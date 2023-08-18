@@ -1,0 +1,67 @@
+  <div class="col text-center">
+      <h1 mat-dialog-title> {{ title }} Express {{ isUpdateMode() ? data.id : ''}}
+
+
+      </h1>
+  </div>
+
+<form [formGroup]="form" class="mt-3">
+  <div mat-dialog-content class="text-center">
+      <div class="row">
+
+          <mat-form-field  class="w-50">
+              <mat-label>Encargado</mat-label>
+              <mat-select [formControl]="usuariosControl" #singleSelectUsuarios>
+                  <mat-option *ngFor="let usuario of usuariosFiltrados | async" [value]="usuario">
+                      {{ usuario.nombre }} {{ usuario.apellido }} - {{ usuario.curp }}
+                  </mat-option>
+              </mat-select>
+
+          </mat-form-field>
+          <mat-form-field  class="w-50">
+            <mat-label>Producto</mat-label>
+
+            <input formControlName="producto" oninput="this.value = this.value.toUpperCase()" matInput type="text">
+            <mat-error *ngIf="form.controls['producto'].hasError('required')">
+                El producto es <strong> requerido </strong>
+            </mat-error>
+            <mat-icon matSuffix>build</mat-icon>
+
+        </mat-form-field>
+
+      </div>
+      <div class="row">
+          <mat-form-field >
+              <mat-label>Falla Detectada</mat-label>
+              <textarea oninput="this.value = this.value.toUpperCase()" matInput formControlName="falla_detectada"></textarea>
+          </mat-form-field>
+      </div>
+      <div class="row">
+
+        <mat-form-field  class="w-50">
+          <mat-label>Cotizacion</mat-label>
+
+          <input formControlName="cotizacion" matInput type="text">
+
+          <mat-icon matSuffix>tag</mat-icon>
+
+      </mat-form-field>
+      <mat-form-field  class="w-50">
+        <mat-label>Importe</mat-label>
+
+        <input formControlName="importe" matInput type="number">
+
+        <mat-icon matSuffix>attach_money</mat-icon>
+
+    </mat-form-field>
+    </div>
+
+
+  </div>
+  <div mat-dialog-actions align="end">
+    <button mat-button *ngIf="isUpdateMode()" [disabled]="form.invalid" (click)="onAdd()">Actualizar</button>
+    <button mat-button *ngIf="isCreateMode()" [disabled]="form.invalid" (click)="onAdd()">Agregar</button>
+
+      <button mat-button (click)="onNoClick()">Cancelar</button>
+  </div>
+</form>

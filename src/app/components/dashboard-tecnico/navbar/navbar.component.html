@@ -1,0 +1,13 @@
+<mat-toolbar color="primary">
+  <div class="container-fluid d-flex">
+    <span>{{ profile.nombre }} {{ profile.apellido }}</span>
+
+      <span class="example-spacer"></span>
+      <button mat-button routerLink="/dashboard-tecnico"> <mat-icon>build_circle</mat-icon> Servicios</button>
+      <button mat-button routerLink="/dashboard-tecnico/express"> <mat-icon>bolt</mat-icon> Express</button>
+      <button mat-button routerLink="/dashboard-tecnico/clientes"> <mat-icon>groups</mat-icon> Clientes</button>
+      <button mat-button (click)="logout()"> <mat-icon>logout</mat-icon> Cerrar Sesión</button>
+  </div>
+
+
+</mat-toolbar>

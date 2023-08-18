@@ -1,0 +1,245 @@
+<div class="container-fluid" id="htmlData">
+  <mat-spinner [mode]="mode" class="mx-auto centrar" diameter="50" *ngIf="isLoading">
+  </mat-spinner>
+  <div *ngIf="!isLoading">
+
+  <div class="row">
+    <div class="col d-grid justify-content-center">
+      <img class="mx-auto my-3" src="./assets/logo.png" width="100" alt="">
+      <h1 class="text-center text-primary"> Centro de Servicio Profesional </h1>
+    </div>
+
+    <div class="col mt-4 text-center">
+      <h1 ><b>GRUPO FERRETERO DON PEDRO</b></h1>
+      <h3>CARRETERA SAN MIGUEL A CELAYA KM 2.4 POBLADO DE DON DIEGO CP. 37887 SAN MIGUEL DE ALLENDE, GUANAJUATO
+      </h3>
+    </div>
+
+    <div class="col d-grid align-content-center text-center">
+      <h1 class="text-danger text-large"><b>FOLIO:  {{servicio.id}}</b></h1>
+    </div>
+  </div>
+  <div class="container-margen">
+    <div class="row">
+      <div class="col d-grid text-center align-content-center">
+        <h1 class="titulo text-white">ORDEN DE SERVICIO</h1>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-3 d-grid text-center">
+        <h1 class="text-primary"> <b> DATOS DEL CLIENTE</b></h1>
+      </div>
+    <hr>
+
+    </div>
+    <div class="row mt-4">
+      <div class="col d-grid">
+        <h2><b>Nombre o Razón Social: </b>  {{ servicio.nombre_cliente }}</h2>
+      </div>
+      <div class="col d-grid">
+        <h2><b>ID de Servicio: </b>  {{ servicio.id }}</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col d-grid">
+        <h2><b># de Teléfono: </b> {{ servicio.telefono_cliente }}</h2>
+      </div>
+      <div class="col d-grid">
+        <div class="d-flex flex-row">
+          <h2 class="d-inline-flex text-nowrap"><b># de Teléfono Alterno: </b>
+          </h2>
+          <div class="divider d-inline-flex"></div>
+
+        </div>
+
+      </div>
+    </div>
+    <div class="d-flex flex-row ">
+      <h2 class="d-inline-flex text-nowrap"><b>Correo Electrónico: </b>
+      </h2>
+      <div class="divider email d-inline-flex"></div>
+    </div>
+    <div class="row  mt-5">
+      <div class="col-3 d-grid text-center">
+        <h1 class="text-primary"> <b> DATOS DEL PRODUCTO</b></h1>
+      </div>
+      <hr>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col d-grid">
+        <h2><b>Producto: </b>  {{ servicio.producto }}</h2>
+      </div>
+      <div class="col d-grid text-center">
+        <h2><b>Marca: </b>  {{ servicio.marca }}</h2>
+      </div>
+      <div class="col d-grid text-center">
+        <h2><b>Modelo: </b>  {{ servicio.modelo }}</h2>
+      </div>
+      <div class="col d-grid text-end">
+        <h2><b>Tipo: </b>  {{ servicio.tipo }}</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col d-grid">
+        <h2><b># de Serie: </b> {{ servicio.serie }}</h2>
+      </div>
+      <div class="col d-grid">
+        <div class="d-flex flex-row">
+          <h2 class="d-inline-flex text-nowrap"><b># de Motor: </b>
+          </h2>
+          <div class="divider d-inline-flex"></div>
+
+        </div>
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="col d-grid">
+        <h2><b>Fecha de Ingreso: </b> {{ servicio.fecha_ingreso | date: "dd/MM/YYYY" }}</h2>
+      </div>
+      <div class="col d-grid">
+        <div class="d-flex flex-row">
+          <h2 class="d-inline-flex text-nowrap"><b>Fecha de Entrega: </b>
+          </h2>
+          <div class="divider d-inline-flex"></div>
+
+        </div>
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-6 d-grid">
+        <div class="d-flex flex-row">
+          <h2 class="d-inline-flex text-nowrap"><b>Accesorios: </b>
+          </h2>
+          <div class="divider d-inline-flex"></div>
+
+        </div>
+
+      </div>
+      <div class="col-3 d-grid">
+        <h2><b>Cotización: </b> {{ servicio.cotizacion }}</h2>
+      </div>
+      <div class="col-3 d-grid">
+        <h2><b>Técnico: </b> {{ servicio.encargado }}</h2>
+      </div>
+
+    </div>
+    <div class="row  mt-4">
+      <div class="col-3 d-grid text-center">
+        <h1 class="text-primary text-nowrap"> <b> FALLA DESCRITA POR EL CLIENTE</b></h1>
+      </div>
+    <hr>
+
+    </div>
+    <div class="row mt-3">
+      <div class="col">
+        <h2><b>Garantía: </b> {{ servicio.garantia === "0" ? "NO" : "SI"}}</h2>
+
+        <h2>- {{servicio.falla_detectada}}</h2>
+      </div>
+
+    </div>
+    <div class="row  mt-4">
+      <div class="col-3 d-grid text-center">
+        <h1 class="text-primary"> <b> DIAGNÓSTICO</b></h1>
+      </div>
+    <hr>
+  </div>
+  <div class="row my-3">
+    <div class="col">
+
+      <h2>- {{servicio.observaciones}}</h2>
+    </div>
+
+  </div>
+
+  <div class="row mt-10">
+    <div class="col text-center mx-5">
+      <div class="divider"></div>
+      <h2>SELLO GRUPO FERRETERO DON PEDRO</h2>
+    </div>
+    <div class="col text-center mx-5">
+      <div class="divider"></div>
+      <h2>NOMBRE Y FIRMA DEL CLIENTE</h2>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <h3 class="text-justify">Únicamente se entregará el producto o equipo al portador del presente talón de orden de servicio.</h3>
+  </div>
+
+  <hr>
+
+
+    <div class="row justify-content-center align-items-center g-2">
+      <div class="col-9">
+        <div class="row justify-content-center align-items-center g-2">
+          <div class="col-2 d-grid">
+            <img class="img-fluid mx-auto" src="./assets/logo.png" width="100" alt="">
+
+          </div>
+          <div class="col-6 d-grid align-content-center text-center">
+            <h1><b> TALÓN DE ENTREGA DE EQUIPO </b></h1>
+
+          </div>
+          <div class="col-4 d-grid">
+            <h4 >Email:servicio@grupodonpedro.com <br>
+            Teléfono:415 452 1714 (Ext. 117) <br>
+             Teléfono: 415 688 1140</h4>
+
+          </div>
+        </div>
+        <div class="row mt-3 justify-content-center align-items-center g-2">
+          <div class="col d-grid">
+            <h2><b>Cliente: </b>  {{ servicio.nombre_cliente }}</h2>
+            <h2><b>Producto: </b>  {{ servicio.producto }}</h2>
+          </div>
+          <div class="col d-grid">
+            <h2><b>Teléfono: </b>  {{ servicio.telefono_cliente }}</h2>
+
+            <h2><b>Marca: </b>  {{ servicio.marca }}</h2>
+          </div>
+          <div class="col d-grid">
+            <h2><b>Folio #: </b>  {{ servicio.id }}</h2>
+
+            <h2><b>Fecha: </b>  {{ servicio.fecha_ingreso | date: "dd/MM/YYYY" }}</h2>
+          </div>
+        </div>
+        <div class="row justify-content-start align-items-center g-2">
+          <div class="col">
+            <h2 class="text-justify">Únicamente se entregará el producto o equipo al portador del presente talón de orden de servicio.</h2>
+          </div>
+
+        </div>
+      </div>
+      <div class="col-3 justify-content-center">
+        <h1 class="text-large"><b>FOLIO:  {{servicio.id}} </b></h1>
+        <h2><b>CLIENTE: </b>  {{ servicio.nombre_cliente }}</h2>
+        <h2><b>TELEFONO: </b>  {{ servicio.telefono_cliente }}</h2>
+        <h2><b>HERRAMIENTA: </b>  {{ servicio.producto }}</h2>
+        <h2><b>FALLA: </b>  {{ servicio.falla_detectada }}</h2>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</div>
+<div class="row" *ngIf="!isLoading">
+  <div class="col d-grid justify-content-center mb-4">
+      <button color="accent" mat-raised-button (click)="openPDF()"> <mat-icon>description</mat-icon> Generar PDF</button>
+
+  </div>
+
+
+</div>
+
+<div class="container-fluid" id="htmlData2">
+  <div class="row">
+    <h2 class="text-justify">1. Para equipos NO AUTORIZADOS cuenta con 15 días para su recolección a partir su aviso, de lo contrario, no nos hacemos responsables.</h2>
+    <h2 class="text-justify">2. Para los equipos TERMINADOS cuenta con 30 días a partir de su aviso para recolectarlos, de lo contrario, no nos hacemos responsables.</h2>
+    <h2 class="text-justify mt-2 mb-3">3. En caso de extravío, deberá presentar una identificación y se cobraría una penalización del 5% del valor del ticket.</h2>
+
+  </div>
+</div>

@@ -1,0 +1,73 @@
+<h1 mat-dialog-title class="text-center"> {{ title }} Usuario</h1>
+
+<form [formGroup]="form">
+    <div mat-dialog-center class="text-center">
+        <div class="row mb-2">
+            <mat-form-field  class="w-50">
+                <mat-label>Nombre</mat-label>
+                <input formControlName="nombre" oninput="this.value = this.value.toUpperCase()" matInput type="text">
+                <mat-error *ngIf="form.controls['nombre'].hasError('required')">
+                    El nombre es <strong> requerido </strong>
+                </mat-error>
+                <mat-icon matSuffix>person</mat-icon>
+            </mat-form-field>
+
+
+            <mat-form-field  class="w-50">
+                <mat-label>Apellido</mat-label>
+
+                <input formControlName="apellido" oninput="this.value = this.value.toUpperCase()" matInput type="text">
+                <mat-error *ngIf="form.controls['apellido'].hasError('required')">
+                    El apellido es <strong> requerido </strong>
+                </mat-error>
+                <mat-icon matSuffix>people</mat-icon>
+
+            </mat-form-field>
+
+        </div>
+    </div>
+    <div class="row mb-2">
+        <mat-form-field  class="w-50">
+            <mat-label>RFC sin homoclave</mat-label>
+            <input formControlName="curp" oninput="this.value = this.value.toUpperCase()" matInput type="text" maxlength="10" minlength="10">
+            <mat-error *ngIf="form.controls['curp'].hasError('required')">
+                El RFC es <strong> requerido </strong>
+            </mat-error>
+            <mat-error *ngIf="form.controls['curp'].hasError('minlength')">
+                EL RFC debe tener mínimo <strong> 10 caracteres </strong>
+            </mat-error>
+            <mat-icon matSuffix>badge</mat-icon>
+        </mat-form-field>
+
+
+        <mat-form-field  class="w-50">
+            <mat-label>Tipo</mat-label>
+            <mat-select formControlName="tipo" name="tipo" disableRipple>
+                <mat-option value="0">Técnico</mat-option>
+                <mat-option value="1">Administrador</mat-option>
+            </mat-select>
+
+            <mat-error *ngIf="form.controls['tipo'].hasError('required')">
+                El tipo es <strong> requerido </strong>
+            </mat-error>
+            <mat-icon matSuffix>perm_contact_calendar</mat-icon>
+
+        </mat-form-field>
+    </div>
+    <mat-form-field class="w-100" >
+        <mat-label>Contraseña</mat-label>
+
+        <input formControlName="password" matInput type="text">
+        <mat-error *ngIf="form.controls['password'].hasError('required')">
+            La contraseña es <strong> requerida </strong>
+        </mat-error>
+
+        <mat-icon matSuffix>password</mat-icon>
+    </mat-form-field>
+    <div mat-dialog-actions align="end">
+        <button mat-button *ngIf="isCreateMode()" [disabled]="form.invalid" (click)="onAdd()">Agregar</button>
+        <button mat-button *ngIf="isUpdateMode()" [disabled]="form.invalid" (click)="onAdd()">Actualizar</button>
+        <button mat-button (click)="onNoClick()">Cancelar</button>
+
+    </div>
+</form>

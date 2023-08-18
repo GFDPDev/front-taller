@@ -1,0 +1,39 @@
+<div class="container-fluid h-100">
+  <div class="d-flex flex-row justify-content-center align-items-center h-100">
+
+      <div class="d-flex flex-column ">
+          <mat-spinner [mode]="mode" class="mx-auto my-0" diameter="50" *ngIf="isLoading">
+          </mat-spinner>
+          <form [formGroup]="form" (ngSubmit)="login()" *ngIf="!isLoading">
+              <mat-card class="text-center">
+
+                  <mat-card-header class="d-inline">
+                      <h2 class="fw-semibold">Taller de Servicios GFDP</h2>
+
+                      <img src="./assets/logo.png" width="95" class="mb-4 mt-2" alt="">
+
+                  </mat-card-header>
+                  <mat-card-content>
+                      <mat-form-field appearance="fill">
+                          <mat-label>Usuario</mat-label>
+                          <input oninput="this.value = this.value.toUpperCase()" formControlName="curp" matInput autocomplete="off" placeholder="RFC sin homoclave">
+                      </mat-form-field>
+
+                      <mat-form-field appearance="fill">
+                          <mat-label>Contraseña</mat-label>
+                          <input type="password" formControlName="password" matInput autocomplete="off" placeholder="******">
+                      </mat-form-field>
+                  </mat-card-content>
+                  <mat-card-actions class="justify-content-center">
+                      <button type="submit" mat-raised-button color="primary" class="w-50 mb-4 p-1" [disabled]="form.invalid">Iniciar Sesión</button>
+                  </mat-card-actions>
+              </mat-card>
+
+          </form>
+
+
+
+
+      </div>
+  </div>
+</div>

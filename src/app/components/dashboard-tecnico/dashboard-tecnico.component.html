@@ -1,0 +1,48 @@
+<mat-toolbar class="justify-content-center"  *ngIf="sidenav.mode === 'over'">
+  <button mat-icon-button *ngIf="sidenav.mode === 'over'" (click)="sidenav.toggle()">
+    <mat-icon *ngIf="!sidenav.opened">
+      menu
+    </mat-icon>
+    <mat-icon *ngIf="sidenav.opened">
+      close
+    </mat-icon>
+  </button>
+  Taller de Servicios Grupo Ferretero Don Pedro
+</mat-toolbar>
+
+<mat-sidenav-container>
+  <mat-sidenav #sidenav="matSidenav" class="mat-elevation-z8 fixed">
+    <img class="avatar mat-elevation-z8 mx-auto" src="assets/logo.png" />
+
+    <h4>{{ profile.nombre }} {{ profile.apellido }}</h4>
+    <h5>Técnico</h5>
+    <mat-divider></mat-divider>
+    <button [routerLink]="['/dashboard-tecnico']" [routerLinkActive]="'selected'" [routerLinkActiveOptions]="{ exact: true }" mat-button class="menu-button">
+      <mat-icon>build_circle</mat-icon>
+      <span>Registro de Servicios</span>
+    </button>
+
+    <button [routerLink]="['/dashboard-tecnico/express']" [routerLinkActive]="'selected'" [routerLinkActiveOptions]="{ exact: true }" mat-button class="menu-button">
+      <mat-icon>bolt</mat-icon>
+      <span>Registro de Express</span>
+    </button>
+
+    <button [routerLink]="['/dashboard-tecnico/clientes']" [routerLinkActive]="'selected'" [routerLinkActiveOptions]="{ exact: true }" mat-button class="menu-button">
+      <mat-icon>groups</mat-icon>
+      <span>Clientes</span>
+    </button>
+
+    <button (click)="logout()" mat-button class="menu-button">
+      <mat-icon>logout</mat-icon>
+      <span>Cerrar Sesión</span>
+    </button>
+
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <div class="content mat-elevation-z8 d-grid">
+      <router-outlet></router-outlet>
+
+
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
