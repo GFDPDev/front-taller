@@ -18,12 +18,14 @@ import { ReportesTecnicosComponent } from '../reportes-tecnicos/reportes-tecnico
 import { CSVService } from '../../services/csv.service';
 import { ExpressComponent } from './express/express.component';
 import { ExpressAdminComponent } from './express/express-admin/express-admin.component';
-import { GraficasComponent } from './graficas/graficas.component';
 import { GarantiasComponent } from './garantias/garantias.component';
 import { GarantiaDialogComponent } from './garantias/garantia-dialog/garantia-dialog.component';
 import { ExternosComponent } from './externos/externos.component';
 import { ExternosDialogComponent } from './externos/externos-dialog/externos-dialog.component';
 import { ReporteTablaComponent } from './reportes/reporte-tabla/reporte-tabla.component';
+import { EarningsChartComponent } from './graficas/earnings-chart/earnings-chart.component';
+import { StatusChartComponent } from './graficas/status-chart/status-chart.component';
+import { TechChartComponent } from './graficas/tech-chart/tech-chart.component';
 
 
 @NgModule({
@@ -42,11 +44,13 @@ import { ReporteTablaComponent } from './reportes/reporte-tabla/reporte-tabla.co
     ExpressComponent,
     ExpressAdminComponent,
     ExternosComponent,
-    GraficasComponent,
     GarantiasComponent,
     GarantiaDialogComponent,
     ExternosComponent,
-    ExternosDialogComponent
+    ExternosDialogComponent,
+    EarningsChartComponent,
+    StatusChartComponent,
+    TechChartComponent
   ],
   imports: [
     CommonModule,
