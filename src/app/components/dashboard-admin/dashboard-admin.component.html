@@ -14,7 +14,7 @@
   <mat-sidenav #sidenav="matSidenav" class="mat-elevation-z8 fixed">
     <img class="avatar mat-elevation-z8 mx-auto" src="assets/logo.png" />
 
-    <h4>{{ profile.nombre }} {{ profile.apellido }}</h4>
+    <h4>{{ user.nombre }} {{ user.apellido }}</h4>
     <h5>Administrador</h5>
 
     <mat-divider></mat-divider>
@@ -28,7 +28,7 @@
     </button>
     <button [routerLink]="['/dashboard-admin/externos']" [routerLinkActive]="'selected'" [routerLinkActiveOptions]="{ exact: true }" mat-button class="menu-button">
       <mat-icon>airport_shuttle</mat-icon>
-      <span>Servicios Externos</span>
+      <span>Externos</span>
     </button>
     <button [routerLink]="['/dashboard-admin/garantias']" [routerLinkActive]="'selected'" [routerLinkActiveOptions]="{ exact: true }" mat-button class="menu-button">
       <mat-icon>verified</mat-icon>
@@ -37,12 +37,12 @@
 
     <button [routerLink]="['/dashboard-admin/servicios']" [routerLinkActive]="'selected'" [routerLinkActiveOptions]="{ exact: true }" mat-button class="menu-button">
       <mat-icon>build_circle</mat-icon>
-      <span>Servicios de Taller</span>
+      <span>Taller</span>
     </button>
 
     <button [routerLink]="['/dashboard-admin/express']" [routerLinkActive]="'selected'" [routerLinkActiveOptions]="{ exact: true }" mat-button class="menu-button">
       <mat-icon>bolt</mat-icon>
-      <span>Servicios Express</span>
+      <span>Express</span>
     </button>
 
     <button [routerLink]="['/dashboard-admin/clientes']" [routerLinkActive]="'selected'" [routerLinkActiveOptions]="{ exact: true }" mat-button class="menu-button">

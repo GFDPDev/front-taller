@@ -10,9 +10,9 @@ import { interval, Subscription } from 'rxjs';
 import 'moment/locale/es';
 import Swal from 'sweetalert2';
 import { ServiciosRes } from '../../../interfaces/servicios';
-import { Convert, LoginRes } from '../../../interfaces/login';
 import { TecnicoDialogComponent } from './tecnico-dialog/tecnico-dialog.component';
 import { MainService } from 'src/app/services/main.service';
+import { Convert, User } from 'src/app/interfaces/user';
 
 @Component({
   selector: 'app-tecnicos',
@@ -23,13 +23,17 @@ import { MainService } from 'src/app/services/main.service';
 export class TecnicosComponent implements OnInit {
   model = "Servicios";
   subscription!: Subscription;
-  profile: LoginRes = Convert.toLoginRes(sessionStorage.getItem('profile')??'');
+  user!: User;
+
   displayedColumns: string[] = ['id', 'fecha_ingreso', 'nombre_cliente', 'producto', 'marca', 'encargado', 'cotizacion', 'fecha_terminado', 'fecha_entrega', 'importe', 'estatus', 'acciones'];
   dataSource= new MatTableDataSource<ServiciosRes>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private mainService: MainService, public router: Router, public dialog: MatDialog) { }
+  constructor(private mainService: MainService, public router: Router, public dialog: MatDialog) {
+    this.user = Convert.toUser(localStorage.getItem('user')??'');
+
+   }
   ngAfterViewInit(): void {
 
     this.dataSource.paginator = this.paginator;
@@ -40,16 +44,13 @@ export class TecnicosComponent implements OnInit {
   ngOnInit(): void {
     this.getServicios();
   }
-  logout(){
-    sessionStorage.clear();
-    this.router.navigate(['/login']);
-  }
+
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
   getServicios(){
-    this.mainService.requestMany({ _function: "fnGetServiciosPorMesTec",  id: this.profile.id}, this.model).subscribe((data: ServiciosRes[])=>{
+    this.mainService.requestMany({ _function: "fnGetServiciosPorMesTec",  id: this.user.id}, this.model).subscribe((data: ServiciosRes[])=>{
       this.dataSource.data = data;
     });
   }

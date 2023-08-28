@@ -1,5 +1,4 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { Convert } from 'src/app/interfaces/login';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -11,6 +10,7 @@ import { ReplaySubject, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 import { MainService } from 'src/app/services/main.service';
 import { GarantiaRes } from 'src/app/interfaces/garantias';
+import { Convert, User } from 'src/app/interfaces/user';
 
 export const MY_FORMATS = {
   parse: {
@@ -45,6 +45,8 @@ export class GarantiaDialogComponent implements OnInit {
   form!: FormGroup;
   mode!: Number;
   title!: String;
+  user!: User;
+
   estatusC = [
     {
       value: 'EN TRÁMITE'
@@ -74,14 +76,14 @@ export class GarantiaDialogComponent implements OnInit {
       value: 'FACTURA '
     }
   ];
-  profile = sessionStorage.getItem('profile');
+
   protected _onDestroy = new Subject<void>();
   constructor(private fb: FormBuilder,
     public dialogRef: MatDialogRef<GarantiaDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: GarantiaRes,
     private mainService: MainService,
     private snackbar: MatSnackBar,) {
-      let user = Convert.toLoginRes(this.profile ?? '');
+      this.user = Convert.toUser(localStorage.getItem('user')??'');
 
       if (this.data) {
         this.mode = 1;
@@ -102,7 +104,7 @@ export class GarantiaDialogComponent implements OnInit {
           fecha_resuelto_cliente: [this.data.fecha_resuelto_cliente],
           estado_cliente: [this.data.estado_cliente],
           estado_proveedor: [this.data.estado_proveedor],
-          id_modificado:  [user.id]
+          id_modificado:  [this.user.id]
 
         });
       } else {
@@ -125,7 +127,7 @@ export class GarantiaDialogComponent implements OnInit {
           fecha_resuelto_cliente: [null],
           estado_proveedor: [this.estatusP[0].value, Validators.required],
           estado_cliente: [this.estatusC[0].value, Validators.required],
-          id_modificado:  [user.id]
+          id_modificado:  [this.user.id]
       });
 
      }

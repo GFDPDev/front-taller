@@ -23,6 +23,7 @@ import { GarantiasComponent } from './garantias/garantias.component';
 import { GarantiaDialogComponent } from './garantias/garantia-dialog/garantia-dialog.component';
 import { ExternosComponent } from './externos/externos.component';
 import { ExternosDialogComponent } from './externos/externos-dialog/externos-dialog.component';
+import { ReporteTablaComponent } from './reportes/reporte-tabla/reporte-tabla.component';
 
 
 @NgModule({

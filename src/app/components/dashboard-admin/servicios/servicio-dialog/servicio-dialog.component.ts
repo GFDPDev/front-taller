@@ -8,9 +8,8 @@ import {MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/mater
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
 import * as _moment from 'moment';
 import 'moment/locale/es';
-import { Convert } from 'src/app/interfaces/login';
 import { ServiciosRes } from '../../../../interfaces/servicios';
-import { UsuariosRes } from '../../../../interfaces/usuarios';
+import { Convert, User } from '../../../../interfaces/user';
 import { ClientesRes } from '../../../../interfaces/clientes';
 import { ReplaySubject, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
@@ -48,11 +47,12 @@ export class ServicioDialogComponent implements OnInit {
   form!: FormGroup;
   mode!: Number;
   title!: String;
-  usuarios!: UsuariosRes[];
+  usuarios!: User[];
   clientes!: ClientesRes[];
   marcas!: MarcasRes[];
   minDateTerminado!: Date;
   minDateEntregado!: Date;
+  user!: User;
   estatus = [{
     value: 'POR AUTORIZAR'
   },{
@@ -82,7 +82,7 @@ export class ServicioDialogComponent implements OnInit {
 
   public usuariosFiltro: FormControl = new FormControl();
   public usuariosControl: FormControl = new FormControl();
-  public usuariosFiltrados: ReplaySubject<UsuariosRes[]> = new ReplaySubject<UsuariosRes[]>(1);
+  public usuariosFiltrados: ReplaySubject<User[]> = new ReplaySubject<User[]>(1);
 
 
   public clientesFiltro: FormControl = new FormControl();
@@ -93,7 +93,7 @@ export class ServicioDialogComponent implements OnInit {
 
   @ViewChild('singleSelectUsuarios') singleSelectUsuarios!: MatSelect;
   @ViewChild('singleSelectClientes') singleSelectClientes!: MatSelect;
-  profile = sessionStorage.getItem('profile');
+ 
 
 
   constructor(private fb: FormBuilder,
@@ -102,7 +102,7 @@ export class ServicioDialogComponent implements OnInit {
     private mainService: MainService,
     private snackbar: MatSnackBar,
     ) {
-      let user = Convert.toLoginRes(this.profile ?? '');
+      this.user = Convert.toUser(localStorage.getItem('user')??'');
 
 
       if (this.data) {
@@ -126,7 +126,7 @@ export class ServicioDialogComponent implements OnInit {
           estatus: [this.data.estatus, Validators.required],
           observaciones: [this.data.observaciones],
           avisado: [this.data.avisado],
-          id_modificado:  [user.id]
+          id_modificado:  [this.user.id]
 
         });
       } else {
@@ -149,7 +149,7 @@ export class ServicioDialogComponent implements OnInit {
           importe: [null],
           estatus: [this.estatus[0].value, Validators.required],
           observaciones: [' '],
-          id_modificado:  [user.id]
+          id_modificado:  [this.user.id]
       });
 
   }
@@ -242,10 +242,10 @@ ngOnInit(): void {
         let filtro = data.filter(cliente => cliente.id == this.data.id_cliente);
         this.clientesControl.setValue(filtro[0]);
     });
-    this.mainService.requestMany({ _function: "fnGetUsuarios" }, "Usuarios").subscribe((data: UsuariosRes[]) => {
+    this.mainService.requestMany({ _function: "fnGetUsuarios" }, "Usuarios").subscribe((data: User[]) => {
       this.usuarios = data;
       this.usuariosFiltrados.next(this.usuarios.slice());
-      let filtro = data.filter(usuario => usuario.id == this.data.id_usuario);
+      let filtro = data.filter(usuario => usuario.id.toString() == this.data.id_usuario);
       this.usuariosControl.setValue(filtro[0]);
     });
 
@@ -254,7 +254,7 @@ ngOnInit(): void {
       this.clientes = data;
       this.clientesFiltrados.next(this.clientes.slice());
     });
-    this.mainService.requestMany({ _function: "fnGetUsuarios" }, "Usuarios").subscribe((data: UsuariosRes[]) => {
+    this.mainService.requestMany({ _function: "fnGetUsuarios" }, "Usuarios").subscribe((data: User[]) => {
       this.usuarios = data;
       this.usuariosFiltrados.next(this.usuarios.slice());
 
@@ -271,7 +271,7 @@ ngOnInit(): void {
         // the form control (i.e. _initializeSelection())
         // this needs to be done after the filteredBanks are loaded initially
         // and after the mat-option elements are available
-        this.singleSelectUsuarios.compareWith = (a: UsuariosRes, b: UsuariosRes) => a && b && a.id === b.id;
+        this.singleSelectUsuarios.compareWith = (a: User, b: User) => a && b && a.id === b.id;
       });
   }
   protected setInitialValueClientes() {

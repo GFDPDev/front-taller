@@ -6,13 +6,14 @@ import { ReportesComponent } from './reportes/reportes.component';
 import { UsuariosComponent } from './usuarios/usuarios.component';
 import { ServiciosComponent } from './servicios/servicios.component';
 import { ClientesComponent } from './clientes/clientes.component';
-import { AdminGuard } from 'src/app/admin.guard';
 import { ExpressComponent } from './express/express.component';
 import { GarantiasComponent } from './garantias/garantias.component';
 import { ExternosComponent } from './externos/externos.component';
+import { adminGuard } from 'src/app/auth/admin.guard';
+import { ReporteTablaComponent } from './reportes/reporte-tabla/reporte-tabla.component';
 
 const routes: Routes = [
-  { path: '', component: DashboardAdminComponent, canActivate: [AdminGuard], canLoad: [AdminGuard], children: [
+  { path: '', component: DashboardAdminComponent, canActivate: [adminGuard], canLoad: [adminGuard], children: [
     { path: '', component: ReportesComponent },
     { path: 'graficas', component: GraficasComponent },
     { path: 'usuarios', component: UsuariosComponent },
@@ -29,8 +30,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule],
-  providers: [AdminGuard]
+  exports: [RouterModule]
 
 })
 export class DashboardAdminRoutingModule { }

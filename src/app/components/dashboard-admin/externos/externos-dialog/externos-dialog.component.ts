@@ -21,7 +21,6 @@ import {
 import * as _moment from 'moment';
 import 'moment/locale/es';
 import { Convert } from 'src/app/interfaces/login';
-import { UsuariosRes } from '../../../../interfaces/usuarios';
 import { ClientesRes } from '../../../../interfaces/clientes';
 import { ReplaySubject, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
@@ -39,6 +38,7 @@ import {
   NgxMatDateAdapter,
 } from '@angular-material-components/datetime-picker';
 import * as moment from 'moment';
+import { User } from 'src/app/interfaces/user';
 
 export const MY_FORMATS = {
   parse: {
@@ -78,7 +78,7 @@ export class ExternosDialogComponent implements OnInit {
   mode!: Number;
   title!: String;
   clientes!: ClientesRes[];
-  usuarios!: UsuariosRes[];
+  usuarios!: User[];
   estatus = [
     {
       value: 'PENDIENTE',
@@ -112,8 +112,8 @@ export class ExternosDialogComponent implements OnInit {
   ];
   public usuariosFiltro: FormControl = new FormControl();
   public usuariosControl: FormControl = new FormControl();
-  public usuariosFiltrados: ReplaySubject<UsuariosRes[]> = new ReplaySubject<
-    UsuariosRes[]
+  public usuariosFiltrados: ReplaySubject<User[]> = new ReplaySubject<
+    User[]
   >(1);
 
   public clientesFiltro: FormControl = new FormControl();
@@ -249,11 +249,11 @@ export class ExternosDialogComponent implements OnInit {
         });
       this.mainService
         .requestMany({ _function: 'fnGetUsuarios' }, 'Usuarios')
-        .subscribe((data: UsuariosRes[]) => {
+        .subscribe((data: User[]) => {
           this.usuarios = data;
           this.usuariosFiltrados.next(this.usuarios.slice());
           let filtro = data.filter(
-            (usuario) => usuario.id == this.data.id_usuario
+            (usuario) => usuario.id.toString() == this.data.id_usuario
           );
           this.usuariosControl.setValue(filtro[0]);
         });
@@ -266,7 +266,7 @@ export class ExternosDialogComponent implements OnInit {
         });
       this.mainService
         .requestMany({ _function: 'fnGetUsuarios' }, 'Usuarios')
-        .subscribe((data: UsuariosRes[]) => {
+        .subscribe((data: User[]) => {
           this.usuarios = data;
           this.usuariosFiltrados.next(this.usuarios.slice());
         });
@@ -296,7 +296,7 @@ export class ExternosDialogComponent implements OnInit {
         // the form control (i.e. _initializeSelection())
         // this needs to be done after the filteredBanks are loaded initially
         // and after the mat-option elements are available
-        this.singleSelectUsuarios.compareWith = (a: UsuariosRes, b: UsuariosRes) => a && b && a.id === b.id;
+        this.singleSelectUsuarios.compareWith = (a: User, b: User) => a && b && a.id === b.id;
       });
   }
   onAdd(): void {

@@ -10,7 +10,7 @@ import * as _moment from 'moment';
 // tslint:disable-next-line:no-duplicate-imports
 import { Moment } from 'moment';
 import 'moment/locale/es';
-import { UsuariosRes } from 'src/app/interfaces/usuarios';
+import { User } from 'src/app/interfaces/user';
 import { ClientesRes } from 'src/app/interfaces/clientes';
 import { ReplaySubject, Subject } from 'rxjs';
 import { filter, take, takeUntil } from 'rxjs/operators';
@@ -51,7 +51,7 @@ export class TecnicoDialogComponent implements OnInit {
   form!: UntypedFormGroup;
   mode!: Number;
   title!: String;
-  usuarios!: UsuariosRes[];
+  usuarios!: User[];
   clientes!: ClientesRes[];
   marcas!: MarcasRes[];
   minDateTerminado!: Date;
@@ -85,7 +85,7 @@ export class TecnicoDialogComponent implements OnInit {
   ]
   public usuariosFiltro: UntypedFormControl = new UntypedFormControl();
   public usuariosControl: UntypedFormControl = new UntypedFormControl();
-  public usuariosFiltrados: ReplaySubject<UsuariosRes[]> = new ReplaySubject<UsuariosRes[]>(1);
+  public usuariosFiltrados: ReplaySubject<User[]> = new ReplaySubject<User[]>(1);
 
 
   public clientesFiltro: UntypedFormControl = new UntypedFormControl();
@@ -244,10 +244,10 @@ export class TecnicoDialogComponent implements OnInit {
         let filtro = data.filter(cliente => cliente.id == this.data.id_cliente);
         this.clientesControl.setValue(filtro[0]);
     });
-    this.mainService.requestOne({ _function: "fnGetUsuariosTecnico", id: user.id }, "Usuarios").subscribe((data: UsuariosRes[]) => {
+    this.mainService.requestOne({ _function: "fnGetUsuariosTecnico", id: user.id }, "Usuarios").subscribe((data: User[]) => {
       this.usuarios = data;
       this.usuariosFiltrados.next(this.usuarios.slice());
-      let filtro = data.filter(usuario => usuario.id == this.data.id_usuario);
+      let filtro = data.filter(usuario => usuario.id.toString() == this.data.id_usuario);
       this.usuariosControl.setValue(filtro[0]);
     });
 
@@ -256,10 +256,10 @@ export class TecnicoDialogComponent implements OnInit {
       this.clientes = data;
       this.clientesFiltrados.next(this.clientes.slice());
     });
-    this.mainService.requestOne({ _function: "fnGetUsuariosTecnico", id: user.id }, "Usuarios").subscribe((data: UsuariosRes[]) => {
+    this.mainService.requestOne({ _function: "fnGetUsuariosTecnico", id: user.id }, "Usuarios").subscribe((data: User[]) => {
       this.usuarios = data;
       this.usuariosFiltrados.next(this.usuarios.slice());
-      let filtro = data.filter(usuario => usuario.id == '3');
+      let filtro = data.filter(usuario => usuario.id.toString() == '3');
       this.usuariosControl.setValue(filtro[0]);
 
     });
@@ -275,7 +275,7 @@ export class TecnicoDialogComponent implements OnInit {
         // the form control (i.e. _initializeSelection())
         // this needs to be done after the filteredBanks are loaded initially
         // and after the mat-option elements are available
-        this.singleSelectUsuarios.compareWith = (a: UsuariosRes, b: UsuariosRes) => a && b && a.id === b.id;
+        this.singleSelectUsuarios.compareWith = (a: User, b: User) => a && b && a.id === b.id;
       });
   }
   protected setInitialValueClientes() {

@@ -8,7 +8,7 @@ import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/
 import * as _moment from 'moment';
 import 'moment/locale/es';
 
-import { UsuariosRes } from 'src/app/interfaces/usuarios';
+import { User } from 'src/app/interfaces/user';
 import { ReplaySubject, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 import { ServiciosRes } from 'src/app/interfaces/servicios';
@@ -45,10 +45,10 @@ export class ExpressAdminComponent implements OnInit {
   form!: UntypedFormGroup;
   mode!: Number;
   title!: String;
-  usuarios!: UsuariosRes[];
+  usuarios!: User[];
   public usuariosFiltro: UntypedFormControl = new UntypedFormControl();
   public usuariosControl: UntypedFormControl = new UntypedFormControl();
-  public usuariosFiltrados: ReplaySubject<UsuariosRes[]> = new ReplaySubject<UsuariosRes[]>(1);
+  public usuariosFiltrados: ReplaySubject<User[]> = new ReplaySubject<User[]>(1);
 
   protected _onDestroy = new Subject<void>();
 
@@ -123,20 +123,20 @@ export class ExpressAdminComponent implements OnInit {
         // the form control (i.e. _initializeSelection())
         // this needs to be done after the filteredBanks are loaded initially
         // and after the mat-option elements are available
-        this.singleSelectUsuarios.compareWith = (a: UsuariosRes, b: UsuariosRes) => a && b && a.id === b.id;
+        this.singleSelectUsuarios.compareWith = (a: User, b: User) => a && b && a.id === b.id;
       });
   }
   getMenus(){
     if (this.isUpdateMode()) {
 
-    this.mainService.requestOne({ _function: "fnGetUsuarios" }, "Usuarios").subscribe((data: UsuariosRes[]) => {
+    this.mainService.requestOne({ _function: "fnGetUsuarios" }, "Usuarios").subscribe((data: User[]) => {
       this.usuarios = data;
       this.usuariosFiltrados.next(this.usuarios.slice());
-      let filtro = data.filter(usuario => usuario.id == this.data.id_usuario);
+      let filtro = data.filter(usuario => usuario.id.toString() == this.data.id_usuario);
       this.usuariosControl.setValue(filtro[0]);
     });
   } else {
-    this.mainService.requestOne({ _function: "fnGetUsuarios" }, "Usuarios").subscribe((data: UsuariosRes[]) => {
+    this.mainService.requestOne({ _function: "fnGetUsuarios" }, "Usuarios").subscribe((data: User[]) => {
       this.usuarios = data;
       this.usuariosFiltrados.next(this.usuarios.slice());
 

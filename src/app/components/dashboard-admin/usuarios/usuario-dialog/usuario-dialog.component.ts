@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { UsuariosRes } from '../../../../interfaces/usuarios';
+import { User } from '../../../../interfaces/user';
 import { MainService } from 'src/app/services/main.service';
 
 @Component({
@@ -17,7 +17,7 @@ export class UsuarioDialogComponent implements OnInit {
   title: String;
   constructor( private fb: FormBuilder,
     public dialogRef: MatDialogRef<UsuarioDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: UsuariosRes,
+    @Inject(MAT_DIALOG_DATA) public data: User,
     private mainService: MainService,
     private snackbar: MatSnackBar,) {
       if (this.data) {
@@ -51,7 +51,7 @@ export class UsuarioDialogComponent implements OnInit {
   }
 
   onAdd(): void{
-    const usuario: UsuariosRes = this.form.value;
+    const usuario: User = this.form.value;
     if (this.mode === 0) {
       this.mainService.requestOne({ _function: "fnCreateUsuario", data: usuario }, this.model).subscribe
       ((data: any)=> {

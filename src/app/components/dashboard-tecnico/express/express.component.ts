@@ -15,9 +15,9 @@ import Swal from 'sweetalert2';
 import { ServiciosRes } from '../../../interfaces/servicios';
 import { UntypedFormControl } from '@angular/forms';
 import * as moment from 'moment';
-import { Convert, LoginRes } from 'src/app/interfaces/login';
 import { ExpressDialogComponent } from './express-dialog/express-dialog.component';
 import { MainService } from 'src/app/services/main.service';
+import { User, Convert } from 'src/app/interfaces/user';
 export const MY_FORMATS = {
   parse: {
     dateInput: 'MM/YYYY',
@@ -47,13 +47,16 @@ export const MY_FORMATS = {
 export class ExpressComponent implements OnInit {
   model = "Express";
   subscription!: Subscription;
-  profile: LoginRes = Convert.toLoginRes(sessionStorage.getItem('profile')??'');
+  user!: User;
   displayedColumns: string[] = ['id', 'fecha_ingreso', 'producto', 'encargado', 'cotizacion', 'importe', 'acciones'];
   dataSource= new MatTableDataSource<ServiciosRes>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   date = new UntypedFormControl(moment());
-  constructor(private mainService: MainService, public dialog: MatDialog) { }
+  constructor(private mainService: MainService, public dialog: MatDialog) {
+    this.user = Convert.toUser(localStorage.getItem('user')??'');
+
+   }
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
@@ -63,7 +66,7 @@ export class ExpressComponent implements OnInit {
       this.getExpress();
   }
   getExpress(){
-    this.mainService.requestMany({ _function: "fnGetExpressPorMesTec", mes: this.date.value.month() + 1, ano: this.date.value.year(), id_usuario: this.profile.id }, this.model).subscribe((data: ServiciosRes[])=>{
+    this.mainService.requestMany({ _function: "fnGetExpressPorMesTec", mes: this.date.value.month() + 1, ano: this.date.value.year(), id_usuario: this.user.id }, this.model).subscribe((data: ServiciosRes[])=>{
       this.dataSource.data = data;
     });
   }

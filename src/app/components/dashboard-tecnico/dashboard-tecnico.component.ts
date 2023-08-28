@@ -3,7 +3,7 @@ import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router, NavigationEnd } from '@angular/router';
-import { LoginRes, Convert } from 'src/app/interfaces/login';
+import { User, Convert } from 'src/app/interfaces/user';
 
 @Component({
   selector: 'app-dashboard-tecnico',
@@ -14,10 +14,10 @@ export class DashboardTecnicoComponent {
 
   @ViewChild(MatSidenav)
  sidenav!: MatSidenav;
- profile!: LoginRes;
+ user!: User;
 
  constructor(private breakpointObserver: BreakpointObserver, private observer: BreakpointObserver, private router: Router) {
-  this.profile = Convert.toLoginRes(sessionStorage.getItem('profile')??'');
+  this.user = Convert.toUser(localStorage.getItem('user')??'');
  }
  ngAfterViewInit() {
    this.observer.observe(['(max-width: 1200px)']).subscribe((res) => {
@@ -35,7 +35,7 @@ export class DashboardTecnicoComponent {
 
  }
  logout(){
-  sessionStorage.clear();
+  localStorage.clear();
   this.router.navigate(['/login']);
 }
 }

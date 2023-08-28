@@ -5,7 +5,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MainService } from 'src/app/services/main.service';
 import Swal from 'sweetalert2';
-import { UsuariosRes } from '../../../interfaces/usuarios';
+import { User } from '../../../interfaces/user';
 import { UsuarioDialogComponent } from './usuario-dialog/usuario-dialog.component';
 
 @Component({
@@ -15,9 +15,9 @@ import { UsuarioDialogComponent } from './usuario-dialog/usuario-dialog.componen
 })
 export class UsuariosComponent implements OnInit {
   model = "Usuarios";
-  usuarios!: UsuariosRes[];
+  usuarios!: User[];
   displayedColumns: string[] = ['id', 'nombre', 'apellido', 'tipo', 'curp', 'acciones'];
-  dataSource =new MatTableDataSource<UsuariosRes>();
+  dataSource =new MatTableDataSource<User>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -43,7 +43,7 @@ export class UsuariosComponent implements OnInit {
   }
 
   getUsuarios(){
-    this.mainService.requestMany({ _function: "fnGetUsuarios" }, this.model).subscribe((data: UsuariosRes[])=>{
+    this.mainService.requestMany({ _function: "fnGetUsuarios" }, this.model).subscribe((data: User[])=>{
       this.dataSource.data = data;
     });
   }
@@ -81,7 +81,7 @@ export class UsuariosComponent implements OnInit {
       width: '40%',
       data: null
     });
-    dialogRef.afterClosed().subscribe((result: UsuariosRes) => {
+    dialogRef.afterClosed().subscribe((result: User) => {
       if (result) {
         Swal.fire(
           'Usuario Registrado',
@@ -93,12 +93,12 @@ export class UsuariosComponent implements OnInit {
     });
 
   }
-  updateUsuario(usuario: UsuariosRes){
+  updateUsuario(usuario: User){
     const dialogRef =this.dialog.open(UsuarioDialogComponent, {
       width: '40%',
       data: usuario
     });
-    dialogRef.afterClosed().subscribe((result: UsuariosRes) => {
+    dialogRef.afterClosed().subscribe((result: User) => {
     if (result) {
       Swal.fire(
         'Usuario Actualizado',
