@@ -17,7 +17,6 @@ export interface User {
 // Converts JSON strings to/from your types
 export class Convert {
   public static toUser(json: string): User {
-      console.log(json);
       return JSON.parse(json);
   }
 

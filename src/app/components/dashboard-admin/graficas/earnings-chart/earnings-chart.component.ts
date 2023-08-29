@@ -2,10 +2,11 @@ import { Component, Inject, NgZone, OnInit, PLATFORM_ID } from '@angular/core';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themes_animated from '@amcharts/amcharts4/themes/animated';
-import { EarningsChart } from 'src/app/interfaces/earnings-chart';
 import { MainService } from 'src/app/services/main.service';
 import { Res } from 'src/app/interfaces/response';
 import { isPlatformBrowser } from '@angular/common';
+import { FormControl } from '@angular/forms';
+import { Chart } from 'src/app/interfaces/chart';
 
 @Component({
   selector: 'app-earnings-chart',
@@ -13,22 +14,21 @@ import { isPlatformBrowser } from '@angular/common';
   styleUrls: ['./earnings-chart.component.scss'],
 })
 export class EarningsChartComponent implements OnInit {
-  route = '/chart/earnings';
+  private route = '/chart/earnings';
   private earningsChart!: am4charts.XYChart;
-  private data!: EarningsChart[];
+  private data!: Chart[];
+  public yearForm = new FormControl(new Date().getFullYear());
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: any,
     private zone: NgZone,
     public mainService: MainService
-  ) {}
+  ) {
+    am4core.options.autoDispose = true;
+
+  }
   ngOnInit(): void {
-    this.mainService
-      .getRequest({ year: 2023 }, this.route)
-      .subscribe((res: Res) => {
-        this.data = res.data;
-        this.generarGraficas();
-      });
+    this.getChart();
   }
   // Run the function only in the browser
   browserOnly(f: () => void) {
@@ -38,7 +38,15 @@ export class EarningsChartComponent implements OnInit {
       });
     }
   }
-  generarGraficas() {
+  getChart() {
+    this.mainService
+      .getRequest({ year: this.yearForm.value }, this.route)
+      .subscribe((res: Res) => {
+        this.data = res.data;
+        this.generateChart();
+      });
+  }
+  generateChart() {
     this.browserOnly(() => {
       am4core.useTheme(am4themes_animated);
       let chart = am4core.create('chartdiv', am4charts.XYChart);
@@ -47,19 +55,18 @@ export class EarningsChartComponent implements OnInit {
 
       chart.data = this.data;
 
-      let mainAxis = chart.xAxes.push(new am4charts.CategoryAxis());
-      mainAxis.dataFields.category = 'main';
-      mainAxis.title.text = 'Meses';
+      let mainAxis = chart.xAxes.push(new am4charts.DateAxis());
+      mainAxis.dataFields.date = 'main';
 
       let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-   
+
       let series = chart.series.push(new am4charts.LineSeries());
       series.strokeWidth = 4;
       series.bullets.push(new am4charts.CircleBullet());
       series.dataFields.valueY = 'total';
-      series.dataFields.categoryX = 'main';
+      series.dataFields.dateX = 'main';
       series.name = 'Ventas de Taller';
-
+      series.showOnInit = false;
       series.tooltipText = '${valueY.value}';
       chart.cursor = new am4charts.XYCursor();
 
@@ -68,13 +75,6 @@ export class EarningsChartComponent implements OnInit {
       chart.scrollbarX = scrollbarX;
 
       this.earningsChart = chart;
-    });
-  }
-  ngOnDestroy() {
-    this.zone.runOutsideAngular(() => {
-      if (this.earningsChart) {
-        this.earningsChart.dispose();
-      }
     });
   }
 }

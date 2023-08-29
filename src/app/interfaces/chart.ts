@@ -4,18 +4,18 @@
 //
 //   const earningsChart = Convert.toEarningsChart(json);
 
-export interface EarningsChart {
+export interface Chart {
     main:  number;
     total: number;
 }
 
 // Converts JSON strings to/from your types
 export class Convert {
-    public static toEarningsChart(json: string): EarningsChart[] {
+    public static toChart(json: string): Chart[] {
         return JSON.parse(json);
     }
 
-    public static earningsChartToJson(value: EarningsChart[]): string {
+    public static chartToJson(value: Chart[]): string {
         return JSON.stringify(value);
     }
 }

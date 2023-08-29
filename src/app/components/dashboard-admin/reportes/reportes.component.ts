@@ -3,13 +3,14 @@ import {MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/mater
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
 import * as _moment from 'moment';
 import 'moment/locale/es';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import * as moment from 'moment';
 import { CSVService } from '../../../services/csv.service';
 import { MainService } from 'src/app/services/main.service';
 import { Convert, ToolService } from 'src/app/interfaces/toolservice';
 import { Res } from 'src/app/interfaces/response';
+import { formatDate } from '@angular/common';
 
 
 export const MY_FORMATS = {
@@ -43,6 +44,7 @@ export class ReportesComponent {
   reportRange!: FormGroup;
   serviceRange! : FormGroup;
   route = "/service/by_range"
+  
   constructor(public router: Router, private csv: CSVService, private fb: FormBuilder, private mainService: MainService) {
     this.serviceRange = this.fb.group({
       start_date : [moment()],
