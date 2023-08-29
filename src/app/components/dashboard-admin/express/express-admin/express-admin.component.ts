@@ -1,18 +1,35 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSelect } from '@angular/material/select';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import {MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/material-moment-adapter';
-import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
+import {
+  MatDialog,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+} from '@angular/material/dialog';
+import {
+  MomentDateAdapter,
+  MAT_MOMENT_DATE_ADAPTER_OPTIONS,
+} from '@angular/material-moment-adapter';
+import {
+  DateAdapter,
+  MAT_DATE_FORMATS,
+  MAT_DATE_LOCALE,
+} from '@angular/material/core';
 import * as _moment from 'moment';
 import 'moment/locale/es';
 
 import { User } from 'src/app/interfaces/user';
 import { ReplaySubject, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
-import { ServiciosRes } from 'src/app/interfaces/servicios';
 import { MainService } from 'src/app/services/main.service';
+import { ExpressRes } from 'src/app/interfaces/express';
+import { Res } from 'src/app/interfaces/response';
 
 export const MY_FORMATS = {
   parse: {
@@ -30,69 +47,73 @@ export const MY_FORMATS = {
   templateUrl: './express-admin.component.html',
   styleUrls: ['./express-admin.component.scss'],
   providers: [
-    {provide: MAT_DATE_LOCALE, useValue: 'es-ES'},
+    { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
     {
       provide: DateAdapter,
       useClass: MomentDateAdapter,
       deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
     },
 
-    {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS},
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
 })
 export class ExpressAdminComponent implements OnInit {
-  model= "Express";
+  private route = '/express';
   form!: UntypedFormGroup;
   mode!: Number;
   title!: String;
   usuarios!: User[];
   public usuariosFiltro: UntypedFormControl = new UntypedFormControl();
   public usuariosControl: UntypedFormControl = new UntypedFormControl();
-  public usuariosFiltrados: ReplaySubject<User[]> = new ReplaySubject<User[]>(1);
+  public usuariosFiltrados: ReplaySubject<User[]> = new ReplaySubject<User[]>(
+    1
+  );
 
   protected _onDestroy = new Subject<void>();
 
-
   @ViewChild('singleSelectUsuarios') singleSelectUsuarios!: MatSelect;
-  constructor(private fb: UntypedFormBuilder,
+  constructor(
+    private fb: UntypedFormBuilder,
     public dialogRef: MatDialogRef<ExpressAdminComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ServiciosRes,
+    @Inject(MAT_DIALOG_DATA) public data: ExpressRes,
     private mainService: MainService,
-    private snackbar: MatSnackBar,) {
-      if (this.data) {
-        this.mode = 1;
-        this.title = 'Actualizar';
+    private snackbar: MatSnackBar
+  ) {
+    if (this.data) {
+      this.mode = 1;
+      this.title = 'Actualizar';
 
-        this.form = this.fb.group({
-            producto: [this.data.producto,Validators.required],
-            falla_detectada: [this.data.falla_detectada, Validators.required],
-            id_usuario: [this.data.id_usuario, Validators.required],
-            cotizacion: [this.data.cotizacion],
-            importe: [this.data.importe],
-
-          });
-      } else {
-        this.mode = 0;
-        this.title = 'Nuevo';
-        this.form = this.fb.group({
-            producto: ['', Validators.required],
-            falla_detectada: ['', Validators.required],
-            id_usuario: ['', Validators.required],
-            cotizacion: [null],
-            importe: [null],
-        });
-      }
+      this.form = this.fb.group({
+        id: [this.data.id, Validators.required],
+        herramienta: [this.data.herramienta, Validators.required],
+        falla: [this.data.falla, Validators.required],
+        id_usuario: [this.data.id_usuario, Validators.required],
+        cotizacion: [this.data.cotizacion],
+        importe: [this.data.importe],
+      });
+    } else {
+      this.mode = 0;
+      this.title = 'Nuevo';
+      this.form = this.fb.group({
+        herramienta: ['', Validators.required],
+        falla: ['', Validators.required],
+        id_usuario: ['', Validators.required],
+        cotizacion: [null],
+        importe: [null],
+      });
     }
+  }
 
   ngOnInit(): void {
     this.getMenus();
-    this.usuariosControl.valueChanges.subscribe((data)=>{
+    this.usuariosControl.valueChanges.subscribe((data) => {
       this.form.controls['id_usuario'].setValue(data.id);
     });
-    this.usuariosFiltro.valueChanges.pipe(takeUntil(this._onDestroy)).subscribe(()=> {
-
-      this.filtrarUsuarios();
-    });
+    this.usuariosFiltro.valueChanges
+      .pipe(takeUntil(this._onDestroy))
+      .subscribe(() => {
+        this.filtrarUsuarios();
+      });
   }
   ngAfterViewInit(): void {
     this.setInitialValueUsuarios();
@@ -110,86 +131,77 @@ export class ExpressAdminComponent implements OnInit {
       search = search.toLowerCase();
     }
     this.usuariosFiltrados.next(
-      this.usuarios.filter(usuario => usuario.curp.toLowerCase().indexOf(search) > -1)
+      this.usuarios.filter((usuario) => {
+        let filtrado =
+          usuario.nombre + ' ' + usuario.apellido + ' ' + usuario.curp;
+        return filtrado.toLowerCase().indexOf(search) > -1;
+      })
     );
-
   }
   protected setInitialValueUsuarios() {
     this.usuariosFiltrados
       .pipe(take(1), takeUntil(this._onDestroy))
       .subscribe(() => {
-        // setting the compareWith property to a comparison function
-        // triggers initializing the selection according to the initial value of
-        // the form control (i.e. _initializeSelection())
-        // this needs to be done after the filteredBanks are loaded initially
-        // and after the mat-option elements are available
-        this.singleSelectUsuarios.compareWith = (a: User, b: User) => a && b && a.id === b.id;
+        this.singleSelectUsuarios.compareWith = (a: User, b: User) =>
+          a && b && a.id === b.id;
       });
   }
-  getMenus(){
-    if (this.isUpdateMode()) {
-
-    this.mainService.requestOne({ _function: "fnGetUsuarios" }, "Usuarios").subscribe((data: User[]) => {
-      this.usuarios = data;
-      this.usuariosFiltrados.next(this.usuarios.slice());
-      let filtro = data.filter(usuario => usuario.id.toString() == this.data.id_usuario);
-      this.usuariosControl.setValue(filtro[0]);
-    });
-  } else {
-    this.mainService.requestOne({ _function: "fnGetUsuarios" }, "Usuarios").subscribe((data: User[]) => {
-      this.usuarios = data;
-      this.usuariosFiltrados.next(this.usuarios.slice());
-
-    });
-    }
-
-}
-onAdd(): void {
-
-  const servicio: ServiciosRes = this.form.value;
-  if (this.isCreateMode()) {
-    this.mainService.requestOne({ _function: "fnCreateExpress", data: servicio }, this.model).subscribe
-    ((data: any)=> {
-      if (!data.error) {
-
-        this.dialogRef.close(servicio);
-
-      } else {
-        this.snackbar.open('Error al registrar el servicio.', 'Aceptar', {
-          duration: 4000,
-          horizontalPosition: 'center',
-          verticalPosition: 'top'
-        });
-      }
-    });
-  } else {
-    servicio.id = this.data.id;
-      this.mainService.requestOne({ _function: "fnUpdateExpress", data: servicio }, this.model).subscribe
-      ((data: any)=> {
-        if (!data.error) {
-          this.dialogRef.close(servicio);
-
+  getMenus() {
+    this.mainService
+      .getRequest({}, `/user/get_active_users`)
+      .subscribe((res: Res) => {
+        if (this.isUpdateMode()) {
+          this.usuarios = res.data;
+          this.usuariosFiltrados.next(this.usuarios.slice());
+          let filtro = res.data.filter(
+            (usuario: User) => usuario.id == this.data.id_usuario
+          );
+          this.usuariosControl.setValue(filtro[0]);
         } else {
-
-          this.snackbar.open('Error al actualizar el servicio.', 'Aceptar', {
-            duration: 4000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top'
-          });
-
+          this.usuarios = res.data;
+          this.usuariosFiltrados.next(this.usuarios.slice());
         }
       });
   }
-
-}
-isCreateMode() {
-  return this.mode === 0;
-}
-onNoClick(): void {
-  this.dialogRef.close();
-
-}
-isUpdateMode() {
-  return this.mode === 1;
-}
+  onAdd(): void {
+    const servicio: ExpressRes = this.form.value;
+    if (this.isCreateMode()) {
+      this.mainService
+        .postRequest(servicio, this.route)
+        .subscribe((res: Res) => {
+          if (res.error) {
+            this.snackbar.open(`${res.data} (${res.code})`, 'Aceptar', {
+              duration: 4000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
+            });
+          } else {
+            this.dialogRef.close(servicio);
+          }
+        });
+    } else {
+      this.mainService
+        .putRequest(servicio, this.route)
+        .subscribe((res: Res) => {
+          if (res.error) {
+            this.snackbar.open(`${res.data} (${res.code})`, 'Aceptar', {
+              duration: 4000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
+            });
+          } else {
+            this.dialogRef.close(servicio);
+          }
+        });
+    }
+  }
+  isCreateMode() {
+    return this.mode === 0;
+  }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+  isUpdateMode() {
+    return this.mode === 1;
+  }
 }

@@ -3,21 +3,30 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import {MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/material-moment-adapter';
-import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
-import {MatDatepicker} from '@angular/material/datepicker';
+import {
+  MomentDateAdapter,
+  MAT_MOMENT_DATE_ADAPTER_OPTIONS,
+} from '@angular/material-moment-adapter';
+import {
+  DateAdapter,
+  MAT_DATE_FORMATS,
+  MAT_DATE_LOCALE,
+} from '@angular/material/core';
+import { MatDatepicker } from '@angular/material/datepicker';
 import { interval, Subscription } from 'rxjs';
 import * as _moment from 'moment';
 // tslint:disable-next-line:no-duplicate-imports
-import { Moment} from 'moment';
+import { Moment } from 'moment';
 import 'moment/locale/es';
 import Swal from 'sweetalert2';
 import { UntypedFormControl } from '@angular/forms';
 import * as moment from 'moment';
 import { MainService } from 'src/app/services/main.service';
-import { GarantiaRes, Convert } from 'src/app/interfaces/garantias';
+import { GarantiasRes, Convert } from 'src/app/interfaces/garantias';
 import { GarantiaDialogComponent } from './garantia-dialog/garantia-dialog.component';
 import { CSVService } from 'src/app/services/csv.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Res } from 'src/app/interfaces/response';
 export const MY_FORMATS = {
   parse: {
     dateInput: 'MM/YYYY',
@@ -34,47 +43,72 @@ export const MY_FORMATS = {
   templateUrl: './garantias.component.html',
   styleUrls: ['./garantias.component.scss'],
   providers: [
-    {provide: MAT_DATE_LOCALE, useValue: 'es-ES'},
+    { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
     {
       provide: DateAdapter,
       useClass: MomentDateAdapter,
       deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
     },
 
-    {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS},
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
 })
-
 export class GarantiasComponent implements OnInit {
-  model = "Garantia";
-  displayedColumns: string[] = ['id', 'comprobante', 'autorizo', 'folio', 'fecha_registro', 'producto', 'marca', 'estado_cliente', 'estado_proveedor', 'acciones'];
-  dataSource= new MatTableDataSource<GarantiaRes>();
+  private route = '/warranty';
+  displayedColumns: string[] = [
+    'id',
+    'comprobante',
+    'folio',
+    'producto',
+    'marca',
+    'estado_cliente',
+    'estado_proveedor',
+    'acciones',
+  ];
+  dataSource = new MatTableDataSource<GarantiasRes>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   date = new UntypedFormControl(moment());
-  constructor(private mainService: MainService, public dialog: MatDialog,  private csv: CSVService) { }
+  constructor(
+    private snackbar: MatSnackBar,
+    private mainService: MainService,
+    public dialog: MatDialog,
+    private csv: CSVService
+  ) {}
 
   ngOnInit(): void {
-        this.getGarantias();
+    this.getGarantias();
   }
   ngAfterViewInit(): void {
-
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-
-
-   }
-   applyFilter(event: Event) {
+  }
+  applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
-  getGarantias(){
-    this.mainService.requestMany({ _function: "fnGetGarantia", mes: this.date.value.month() + 1, ano: this.date.value.year() }, this.model).subscribe((data: GarantiaRes[])=>{
-
-      this.dataSource.data = data;
-    });
+  getGarantias() {
+    this.mainService
+      .getRequest(
+        { month: this.date.value.month() + 1, year: this.date.value.year() },
+        `${this.route}/by_month`
+      )
+      .subscribe((res: Res) => {
+        if (res.error) {
+          this.snackbar.open(`${res.data} (${res.code})`, 'Aceptar', {
+            duration: 4000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
+        } else {
+          this.dataSource.data = res.data;
+        }
+      });
   }
-  setMonthAndYear(normalizedMonthAndYear: Moment, datepicker: MatDatepicker<Moment>) {
+  setMonthAndYear(
+    normalizedMonthAndYear: Moment,
+    datepicker: MatDatepicker<Moment>
+  ) {
     const ctrlValue = this.date.value;
     ctrlValue.month(normalizedMonthAndYear.month());
     ctrlValue.year(normalizedMonthAndYear.year());
@@ -82,84 +116,94 @@ export class GarantiasComponent implements OnInit {
     this.getGarantias();
     datepicker.close();
   }
-  deleteGarantia(id: String){
+  deleteGarantia(id: String) {
     Swal.fire({
       title: '¿Seguro que quiere eliminar el registro de la garantía?',
       text: 'Esta operación no se puede revertir.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Eliminar',
-      cancelButtonText: 'Cancelar'
+      cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.value) {
-        this.mainService.requestOne({ _function: "fnDeleteGarantia", id: id }, this.model).subscribe((data)=>{console.log(data)});
-        this.getGarantias();
-
-        Swal.fire(
-          'Eliminado',
-          'La garantía se ha eliminado',
-          'success'
-        );
+        this.mainService
+          .deleteRequest({}, `${this.route}/${id}`)
+          .subscribe((data) => {
+            this.getGarantias();
+            Swal.fire('Eliminado', 'La garantía se ha eliminado', 'success');
+          });
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         Swal.fire(
           'Haz cancelado la operación.',
           'Ningún registro eliminado',
           'error'
-        )
+        );
       }
     });
   }
-  createGarantia(){
-    const dialogRef =this.dialog.open(GarantiaDialogComponent, {
+  createGarantia() {
+    const dialogRef = this.dialog.open(GarantiaDialogComponent, {
       width: '50%',
-      data: null
+      data: null,
     });
-    dialogRef.afterClosed().subscribe((result: GarantiaRes) => {
+    dialogRef.afterClosed().subscribe((result: GarantiasRes) => {
       if (result) {
         Swal.fire({
           position: 'center',
           icon: 'success',
           title: 'Se ha registrado la garantia correctamente.',
           showConfirmButton: false,
-          timer: 1500
-        }
-        );
+          timer: 1500,
+        });
         this.getGarantias();
       }
     });
-
   }
-  updateGarantia(garantia: GarantiaRes){
-    const dialogRef =this.dialog.open(GarantiaDialogComponent, {
+  updateGarantia(garantia: GarantiasRes) {
+    const dialogRef = this.dialog.open(GarantiaDialogComponent, {
       width: '50%',
-      data: garantia
+      data: garantia,
     });
-    dialogRef.afterClosed().subscribe((result: GarantiaRes) => {
-    if (result) {
-      Swal.fire(
-        {
+    dialogRef.afterClosed().subscribe((result: GarantiasRes) => {
+      if (result) {
+        Swal.fire({
           position: 'center',
           icon: 'success',
           title: 'Se ha actualizado la garantia correctamente.',
           showConfirmButton: false,
-          timer: 1500
-        }
-      );
-      this.getGarantias();
-    }
-  });
-
-
-  }
-  getCSVGarantia(){
-    let data = this.dataSource.filteredData;
-    data.forEach(garantia => {
-      garantia.motivo = garantia.motivo.replace(/(\r\n|\n|\r)/gm, "");
+          timer: 1500,
+        });
+        this.getGarantias();
+      }
     });
-    let jsonReporte = Convert.garantiaResToJson(data);
-    setTimeout(()=>{
-      this.csv.downloadFile(jsonReporte, 'Reporte', ['id', 'autorizo', 'comprobante', 'folio', 'fecha_registro', 'producto', 'marca', 'modelo', 'cantidad', 'costo_unitario', 'total', 'fecha_proveedor', 'fecha_resuelto_proveedor', 'fecha_resuelto_cliente', 'estado_cliente', 'estado_proveedor', 'estado', 'modificador'])
-
-      }, 1500);
+  }
+  getCSVGarantia() {
+    let data = this.dataSource.filteredData;
+    data.forEach((garantia) => {
+      garantia.motivo = garantia.motivo.replace(/(\r\n|\n|\r)/gm, '');
+    });
+    let jsonReporte = Convert.garantiasResToJson(data);
+    setTimeout(() => {
+      this.csv.downloadFile(jsonReporte, 'Reporte', [
+        'id',
+        'autorizo',
+        'comprobante',
+        'folio',
+        'fecha_registro',
+        'producto',
+        'marca',
+        'modelo',
+        'cantidad',
+        'costo_unitario',
+        'total',
+        'fecha_proveedor',
+        'fecha_resuelto_proveedor',
+        'fecha_resuelto_cliente',
+        'estado_cliente',
+        'estado_proveedor',
+        'estado',
+        'modificador',
+      ]);
+    }, 1500);
   }
 }

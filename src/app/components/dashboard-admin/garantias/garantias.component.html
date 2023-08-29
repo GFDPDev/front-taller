@@ -1,127 +1,197 @@
-<div class="container-fluid">
+<div class="container">
   <div class="row">
     <div class="col text-center">
-      <h2 class="mt-3">
-        Garantías
-      </h2>
+      <h2 class="mt-3">Garantías</h2>
     </div>
   </div>
   <div class="row align-items-center">
     <div class="col">
-      <mat-form-field  [hidden]="!(this.dataSource.data.length > 0)">
+      <mat-form-field [hidden]="!(this.dataSource.data.length > 0)">
         <mat-label>Buscar</mat-label>
-        <input matInput (keyup)="applyFilter($event)" #input>
+        <input matInput (keyup)="applyFilter($event)" #input />
       </mat-form-field>
     </div>
     <div class="col text-center">
-      <mat-form-field  class="mt-3">
+      <mat-form-field class="mt-3">
         <mat-label>Mes y Año</mat-label>
-        <input matInput [matDatepicker]="dp" [formControl]="date">
+        <input matInput [matDatepicker]="dp" [formControl]="date" />
         <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
-        <mat-datepicker #dp startView="year" (monthSelected)="setMonthAndYear($event, dp)" panelClass="month-picker">
+        <mat-datepicker
+          #dp
+          startView="year"
+          (monthSelected)="setMonthAndYear($event, dp)"
+          panelClass="month-picker"
+        >
         </mat-datepicker>
       </mat-form-field>
     </div>
     <div class="col text-end">
-      <button mat-raised-button class="me-2 csv-button" (click)="getCSVGarantia()"> <mat-icon>save_alt</mat-icon>
-        Descargar CSV</button>
+      <button
+        mat-raised-button
+        class="me-2 csv-button"
+        (click)="getCSVGarantia()"
+      >
+        <mat-icon>save_alt</mat-icon> Descargar CSV
+      </button>
 
       <button mat-raised-button color="primary" (click)="createGarantia()">
-        <mat-icon>add</mat-icon> Agregar Garantía</button>
-
+        <mat-icon>add</mat-icon> Agregar Garantía
+      </button>
     </div>
   </div>
   <div class="w-100" [hidden]="!(this.dataSource.data!.length > 0)">
-    <table mat-table [dataSource]="dataSource" class="w-100 text-center" matSort matSortActive="id"
-      matSortDirection="desc" matSortDisableClear>
-
+    <table
+      mat-table
+      [dataSource]="dataSource"
+      class="w-100 text-center"
+      matSort
+      matSortActive="id"
+      matSortDirection="desc"
+      matSortDisableClear
+    >
       <!--- Note that these columns can be defined in any order.
         The actual rendered columns are set as a property on the row definition" -->
 
       <!-- ID Column -->
       <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-center"> No. </th>
-        <td mat-cell *matCellDef="let element" class="text-center"> {{element.id}} </td>
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          class="text-center"
+        >
+          No.
+        </th>
+        <td mat-cell *matCellDef="let element" class="text-center">
+          {{ element.id }}
+        </td>
       </ng-container>
 
       <!-- Comprobante Column -->
       <ng-container matColumnDef="comprobante">
-        <th mat-header-cell *matHeaderCellDef class="text-center"> Comprobante </th>
-        <td mat-cell *matCellDef="let element" class="text-center"> {{element.comprobante}} </td>
+        <th mat-header-cell *matHeaderCellDef class="text-center">
+          Comprobante
+        </th>
+        <td mat-cell *matCellDef="let element" class="text-center">
+          {{ element.comprobante }}
+        </td>
       </ng-container>
       <!-- Autorizo Column -->
       <ng-container matColumnDef="autorizo">
-        <th mat-header-cell *matHeaderCellDef class="text-center"> Autorizó </th>
-        <td mat-cell *matCellDef="let element" class="text-center"> {{element.autorizo}} </td>
+        <th mat-header-cell *matHeaderCellDef class="text-center">Autorizó</th>
+        <td mat-cell *matCellDef="let element" class="text-center">
+          {{ element.autorizo }}
+        </td>
       </ng-container>
       <!-- Folio Column -->
       <ng-container matColumnDef="folio">
-        <th mat-header-cell *matHeaderCellDef class="text-center"> Folio </th>
-        <td mat-cell *matCellDef="let element" class="text-center"> {{element.folio}} </td>
+        <th mat-header-cell *matHeaderCellDef class="text-center">Folio</th>
+        <td mat-cell *matCellDef="let element" class="text-center">
+          {{ element.folio }}
+        </td>
       </ng-container>
       <!-- Fecha de Registro Column -->
       <ng-container matColumnDef="fecha_registro">
-        <th mat-header-cell *matHeaderCellDef class="text-center"> Fecha de Registro </th>
-        <td mat-cell *matCellDef="let element" class="text-center"> {{element.fecha_registro | date:'dd/MM/yyyy' }} </td>
+        <th mat-header-cell *matHeaderCellDef class="text-center">
+          Fecha de Registro
+        </th>
+        <td mat-cell *matCellDef="let element" class="text-center">
+          {{ element.fecha_registro | date : "dd/MM/yyyy" }}
+        </td>
       </ng-container>
 
       <!-- Producto Column -->
       <ng-container matColumnDef="producto">
-        <th mat-header-cell *matHeaderCellDef class="text-center"> Producto </th>
-        <td mat-cell *matCellDef="let element" class="text-center"> {{element.producto}} </td>
+        <th mat-header-cell *matHeaderCellDef class="text-center">Producto</th>
+        <td mat-cell *matCellDef="let element" class="text-center">
+          {{ element.producto }}
+        </td>
       </ng-container>
 
       <!-- Marca Column -->
       <ng-container matColumnDef="marca">
-        <th mat-header-cell *matHeaderCellDef class="text-center"> Marca</th>
-        <td mat-cell *matCellDef="let element" class="text-center"> {{element.marca}} </td>
+        <th mat-header-cell *matHeaderCellDef class="text-center">Marca</th>
+        <td mat-cell *matCellDef="let element" class="text-center">
+          {{ element.marca }}
+        </td>
       </ng-container>
 
       <!-- Modelo Column -->
       <ng-container matColumnDef="modelo">
-        <th mat-header-cell *matHeaderCellDef class="text-center"> Modelo </th>
-        <td mat-cell *matCellDef="let element" class="text-center"> {{element.modelo}} </td>
+        <th mat-header-cell *matHeaderCellDef class="text-center">Modelo</th>
+        <td mat-cell *matCellDef="let element" class="text-center">
+          {{ element.modelo }}
+        </td>
       </ng-container>
       <!-- Cantidad Column -->
       <ng-container matColumnDef="cantidad">
-        <th mat-header-cell *matHeaderCellDef class="text-center"> Cantidad </th>
-        <td mat-cell *matCellDef="let element" class="text-center"> {{element.cantidad}} </td>
+        <th mat-header-cell *matHeaderCellDef class="text-center">Cantidad</th>
+        <td mat-cell *matCellDef="let element" class="text-center">
+          {{ element.cantidad }}
+        </td>
       </ng-container>
       <!-- Fecha de Proveedor Column -->
       <ng-container matColumnDef="fecha_proveedor">
-        <th mat-header-cell *matHeaderCellDef class="text-center"> Fecha de Solicitud </th>
-        <td mat-cell *matCellDef="let element" class="text-center"> {{element.fecha_proveedor | date:'dd/MM/yyyy'}} </td>
+        <th mat-header-cell *matHeaderCellDef class="text-center">
+          Fecha de Solicitud
+        </th>
+        <td mat-cell *matCellDef="let element" class="text-center">
+          {{ element.fecha_proveedor | date : "dd/MM/yyyy" }}
+        </td>
       </ng-container>
       <!-- Estatus Column -->
       <ng-container matColumnDef="estado_cliente">
-        <th mat-header-cell *matHeaderCellDef class="text-center"> Estado de Cliente </th>
-        <td mat-cell *matCellDef="let element" class="text-center"> {{element.estado_cliente}} </td>
+        <th mat-header-cell *matHeaderCellDef class="text-center">
+          Estado de Cliente
+        </th>
+        <td mat-cell *matCellDef="let element" class="text-center">
+          {{ element.estado_cliente }}
+        </td>
       </ng-container>
-        <!-- Estatus Column -->
-        <ng-container matColumnDef="estado_proveedor">
-          <th mat-header-cell *matHeaderCellDef class="text-center"> Estado de Proveedor </th>
-          <td mat-cell *matCellDef="let element" class="text-center"> {{element.estado_proveedor}} </td>
-        </ng-container>
+      <!-- Estatus Column -->
+      <ng-container matColumnDef="estado_proveedor">
+        <th mat-header-cell *matHeaderCellDef class="text-center">
+          Estado de Proveedor
+        </th>
+        <td mat-cell *matCellDef="let element" class="text-center">
+          {{ element.estado_proveedor }}
+        </td>
+      </ng-container>
       <!-- Acciones Column -->
       <ng-container matColumnDef="acciones">
-        <th mat-header-cell *matHeaderCellDef class="text-center"> Acciones </th>
+        <th mat-header-cell *matHeaderCellDef class="text-center">Acciones</th>
         <td mat-cell *matCellDef="let element" class="text-center">
-          <button mat-icon-button (click)="updateGarantia(element)" color="secondary"
-            matTooltip="Editar Garantía"><mat-icon>edit</mat-icon></button>
+          <button
+            mat-icon-button
+            (click)="updateGarantia(element)"
+            color="secondary"
+            matTooltip="Editar Garantía"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
 
-          <button mat-icon-button (click)="deleteGarantia(element.id)" color="warn"
-            matTooltip="Eliminar Garantía"><mat-icon>delete</mat-icon></button>
-
+          <button
+            mat-icon-button
+            (click)="deleteGarantia(element.id)"
+            color="warn"
+            matTooltip="Eliminar Garantía"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
         </td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns "></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"  [ngClass]="{'terminado' : row.estado_proveedor != 'EN TRÁMITE', 'merma' : row.estado_proveedor == 'MERMA'}"></tr>
     </table>
     <div class="w-100" [hidden]="!(this.dataSource.data!.length > 0)">
-
-      <mat-paginator [pageSizeOptions]="[10, 25, 50, 100] " aria-label="Select page of users "></mat-paginator>
-
+      <mat-paginator
+        [pageSizeOptions]="[10, 25, 50, 100]"
+        aria-label="Select page of users "
+      ></mat-paginator>
     </div>
-    <h2 *ngIf="this.dataSource.data.length===0 " class="text-center mt-5 ">No hay registros</h2>
+    <h2 *ngIf="this.dataSource.data.length === 0" class="text-center mt-5">
+      No hay registros
+    </h2>
   </div>
+</div>

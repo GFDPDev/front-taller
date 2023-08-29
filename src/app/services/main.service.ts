@@ -37,7 +37,7 @@ export class MainService {
     return this.http.post<Res>(this.api + route, params, { headers: this.httpHeaders });
   }
   putRequest(params: any, route: String): Observable<Res> {
-    return this.http.put<Res>(this.api + route, { params: params, headers: this.httpHeaders });
+    return this.http.put<Res>(this.api + route, params, { headers: this.httpHeaders });
   }
   deleteRequest(params: any, route: String): Observable<Res> {
     return this.http.delete<Res>(this.api + route, { params: params, headers: this.httpHeaders });

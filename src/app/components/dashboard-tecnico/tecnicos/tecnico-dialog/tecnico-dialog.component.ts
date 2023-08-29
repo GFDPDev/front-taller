@@ -17,6 +17,7 @@ import { filter, take, takeUntil } from 'rxjs/operators';
 import { ServiciosRes } from 'src/app/interfaces/servicios';
 import { Convert } from 'src/app/interfaces/login';
 import { MainService } from 'src/app/services/main.service';
+import { ToolService } from 'src/app/interfaces/toolservice';
 
 
 export const MY_FORMATS = {
@@ -101,7 +102,7 @@ export class TecnicoDialogComponent implements OnInit {
 
   constructor(private fb: UntypedFormBuilder,
     public dialogRef: MatDialogRef<TecnicoDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ServiciosRes,
+    @Inject(MAT_DIALOG_DATA) public data: ToolService,
     private mainService: MainService,
     private snackbar: MatSnackBar,) {
       let user = Convert.toLoginRes(this.profile ?? '');
@@ -195,7 +196,7 @@ export class TecnicoDialogComponent implements OnInit {
   }
   onAdd(): void {
 
-    const servicio: ServiciosRes = this.form.getRawValue();
+    const servicio: ToolService = this.form.getRawValue();
     if (this.isCreateMode()) {
       this.mainService.requestOne({ _function: "fnCreateServicio", data: servicio }, this.model).subscribe
       ((data: any)=> {
@@ -247,7 +248,7 @@ export class TecnicoDialogComponent implements OnInit {
     this.mainService.requestOne({ _function: "fnGetUsuariosTecnico", id: user.id }, "Usuarios").subscribe((data: User[]) => {
       this.usuarios = data;
       this.usuariosFiltrados.next(this.usuarios.slice());
-      let filtro = data.filter(usuario => usuario.id.toString() == this.data.id_usuario);
+      let filtro = data.filter(usuario => usuario.id == this.data.id_usuario);
       this.usuariosControl.setValue(filtro[0]);
     });
 

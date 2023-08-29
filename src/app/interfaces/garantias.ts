@@ -2,37 +2,38 @@
 //
 //   import { Convert } from "./file";
 //
-//   const garantiaRes = Convert.toGarantiaRes(json);
+//   const garantiasRes = Convert.toGarantiasRes(json);
 
-export interface GarantiaRes {
-  id: string;
-  comprobante: string;
-  autorizo: string;
-  folio: string;
-  fecha_registro: Date;
-  producto: string;
-  marca: string;
-  modelo: string;
-  cantidad: string;
-  costo_unitario: string;
-  total: string;
-  motivo: string;
-  fecha_proveedor: Date | undefined;
-  fecha_resuelto_proveedor: Date | undefined;
-  fecha_resuelto_cliente: Date | undefined;
-  estado_cliente: string;
-  estado_proveedor: string;
-  id_modificado: string;
-  modificador: string;
+export interface GarantiasRes {
+  id:                       number;
+  comprobante:              string;
+  autorizo:                 string;
+  folio:                    string;
+  fecha_registro:           Date;
+  producto:                 string;
+  marca:                    string;
+  modelo:                   string;
+  cantidad:                 number;
+  costo_unitario:           number;
+  total:                    number;
+  motivo:                   string;
+  fecha_proveedor:          Date | null;
+  fecha_resuelto_proveedor: Date | null;
+  fecha_resuelto_cliente:   Date | null;
+  estado_cliente:           string;
+  estado_proveedor:         string;
+  id_modificado:            number;
+  modificador:              string;
 }
+
 
 // Converts JSON strings to/from your types
 export class Convert {
-  public static toGarantiaRes(json: string): GarantiaRes[] {
-    return JSON.parse(json);
+  public static toGarantiasRes(json: string): GarantiasRes[] {
+      return JSON.parse(json);
   }
 
-  public static garantiaResToJson(value: GarantiaRes[]): string {
-    return JSON.stringify(value);
+  public static garantiasResToJson(value: GarantiasRes[]): string {
+      return JSON.stringify(value);
   }
 }

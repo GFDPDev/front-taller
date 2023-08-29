@@ -6,7 +6,6 @@ import { DashboardAdminComponent } from './dashboard-admin.component';
 import { AngularMaterialModule } from '../../angular-material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ReportesComponent } from './reportes/reportes.component';
-import { NavbarComponent } from '../dashboard-admin/navbar/navbar.component';
 import { ServiciosComponent } from './servicios/servicios.component';
 import { ClientesComponent } from './clientes/clientes.component';
 import { UsuariosComponent } from './usuarios/usuarios.component';
@@ -32,7 +31,6 @@ import { TechChartComponent } from './graficas/tech-chart/tech-chart.component';
   declarations: [
     DashboardAdminComponent,
     ReportesComponent,
-    NavbarComponent,
     ServiciosComponent,
     ServicioDialogComponent,
     ClientesComponent,

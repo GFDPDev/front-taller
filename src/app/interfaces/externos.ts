@@ -5,23 +5,23 @@
 //   const externosRes = Convert.toExternosRes(json);
 
 export interface ExternosRes {
-  id:             string;
+  id:             number;
+  id_usuario:     number;
   folio:          string;
-  garantia:       string;
   fecha_registro: Date;
+  garantia:       number;
   marca:          string;
-  id_usuario:     string;
-  id_cliente:     string;
-  nombre_cliente: string;
-  encargado:      string;
+  id_cliente:     number;
   cotizacion:     string;
-  importe:        string;
+  importe:        number;
   cita:           Date;
   estado:         string;
   observaciones:  string;
-  avisado:        string;
-
+  avisado:        number;
+  nombre_cliente: string;
+  encargado:      string;
 }
+
 
 // Converts JSON strings to/from your types
 export class Convert {

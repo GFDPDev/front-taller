@@ -1,10 +1,16 @@
+// To parse this data:
+//
+//   import { Convert } from "./file";
+//
+//   const clientesRes = Convert.toClientesRes(json);
 
 export interface ClientesRes {
-  id:       string;
+  id:       number;
   nombre:   string;
   apellido: string;
   telefono: string;
   curp:     string;
+  activo:   number;
 }
 
 // Converts JSON strings to/from your types
@@ -17,4 +23,3 @@ export class Convert {
       return JSON.stringify(value);
   }
 }
-
