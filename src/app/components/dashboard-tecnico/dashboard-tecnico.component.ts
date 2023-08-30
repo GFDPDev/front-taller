@@ -17,7 +17,7 @@ export class DashboardTecnicoComponent {
  user!: User;
 
  constructor(private breakpointObserver: BreakpointObserver, private observer: BreakpointObserver, private router: Router) {
-  this.user = Convert.toUser(localStorage.getItem('user')??'');
+  this.user = Convert.toUser(sessionStorage.getItem('user')??'');
  }
  ngAfterViewInit() {
    this.observer.observe(['(max-width: 1200px)']).subscribe((res) => {
@@ -35,7 +35,7 @@ export class DashboardTecnicoComponent {
 
  }
  logout(){
-  localStorage.clear();
+  sessionStorage.clear();
   this.router.navigate(['/login']);
 }
 }

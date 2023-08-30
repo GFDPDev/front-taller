@@ -13,18 +13,14 @@ import { Res } from '../interfaces/response';
   providedIn: 'root',
 })
 export class MainService {
-  private api = 'http://localhost:8000';
+  private api = 'http://192.168.10.181:8000';
   private httpHeaders: HttpHeaders;
   private jwt: String | null;
-  private httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'text/plain'
-    })
-  }
   constructor(private http: HttpClient) {
     this.jwt = sessionStorage.getItem('token');
 
     this.httpHeaders = new HttpHeaders({
+        'accept': 'application/json',
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${this.jwt}`,
       })
@@ -41,12 +37,5 @@ export class MainService {
   }
   deleteRequest(params: any, route: String): Observable<Res> {
     return this.http.delete<Res>(this.api + route, { params: params, headers: this.httpHeaders });
-  }
-  requestOne(params:any, model: String): Observable<any>{
-    return this.http.post<any>(this.api + "model" + model + '.php', params, this.httpOptions);
-  }
-
-  requestMany(params:any, model: String): Observable<any[]>{
-    return this.http.post<any[]>(this.api + "model" + model + '.php', params, this.httpOptions);
   }
 }

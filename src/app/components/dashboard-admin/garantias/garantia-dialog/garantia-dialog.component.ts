@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -18,8 +18,7 @@ import {
 } from '@angular/material/core';
 import * as _moment from 'moment';
 import 'moment/locale/es';
-import { ReplaySubject, Subject } from 'rxjs';
-import { take, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import { MainService } from 'src/app/services/main.service';
 import { GarantiasRes } from 'src/app/interfaces/garantias';
 import { Convert, User } from 'src/app/interfaces/user';
@@ -52,7 +51,7 @@ export const MY_FORMATS = {
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
 })
-export class GarantiaDialogComponent implements OnInit {
+export class GarantiaDialogComponent {
   private route = '/warranty';
   form!: FormGroup;
   mode!: Number;
@@ -107,7 +106,7 @@ export class GarantiaDialogComponent implements OnInit {
     private mainService: MainService,
     private snackbar: MatSnackBar
   ) {
-    this.user = Convert.toUser(localStorage.getItem('user') ?? '');
+    this.user = Convert.toUser(sessionStorage.getItem('user') ?? '');
 
     if (this.data) {
       this.mode = 1;
@@ -155,12 +154,21 @@ export class GarantiaDialogComponent implements OnInit {
       });
     }
   }
-  ngOnInit(): void {}
+
   onNoClick(): void {
     this.dialogRef.close();
   }
   onAdd(): void {
-    const garantia: GarantiasRes = this.form.value;
+    const garantia = this.form.value;
+    garantia.fecha_proveedor = garantia.fecha_proveedor
+      ? _moment(garantia.fecha_proveedor).format('YYYY-MM-DD')
+      : null;
+    garantia.fecha_resuelto_proveedor = garantia.fecha_resuelto_proveedor
+      ? _moment(garantia.fecha_resuelto_proveedor).format('YYYY-MM-DD')
+      : null;
+    garantia.fecha_resuelto_cliente = garantia.fecha_resuelto_cliente
+      ? _moment(garantia.fecha_resuelto_cliente).format('YYYY-MM-DD')
+      : null;
     if (this.isCreateMode()) {
       this.mainService
         .postRequest(garantia, this.route)

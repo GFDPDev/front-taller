@@ -85,7 +85,6 @@ export class StatusChartComponent implements OnInit {
       )
       .subscribe((res: Res) => {
         this.data = res.data;
-        console.log(this.data);
         this.generateChart();
       });
   }

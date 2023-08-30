@@ -55,7 +55,7 @@ export class ClienteDialogComponent {
             Validators.pattern('^[0-9]*$'),
           ],
         ],
-        curp: [''],
+        curp: [null],
       });
     }
   }

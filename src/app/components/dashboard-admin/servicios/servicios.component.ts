@@ -19,7 +19,6 @@ import * as _moment from 'moment';
 import { Moment } from 'moment';
 import 'moment/locale/es';
 import Swal from 'sweetalert2';
-import { ServiciosRes } from '../../../interfaces/servicios';
 import { UntypedFormControl } from '@angular/forms';
 import { ServicioDialogComponent } from './servicio-dialog/servicio-dialog.component';
 import * as moment from 'moment';
@@ -168,7 +167,7 @@ export class ServiciosComponent implements OnInit {
       width: '50%',
       data: null,
     });
-    dialogRef.afterClosed().subscribe((result: ServiciosRes) => {
+    dialogRef.afterClosed().subscribe((result: ToolService) => {
       if (result) {
         Swal.fire({
           position: 'center',
@@ -186,7 +185,7 @@ export class ServiciosComponent implements OnInit {
       width: '50%',
       data: servicio,
     });
-    dialogRef.afterClosed().subscribe((result: ServiciosRes) => {
+    dialogRef.afterClosed().subscribe((result: ToolService) => {
       if (result) {
         Swal.fire({
           position: 'center',

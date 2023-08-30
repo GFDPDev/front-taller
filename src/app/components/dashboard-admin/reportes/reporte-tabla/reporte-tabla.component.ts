@@ -33,7 +33,6 @@ export class ReporteTablaComponent implements OnInit {
   }
   getReporte(){
     this.mainService.getRequest({ start_date: this.start_date, end_date: this.end_date }, `${this.route}/by_range`).subscribe((res: Res)=> {
-      console.log(res);
       this.report = res.data;
       setTimeout(()=>{
         this.isLoading = false

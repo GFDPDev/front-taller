@@ -13,8 +13,10 @@ import 'moment/locale/es';
 import { User, Convert } from 'src/app/interfaces/user';
 import { ReplaySubject, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
-import { ServiciosRes } from 'src/app/interfaces/servicios';
 import { MainService } from 'src/app/services/main.service';
+import { Res } from 'src/app/interfaces/response';
+import { ExpressRes } from 'src/app/interfaces/express';
+import { ToolService } from 'src/app/interfaces/toolservice';
 
 export const MY_FORMATS = {
   parse: {
@@ -43,7 +45,7 @@ export const MY_FORMATS = {
   ],
 })
 export class ExpressDialogComponent implements OnInit {
-  model = "Express";
+  private route = '/express'
   form!: UntypedFormGroup;
   mode!: Number;
   title!: String;
@@ -60,18 +62,19 @@ export class ExpressDialogComponent implements OnInit {
 
   constructor(private fb: UntypedFormBuilder,
     public dialogRef: MatDialogRef<ExpressDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ServiciosRes,
+    @Inject(MAT_DIALOG_DATA) public data: ExpressRes,
     private mainService: MainService,
     private snackbar: MatSnackBar,) {
-      this.user = Convert.toUser(localStorage.getItem('user')??'');
+      this.user = Convert.toUser(sessionStorage.getItem('user')??'');
 
 
       if (this.data) {
         this.mode = 1;
         this.title = 'Actualizar';
         this.form = this.fb.group({
-            producto: [this.data.producto,Validators.required],
-            falla_detectada: [this.data.falla_detectada, Validators.required],
+            id: [this.data.id, Validators.required],
+            herramienta: [this.data.herramienta,Validators.required],
+            falla: [this.data.falla, Validators.required],
             id_usuario: [{value: this.data.id_usuario, disabled: true}, Validators.required],
             cotizacion: [this.data.cotizacion],
             importe: [this.data.importe],
@@ -81,8 +84,8 @@ export class ExpressDialogComponent implements OnInit {
         this.mode = 0;
         this.title = 'Nuevo';
         this.form = this.fb.group({
-            producto: ['', Validators.required],
-            falla_detectada: ['', Validators.required],
+            herramienta: ['', Validators.required],
+            falla: ['', Validators.required],
             id_usuario: [{value: this.user.id, disabled: true}, Validators.required],
             cotizacion: [null],
             importe: [null],
@@ -119,50 +122,45 @@ export class ExpressDialogComponent implements OnInit {
   }
   onAdd(): void {
 
-    const servicio: ServiciosRes = this.form.getRawValue();
+    const servicio: ToolService = this.form.getRawValue();
     if (this.isCreateMode()) {
-      this.mainService.requestOne({ _function: "fnCreateExpress", data: servicio }, this.model).subscribe
-      ((data: any)=> {
-
-        if (!data.error) {
-
-          this.dialogRef.close(servicio);
-
-        } else {
-          this.snackbar.open('Error al registrar el servicio.', 'Aceptar', {
-            duration: 4000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top'
-          });
-        }
-      });
+      this.mainService
+        .postRequest(servicio, this.route)
+        .subscribe((res: Res) => {
+          if (res.error) {
+            this.snackbar.open(`${res.data} (${res.code})`, 'Aceptar', {
+              duration: 4000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
+            });
+          } else {
+            this.dialogRef.close(servicio);
+          }
+        });
     } else {
-      servicio.id = this.data.id;
-      this.mainService.requestOne({ _function: "fnUpdateExpress", data: servicio }, this.model).subscribe
-      ((data: any)=> {
-        if (!data.error) {
-          this.dialogRef.close(servicio);
-
-        } else {
-
-          this.snackbar.open('Error al actualizar el servicio.', 'Aceptar', {
-            duration: 4000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top'
-          });
-
-        }
-      });
+      this.mainService
+        .putRequest(servicio, this.route)
+        .subscribe((res: Res) => {
+          if (res.error) {
+            this.snackbar.open(`${res.data} (${res.code})`, 'Aceptar', {
+              duration: 4000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
+            });
+          } else {
+            this.dialogRef.close(servicio);
+          }
+        });
     }
 
   }
 
   getMenus(){
 
-    this.mainService.requestOne({ _function: "fnGetUsuariosTecnico", id: this.user.id }, "Usuarios").subscribe((data: User[]) => {
-    this.usuarios = data;
+    this.mainService.getRequest({ id: this.user.id }, `/user/get_tech_users`).subscribe((res: Res) => {
+    this.usuarios = res.data;
     this.usuariosFiltrados.next(this.usuarios.slice());
-    let filtro = data.filter(usuario => usuario.id == this.user.id);
+    let filtro = res.data.filter((usuario: User) => usuario.id == this.user.id);
     this.usuariosControl.setValue(filtro[0]);
     this.usuariosControl.disable();
 

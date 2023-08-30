@@ -39,8 +39,8 @@ export class LogInComponent implements OnInit {
     this.mainService.postRequest({"curp" : curp, "password" : password }, this.route).subscribe((res:Res) =>{
       if (!res.error) {
         const user: User = res.data;
-        localStorage.setItem('user', Convert.userToJson(user));
-        localStorage.setItem('token', res.token ?? '');
+        sessionStorage.setItem('user', Convert.userToJson(user));
+        sessionStorage.setItem('token', res.token ?? '');
 
         if (user.tipo == 1) {
           this.router.navigate(['/dashboard-admin']);

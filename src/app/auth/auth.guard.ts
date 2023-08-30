@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 export const authGuard = () => {
 
   const router = inject(Router);
-  const response = localStorage.getItem('token');
+  const response = sessionStorage.getItem('token');
   if (response) {
     return true;
   }

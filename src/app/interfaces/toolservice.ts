@@ -17,8 +17,8 @@ export interface ToolService {
     falla_detectada:  string;
     cotizacion:       string;
     garantia:         number;
-    fecha_terminado:  null;
-    fecha_entrega:    null;
+    fecha_terminado?:  Date;
+    fecha_entrega?:    Date;
     importe:          number;
     estatus:          string;
     observaciones:    string;

@@ -17,9 +17,9 @@ export interface GarantiasRes {
   costo_unitario:           number;
   total:                    number;
   motivo:                   string;
-  fecha_proveedor:          Date | null;
-  fecha_resuelto_proveedor: Date | null;
-  fecha_resuelto_cliente:   Date | null;
+  fecha_proveedor?:         Date;
+  fecha_resuelto_proveedor?:Date;
+  fecha_resuelto_cliente?:  Date;
   estado_cliente:           string;
   estado_proveedor:         string;
   id_modificado:            number;

@@ -1,5 +1,5 @@
 import { MarcasRes } from './../../../../interfaces/marcas';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnInit, ViewChild } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -20,15 +20,13 @@ import {
 } from '@angular/material/core';
 import * as _moment from 'moment';
 import 'moment/locale/es';
-import { ServiciosRes } from '../../../../interfaces/servicios';
-import { Convert, User } from '../../../../interfaces/user';
 import { ClientesRes } from '../../../../interfaces/clientes';
 import { ReplaySubject, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 import { MainService } from 'src/app/services/main.service';
+import { User, Convert } from 'src/app/interfaces/user';
 import { ToolService } from 'src/app/interfaces/toolservice';
 import { Res } from 'src/app/interfaces/response';
-
 
 export const MY_FORMATS = {
   parse: {
@@ -56,7 +54,7 @@ export const MY_FORMATS = {
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
 })
-export class ServicioDialogComponent implements OnInit {
+export class ServicioDialogComponent implements OnInit, AfterViewInit {
   private route = '/service';
   form!: FormGroup;
   mode!: Number;
@@ -110,7 +108,7 @@ export class ServicioDialogComponent implements OnInit {
   public usuariosFiltrados: ReplaySubject<User[]> = new ReplaySubject<User[]>(
     1
   );
-
+  public isLoading: boolean = true;
   public clientesFiltro: FormControl = new FormControl();
   public clientesControl: FormControl = new FormControl();
   public clientesFiltrados: ReplaySubject<ClientesRes[]> = new ReplaySubject<
@@ -128,7 +126,7 @@ export class ServicioDialogComponent implements OnInit {
     private mainService: MainService,
     private snackbar: MatSnackBar
   ) {
-    this.user = Convert.toUser(localStorage.getItem('user') ?? '');
+    this.user = Convert.toUser(sessionStorage.getItem('user') ?? '');
 
     if (this.data) {
       this.mode = 1;
@@ -218,8 +216,16 @@ export class ServicioDialogComponent implements OnInit {
     this.setInitialValueUsuarios();
   }
   onAdd(): void {
-    const servicio: ToolService = this.form.value;
-    console.log(servicio)
+    const servicio = this.form.value;
+    servicio.fecha_ingreso = _moment(servicio.fecha_ingreso).format(
+      'YYYY-MM-DD'
+    );
+    servicio.fecha_terminado = servicio.fecha_terminado
+      ? _moment(servicio.fecha_terminado).format('YYYY-MM-DD')
+      : null;
+    servicio.fecha_entrega = servicio.fecha_entrega
+      ? _moment(servicio.fecha_entrega).format('YYYY-MM-DD')
+      : null;
     if (this.isCreateMode()) {
       this.mainService
         .postRequest(servicio, this.route)
@@ -251,46 +257,49 @@ export class ServicioDialogComponent implements OnInit {
     }
   }
   getMenus() {
-    this.mainService
-    .getRequest({}, `/brand`)
-    .subscribe((res: Res) => {
-        this.marcas = res.data;
-      });
-      if (this.isUpdateMode()) {
-        this.mainService
-          .getRequest({}, `/client/get_active_clients`)
-          .subscribe((res: Res) => {
-            this.clientes = res.data;
-            this.clientesFiltrados.next(this.clientes.slice());
-            let filtro = res.data.filter(
-              (cliente: ClientesRes) => cliente.id == this.data.id_cliente
-            );
-            this.clientesControl.setValue(filtro[0]);
-          });
-        this.mainService
-          .getRequest({}, `/user/get_active_users`)
-          .subscribe((res: Res) => {
-            this.usuarios = res.data;
-            this.usuariosFiltrados.next(this.usuarios.slice());
-            let filtro = res.data.filter(
-              (usuario: User) => usuario.id == this.data.id_usuario
-            );
-            this.usuariosControl.setValue(filtro[0]);
-          });
-      } else {
-        this.mainService
-          .getRequest({}, `/client/get_active_clients`)
-          .subscribe((res: Res) => {
-            this.clientes = res.data;
-            this.clientesFiltrados.next(this.clientes.slice());
-          });
-        this.mainService
-          .getRequest({}, `/user/get_active_users`)
-          .subscribe((res: Res) => {
-            this.usuarios = res.data;
-            this.usuariosFiltrados.next(this.usuarios.slice());
-          });
-      }
+    this.mainService.getRequest({}, `/brand`).subscribe((res: Res) => {
+      this.marcas = res.data;
+    });
+    if (this.isUpdateMode()) {
+      this.mainService
+        .getRequest({}, `/client/get_active_clients`)
+        .subscribe((res: Res) => {
+          this.clientes = res.data;
+          this.isLoading = false;
+
+          this.clientesFiltrados.next(this.clientes.slice());
+          let filtro = res.data.filter(
+            (cliente: ClientesRes) => cliente.id == this.data.id_cliente
+          );
+          this.clientesControl.setValue(filtro[0]);
+        });
+      this.mainService
+        .getRequest({}, `/user/get_active_users`)
+        .subscribe((res: Res) => {
+          this.usuarios = res.data;
+          this.usuariosFiltrados.next(this.usuarios.slice());
+          let filtro = res.data.filter(
+            (usuario: User) => usuario.id == this.data.id_usuario
+          );
+          this.usuariosControl.setValue(filtro[0]);
+        });
+    } else {
+      this.mainService
+        .getRequest({}, `/client/get_active_clients`)
+        .subscribe((res: Res) => {
+          this.clientes = res.data;
+          this.isLoading = false;
+
+          this.clientesFiltrados.next(this.clientes.slice());
+        });
+      this.mainService
+        .getRequest({}, `/user/get_active_users`)
+        .subscribe((res: Res) => {
+          this.usuarios = res.data;
+
+          this.usuariosFiltrados.next(this.usuarios.slice());
+        });
+    }
   }
   protected setInitialValueUsuarios() {
     this.usuariosFiltrados

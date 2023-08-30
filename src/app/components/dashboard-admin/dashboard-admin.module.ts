@@ -12,8 +12,6 @@ import { UsuariosComponent } from './usuarios/usuarios.component';
 import { ServicioDialogComponent } from './servicios/servicio-dialog/servicio-dialog.component';
 import { ClienteDialogComponent } from './clientes/cliente-dialog/cliente-dialog.component';
 import { UsuarioDialogComponent } from './usuarios/usuario-dialog/usuario-dialog.component';
-import { ReportesServiciosComponent } from '../reportes-servicios/reportes-servicios.component';
-import { ReportesTecnicosComponent } from '../reportes-tecnicos/reportes-tecnicos.component';
 import { CSVService } from '../../services/csv.service';
 import { ExpressComponent } from './express/express.component';
 import { ExpressAdminComponent } from './express/express-admin/express-admin.component';
@@ -37,8 +35,6 @@ import { TechChartComponent } from './graficas/tech-chart/tech-chart.component';
     ClienteDialogComponent,
     UsuariosComponent,
     UsuarioDialogComponent,
-    ReportesTecnicosComponent,
-    ReportesServiciosComponent,
     ExpressComponent,
     ExpressAdminComponent,
     ExternosComponent,

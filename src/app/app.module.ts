@@ -30,11 +30,6 @@ import { ReporteTablaComponent } from './components/dashboard-admin/reportes/rep
     FormsModule,
     ReactiveFormsModule,
   ],
-  providers: [
-    { provide: LocationStrategy, useClass: HashLocationStrategy },
-
-
-  ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 
