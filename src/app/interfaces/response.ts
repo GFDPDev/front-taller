@@ -7,7 +7,6 @@
 export interface Res {
     error: boolean;
     data:  any;
-    token?: string;
     code:  number;
 }
 

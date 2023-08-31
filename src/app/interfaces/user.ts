@@ -10,6 +10,7 @@ export interface User {
   apellido:  string;
   tipo:      number;
   curp:      string;
+  token:     string;
   password?: string;
   activo?:   number;
 }
