@@ -2,7 +2,7 @@ import { Component, Inject, NgZone, OnInit, PLATFORM_ID } from '@angular/core';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themes_animated from '@amcharts/amcharts4/themes/animated';
-import { FormControl, UntypedFormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import {
   MomentDateAdapter,
   MAT_MOMENT_DATE_ADAPTER_OPTIONS,

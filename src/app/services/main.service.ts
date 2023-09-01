@@ -8,7 +8,7 @@ import {
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import { Res } from '../interfaces/response';
-import { environment } from 'src/enviroments/enviroment.dev';
+import { environment } from 'src/enviroments/enviroment';
 
 @Injectable({
   providedIn: 'root',
