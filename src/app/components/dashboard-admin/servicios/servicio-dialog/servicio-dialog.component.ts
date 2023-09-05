@@ -212,8 +212,14 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
     this._onDestroy.complete();
   }
   ngAfterViewInit(): void {
-    this.setInitialValueClientes();
-    this.setInitialValueUsuarios();
+    if (this.singleSelectClientes) {
+      this.setInitialValueClientes();
+    }
+    if (this.singleSelectUsuarios) {
+      this.setInitialValueUsuarios();
+
+    }
+    
   }
   onAdd(): void {
     const servicio = this.form.value;
