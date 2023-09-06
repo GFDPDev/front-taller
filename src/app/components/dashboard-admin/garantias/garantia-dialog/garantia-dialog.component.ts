@@ -199,7 +199,17 @@ export class GarantiaDialogComponent {
         });
     }
   }
-
+  onDateChange(event: any, controlName: string) {
+    const selectedDate = event.value;
+    
+    if (selectedDate) {
+      // Formatear la fecha seleccionada al formato "YYYY-MM-DD"
+      const formattedDate = selectedDate.format('YYYY-MM-DD');
+      
+      // Actualizar el valor del FormControl con la fecha formateada
+      this.form.controls[controlName].setValue(formattedDate);
+    }
+  }
   ngOnDestroy() {
     this._onDestroy.next();
     this._onDestroy.complete();

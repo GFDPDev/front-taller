@@ -112,6 +112,7 @@
           matInput
           [matDatepicker]="pickerProveedor"
           formControlName="fecha_proveedor"
+          (dateChange)="onDateChange($event, 'fecha_proveedor')"
         />
         <mat-datepicker-toggle
           matSuffix
@@ -135,6 +136,7 @@
           matInput
           [matDatepicker]="pickerTerminado"
           formControlName="fecha_resuelto_proveedor"
+          (dateChange)="onDateChange($event, 'fecha_resuelto_proveedor')"
         />
         <mat-datepicker-toggle
           matSuffix
@@ -160,6 +162,7 @@
           matInput
           [matDatepicker]="pickerCliente"
           formControlName="fecha_resuelto_cliente"
+          (dateChange)="onDateChange($event, 'fecha_resuelto_cliente')"
         />
         <mat-datepicker-toggle
           matSuffix

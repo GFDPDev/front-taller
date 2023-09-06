@@ -57,7 +57,12 @@ export class ReportesComponent {
 
     })
   }
-
+  getReport(){
+    const url = this.router.serializeUrl(
+      this.router.createUrlTree([`/reporte/${this.reportRange.value.start_date.format('YYYY-MM-DD')}/${this.reportRange.value.end_date.format('YYYY-MM-DD')}`])
+    );
+    window.open(url, '_blank');
+  }
   getCSVRango(){
     const obj = this.serviceRange.value;
     obj.start_date = obj.start_date.format('YYYY-MM-DD')

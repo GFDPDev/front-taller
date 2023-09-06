@@ -223,15 +223,6 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
   }
   onAdd(): void {
     const servicio = this.form.value;
-    servicio.fecha_ingreso = _moment(servicio.fecha_ingreso).format(
-      'YYYY-MM-DD'
-    );
-    servicio.fecha_terminado = servicio.fecha_terminado
-      ? _moment(servicio.fecha_terminado).format('YYYY-MM-DD')
-      : null;
-    servicio.fecha_entrega = servicio.fecha_entrega
-      ? _moment(servicio.fecha_entrega).format('YYYY-MM-DD')
-      : null;
     if (this.isCreateMode()) {
       this.mainService
         .postRequest(servicio, this.route)
@@ -324,6 +315,17 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
           b: ClientesRes
         ) => a && b && a.id === b.id;
       });
+  }
+  onDateChange(event: any, controlName: string) {
+    const selectedDate = event.value;
+    
+    if (selectedDate) {
+      // Formatear la fecha seleccionada al formato "YYYY-MM-DD"
+      const formattedDate = selectedDate.format('YYYY-MM-DD');
+      
+      // Actualizar el valor del FormControl con la fecha formateada
+      this.form.controls[controlName].setValue(formattedDate);
+    }
   }
   protected filtrarUsuarios() {
     if (!this.usuarios) {

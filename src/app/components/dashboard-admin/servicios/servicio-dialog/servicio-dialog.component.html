@@ -181,6 +181,8 @@
           matInput
           [matDatepicker]="pickerIngreso"
           formControlName="fecha_ingreso"
+          (dateChange)="onDateChange($event, 'fecha_ingreso')"
+
         />
         <mat-datepicker-toggle
           matSuffix
@@ -207,6 +209,8 @@
           [min]="minDateTerminado"
           [matDatepicker]="pickerTerminado"
           formControlName="fecha_terminado"
+          (dateChange)="onDateChange($event, 'fecha_terminado')"
+
         />
         <mat-datepicker-toggle
           matSuffix
@@ -231,6 +235,7 @@
           [min]="minDateEntregado"
           [matDatepicker]="pickerEntrega"
           formControlName="fecha_entrega"
+          (dateChange)="onDateChange($event, 'fecha_entrega')"
         />
         <mat-datepicker-toggle
           matSuffix

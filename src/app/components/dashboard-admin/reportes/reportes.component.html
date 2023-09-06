@@ -19,7 +19,7 @@
             </mat-form-field>
         </mat-card-content>
         <mat-card-actions class="justify-content-evenly">
-            <a color="primary" target="_blank" class="mb-3" mat-raised-button [routerLink]="['/reporte', reportRange.value.start_date.format('YYYY-MM-DD'), reportRange.value.end_date.format('YYYY-MM-DD')]"> <mat-icon>post_add</mat-icon> Generar Reporte</a>
+            <a color="primary" target="_blank" class="mb-3" mat-raised-button (click)="getReport()"> <mat-icon>post_add</mat-icon> Generar Reporte</a>
         </mat-card-actions>
     </mat-card>
     </mat-grid-tile>
