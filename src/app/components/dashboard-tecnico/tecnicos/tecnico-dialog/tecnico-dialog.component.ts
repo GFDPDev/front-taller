@@ -170,7 +170,7 @@ export class TecnicoDialogComponent implements OnInit, AfterViewInit{
       this.mode = 0;
       this.title = 'Nuevo';
       this.form = this.fb.group({
-        fecha_ingreso: [{ value: null, disabled: true }],
+        fecha_ingreso: [{ value: new Date().toISOString().slice(0, 10), disabled: true }],
         id_cliente: ['', Validators.required],
         producto: ['', Validators.required],
         id_marca: ['', Validators.required],

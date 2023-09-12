@@ -159,6 +159,7 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
       this.form = this.fb.group({
         id_cliente: ['', Validators.required],
         id_usuario: ['', Validators.required],
+        fecha_ingreso: [new Date().toISOString().slice(0, 10), Validators.required],
         producto: ['', Validators.required],
         id_marca: ['', Validators.required],
         modelo: ['', Validators.required],
