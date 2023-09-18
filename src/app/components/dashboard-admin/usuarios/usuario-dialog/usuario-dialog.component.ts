@@ -11,7 +11,7 @@ import { Res } from 'src/app/interfaces/response';
   templateUrl: './usuario-dialog.component.html',
   styleUrls: ['./usuario-dialog.component.scss']
 })
-export class UsuarioDialogComponent implements OnInit {
+export class UsuarioDialogComponent{
   private route = '/user';
   form: FormGroup;
   mode: Number;
@@ -25,6 +25,7 @@ export class UsuarioDialogComponent implements OnInit {
         this.mode = 1;
         this.title = 'Actualizar';
         this.form = this.fb.group({
+          id: [this.data.id, Validators.required],
           nombre: [this.data.nombre, Validators.required],
           apellido: [this.data.apellido, Validators.required],
           tipo: [this.data.tipo.toString(), Validators.required],
@@ -43,9 +44,6 @@ export class UsuarioDialogComponent implements OnInit {
         });
       }
     }
-
-  ngOnInit(): void {
-  }
   onNoClick(): void {
     this.dialogRef.close();
 

@@ -27,6 +27,7 @@ import { MainService } from 'src/app/services/main.service';
 import { User, Convert } from 'src/app/interfaces/user';
 import { ToolService } from 'src/app/interfaces/toolservice';
 import { Res } from 'src/app/interfaces/response';
+import * as moment from 'moment';
 
 export const MY_FORMATS = {
   parse: {
@@ -418,15 +419,15 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
     );
   }
   marcarTerminado() {
-    const now = new Date();
+    const now = moment();
     this.form.controls['estatus'].setValue('TERMINADO');
-    this.form.controls['fecha_terminado'].setValue(now);
+    this.form.controls['fecha_terminado'].setValue(now.format('YYYY-MM-DD'));
     this.onAdd();
   }
   marcarEntregado() {
-    const now = new Date();
+    const now = moment();
     this.form.controls['estatus'].setValue('ENTREGADO');
-    this.form.controls['fecha_entrega'].setValue(now);
+    this.form.controls['fecha_entrega'].setValue(now.format('YYYY-MM-DD'));
     this.onAdd();
   }
 }

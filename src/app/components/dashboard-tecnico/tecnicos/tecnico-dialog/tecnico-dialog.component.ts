@@ -33,6 +33,7 @@ import { take, takeUntil } from 'rxjs/operators';
 import { MainService } from 'src/app/services/main.service';
 import { ToolService } from 'src/app/interfaces/toolservice';
 import { Res } from 'src/app/interfaces/response';
+import * as moment from 'moment';
 
 export const MY_FORMATS = {
   parse: {
@@ -147,7 +148,7 @@ export class TecnicoDialogComponent implements OnInit, AfterViewInit{
         modelo: [this.data.modelo, Validators.required],
         tipo: [this.data.tipo, Validators.required],
         serie: [this.data.serie, Validators.required],
-        garantia: [this.data.garantia, Validators.required],
+        garantia: [this.data.garantia.toString(), Validators.required],
         falla_detectada: [this.data.falla_detectada, Validators.required],
         id_usuario: [
           { value: this.data.id_usuario, disabled: true },
@@ -387,15 +388,15 @@ export class TecnicoDialogComponent implements OnInit, AfterViewInit{
     return duration;
   }
   marcarTerminado() {
-    const now = new Date();
+    const now = moment();
     this.form.controls['estatus'].setValue('TERMINADO');
-    this.form.controls['fecha_terminado'].setValue(now);
+    this.form.controls['fecha_terminado'].setValue(now.format('YYYY-MM-DD'));
     this.onAdd();
   }
   marcarEntregado() {
-    const now = new Date();
+    const now = moment();
     this.form.controls['estatus'].setValue('ENTREGADO');
-    this.form.controls['fecha_entrega'].setValue(now);
+    this.form.controls['fecha_entrega'].setValue(now.format('YYYY-MM-DD'));
     this.onAdd();
   }
   marcarPendiente() {

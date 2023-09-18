@@ -34,7 +34,7 @@
     </div>
   <div class="row mb-2">
     <mat-form-field class="w-50">
-      <mat-label>RFC sin homoclave</mat-label>
+      <mat-label>Usuario</mat-label>
       <input
         formControlName="curp"
         oninput="this.value = this.value.toUpperCase()"
@@ -44,10 +44,10 @@
         minlength="10"
       />
       <mat-error *ngIf="form.controls['curp'].hasError('required')">
-        El RFC es <strong> requerido </strong>
+        El usuario es <strong> requerido </strong>
       </mat-error>
       <mat-error *ngIf="form.controls['curp'].hasError('minlength')">
-        EL RFC debe tener mínimo <strong> 10 caracteres </strong>
+        EL usuario debe tener mínimo <strong> 10 caracteres </strong>
       </mat-error>
       <mat-icon matSuffix>badge</mat-icon>
     </mat-form-field>
@@ -68,7 +68,7 @@
   <mat-form-field class="w-100">
     <mat-label>Contraseña</mat-label>
 
-    <input formControlName="password" matInput type="text" />
+    <input formControlName="password" matInput type="password" maxlength="15"/>
     <mat-error *ngIf="form.controls['password'].hasError('required')">
       La contraseña es <strong> requerida </strong>
     </mat-error>

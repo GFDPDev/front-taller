@@ -22,7 +22,7 @@ export class MainService {
 
     this.httpHeaders = new HttpHeaders({
         'accept': 'application/json',
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
         'Authorization': `Bearer ${this.token}`,
       })
   }

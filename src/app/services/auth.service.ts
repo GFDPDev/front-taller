@@ -20,7 +20,7 @@ export class AuthService {
   constructor(private http: HttpClient) {
     this.httpHeaders = new HttpHeaders({
         'accept': 'application/json',
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
       })
   }
 
