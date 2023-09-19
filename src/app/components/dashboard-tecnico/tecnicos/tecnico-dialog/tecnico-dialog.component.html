@@ -56,10 +56,10 @@
       </mat-form-field>
       <mat-form-field class="w-50"  >
         <mat-label>Encargado</mat-label>
-        <mat-select [formControl]="usuariosControl" #singleSelectUsuarios>
+        <mat-select formControlName="id_usuario" name="usuario">
           <mat-option
-            *ngFor="let usuario of usuariosFiltrados | async"
-            [value]="usuario"
+            *ngFor="let usuario of usuarios"
+            [value]="usuario.id"
           >
             {{ usuario.nombre }} {{ usuario.apellido }} - {{ usuario.curp }}
           </mat-option>

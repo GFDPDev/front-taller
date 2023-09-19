@@ -1,7 +1,9 @@
 import { Component, Inject, NgZone, OnInit, PLATFORM_ID } from '@angular/core';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
-import am4themes_animated from '@amcharts/amcharts4/themes/animated';
+import am4themes_animated from "@amcharts/amcharts4/themes/animated";
+import am4themes_material from "@amcharts/amcharts4/themes/material";
+
 import { MainService } from 'src/app/services/main.service';
 import { Res } from 'src/app/interfaces/response';
 import { isPlatformBrowser } from '@angular/common';
@@ -46,9 +48,28 @@ export class EarningsChartComponent implements OnInit {
         this.generateChart();
       });
   }
+
   generateChart() {
     this.browserOnly(() => {
+      function am4themes_myTheme(target:any) {
+        if (target instanceof am4core.ColorSet) {
+          target.list = [
+            am4core.color("#0062ad"),
+            am4core.color("#b53fa1"),
+            am4core.color("#003c69"),
+            am4core.color("#4f94bc"),
+            am4core.color("#ad0071"),
+            am4core.color("#a700ad"),
+            
+
+          ];
+        }
+      }
       am4core.useTheme(am4themes_animated);
+      am4core.useTheme(am4themes_material);
+      am4core.useTheme(am4themes_myTheme);
+
+
       let chart = am4core.create('chartdiv', am4charts.XYChart);
 
       chart.paddingRight = 20;

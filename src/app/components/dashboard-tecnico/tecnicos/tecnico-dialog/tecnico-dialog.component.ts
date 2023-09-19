@@ -1,5 +1,11 @@
 import { MarcasRes } from './../../../../interfaces/marcas';
-import { AfterViewInit, Component, Inject, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  Inject,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import {
   UntypedFormBuilder,
   UntypedFormControl,
@@ -61,7 +67,7 @@ export const MY_FORMATS = {
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
 })
-export class TecnicoDialogComponent implements OnInit, AfterViewInit{
+export class TecnicoDialogComponent implements OnInit, AfterViewInit {
   private route = '/service';
   form!: UntypedFormGroup;
   mode!: Number;
@@ -110,11 +116,6 @@ export class TecnicoDialogComponent implements OnInit, AfterViewInit{
       value: 'OTRO',
     },
   ];
-  public usuariosFiltro: UntypedFormControl = new UntypedFormControl();
-  public usuariosControl: UntypedFormControl = new UntypedFormControl();
-  public usuariosFiltrados: ReplaySubject<User[]> = new ReplaySubject<User[]>(
-    1
-  );
 
   public isLoading: boolean = true;
 
@@ -125,7 +126,6 @@ export class TecnicoDialogComponent implements OnInit, AfterViewInit{
   >(1);
   protected _onDestroy = new Subject<void>();
 
-  @ViewChild('singleSelectUsuarios') singleSelectUsuarios!: MatSelect;
   @ViewChild('singleSelectClientes') singleSelectClientes!: MatSelect;
 
   constructor(
@@ -150,10 +150,7 @@ export class TecnicoDialogComponent implements OnInit, AfterViewInit{
         serie: [this.data.serie, Validators.required],
         garantia: [this.data.garantia.toString(), Validators.required],
         falla_detectada: [this.data.falla_detectada, Validators.required],
-        id_usuario: [
-          { value: this.data.id_usuario, disabled: true },
-          Validators.required,
-        ],
+        id_usuario: [this.data.id_usuario, Validators.required],
         cotizacion: [this.data.cotizacion],
         fecha_terminado: [{ value: this.data.fecha_terminado, disabled: true }],
         fecha_entrega: [{ value: this.data.fecha_entrega, disabled: true }],
@@ -171,7 +168,9 @@ export class TecnicoDialogComponent implements OnInit, AfterViewInit{
       this.mode = 0;
       this.title = 'Nuevo';
       this.form = this.fb.group({
-        fecha_ingreso: [{ value: new Date().toISOString().slice(0, 10), disabled: true }],
+        fecha_ingreso: [
+          { value: new Date().toISOString().slice(0, 10), disabled: true },
+        ],
         id_cliente: ['', Validators.required],
         producto: ['', Validators.required],
         id_marca: ['', Validators.required],
@@ -180,7 +179,7 @@ export class TecnicoDialogComponent implements OnInit, AfterViewInit{
         serie: ['', Validators.required],
         garantia: ['', Validators.required],
         falla_detectada: ['', Validators.required],
-        id_usuario: ['3', Validators.required], // 3 es el ID del usuario SIN ENCARGADO
+        id_usuario: [3, Validators.required], // 3 es el ID del usuario SIN ENCARGADO
         cotizacion: [null],
         fecha_terminado: [null],
         fecha_entrega: [null],
@@ -200,14 +199,6 @@ export class TecnicoDialogComponent implements OnInit, AfterViewInit{
     this.clientesControl.valueChanges.subscribe((data) => {
       this.form.controls['id_cliente'].setValue(data.id);
     });
-    this.usuariosControl.valueChanges.subscribe((data) => {
-      this.form.controls['id_usuario'].setValue(data.id);
-    });
-    this.usuariosFiltro.valueChanges
-      .pipe(takeUntil(this._onDestroy))
-      .subscribe(() => {
-        this.filtrarUsuarios();
-      });
     this.clientesFiltro.valueChanges
       .pipe(takeUntil(this._onDestroy))
       .subscribe(() => {
@@ -232,7 +223,6 @@ export class TecnicoDialogComponent implements OnInit, AfterViewInit{
   }
   ngAfterViewInit(): void {
     this.setInitialValueClientes();
-    this.setInitialValueUsuarios();
   }
   onAdd(): void {
     const servicio = this.form.getRawValue();
@@ -290,15 +280,8 @@ export class TecnicoDialogComponent implements OnInit, AfterViewInit{
         });
       this.mainService
         .getRequest({ id: this.user.id }, `/user/get_tech_users`)
-        .subscribe({
-          next: (res: Res) => (this.usuarios = res.data),
-          complete: () => {
-            this.usuariosFiltrados.next(this.usuarios.slice());
-            let filtro = this.usuarios.filter(
-              (usuario: User) => usuario.id == this.data.id_usuario
-            );
-            this.usuariosControl.setValue(filtro[0]);
-          },
+        .subscribe((res: Res) => {
+          this.usuarios = res.data;
         });
     } else {
       this.mainService.getRequest({}, `/client/get_active_clients`).subscribe({
@@ -312,17 +295,8 @@ export class TecnicoDialogComponent implements OnInit, AfterViewInit{
         .getRequest({ id: this.user.id }, `/user/get_tech_users`)
         .subscribe((res: Res) => {
           this.usuarios = res.data;
-          this.usuariosFiltrados.next(this.usuarios.slice());
         });
     }
-  }
-  protected setInitialValueUsuarios() {
-    this.usuariosFiltrados
-      .pipe(take(1), takeUntil(this._onDestroy))
-      .subscribe(() => {
-        this.singleSelectUsuarios.compareWith = (a: User, b: User) =>
-          a && b && a.id === b.id;
-      });
   }
   protected setInitialValueClientes() {
     this.clientesFiltrados
@@ -333,26 +307,6 @@ export class TecnicoDialogComponent implements OnInit, AfterViewInit{
           b: ClientesRes
         ) => a && b && a.id === b.id;
       });
-  }
-  protected filtrarUsuarios() {
-    if (!this.usuarios) {
-      return;
-    }
-    // get the search keyword
-    let search = this.usuariosFiltro.value;
-    if (!search) {
-      this.usuariosFiltrados.next(this.usuarios.slice());
-      return;
-    } else {
-      search = search.toLowerCase();
-    }
-    this.usuariosFiltrados.next(
-      this.usuarios.filter((usuario) => {
-        let filtrado =
-          usuario.nombre + ' ' + usuario.apellido + ' ' + usuario.curp;
-        return filtrado.toLowerCase().indexOf(search) > -1;
-      })
-    );
   }
   protected filtrarClientes() {
     if (!this.clientes) {
