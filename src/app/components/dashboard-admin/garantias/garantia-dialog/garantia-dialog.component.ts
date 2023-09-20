@@ -106,7 +106,7 @@ export class GarantiaDialogComponent {
     private mainService: MainService,
     private snackbar: MatSnackBar
   ) {
-    this.user = Convert.toUser(sessionStorage.getItem('user') ?? '');
+    this.user = Convert.toUser(sessionStorage.getItem('user_taller') ?? '');
 
     if (this.data) {
       this.mode = 1;

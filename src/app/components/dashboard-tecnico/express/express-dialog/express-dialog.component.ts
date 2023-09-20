@@ -65,7 +65,7 @@ export class ExpressDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: ExpressRes,
     private mainService: MainService,
     private snackbar: MatSnackBar,) {
-      this.user = Convert.toUser(sessionStorage.getItem('user')??'');
+      this.user = Convert.toUser(sessionStorage.getItem('user_taller')??'');
 
 
       if (this.data) {

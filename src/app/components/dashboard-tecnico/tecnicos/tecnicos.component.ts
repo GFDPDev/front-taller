@@ -49,7 +49,7 @@ export class TecnicosComponent implements OnInit {
     public router: Router,
     public dialog: MatDialog
   ) {
-    this.user = Convert.toUser(sessionStorage.getItem('user') ?? '');
+    this.user = Convert.toUser(sessionStorage.getItem('user_taller') ?? '');
   }
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;

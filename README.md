@@ -1,9 +1,11 @@
-# Sistema de Control del Taller de Servicios 3.0.0
+# Sistema de Control del Taller de Servicios 4.0.7
 ## Ambiente de Desarrollo
 - [Angular CLI](https://github.com/angular/angular-cli) : 15.2.8.
 - [Angular Material](https://material.angular.io/) : 15.2.9
 - [Bootstrap](https://getbootstrap.com/docs/5.3/getting-started/introduction/): 5.3.0
 - [Typescript](https://www.typescriptlang.org/) : 4.9.4 
+- [AmCharts](https://www.amcharts.com/) : 4.10.36 
+
 
 ## Build and Run
 ### Development

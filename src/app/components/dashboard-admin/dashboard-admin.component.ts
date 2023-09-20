@@ -17,7 +17,7 @@ export class DashboardAdminComponent {
  user!: User;
 
  constructor(private breakpointObserver: BreakpointObserver, private observer: BreakpointObserver, private router: Router) {
-  this.user = Convert.toUser(sessionStorage.getItem('user')??'');
+  this.user = Convert.toUser(sessionStorage.getItem('user_taller')??'');
  }
  ngAfterViewInit() {
    this.observer.observe(['(max-width: 1200px)']).subscribe((res) => {

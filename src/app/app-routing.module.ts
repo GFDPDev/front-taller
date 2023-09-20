@@ -9,13 +9,13 @@ import { adminGuard } from './auth/admin.guard';
 import { ReporteTablaComponent } from './components/dashboard-admin/reportes/reporte-tabla/reporte-tabla.component';
 
 const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'login' },
-  { path: 'login', component: LogInComponent },
-  { path: 'reporte/:start/:end', component: ReporteTablaComponent },
-  { path: 'factura/:id', component: FacturaComponent },
-  { path: 'notFound', component: NotFoundsComponent },
-  { path: 'dashboard-admin', canLoad: [adminGuard], loadChildren: () => import('./components/dashboard-admin/dashboard-admin.module').then(x => x.DashboardAdminModule) },
-  { path: 'dashboard-tecnico', canLoad: [authGuard], loadChildren: () => import('./components/dashboard-tecnico/dashboard-tecnico.module').then(x => x.DashboardTecnicoModule) },
+  { path: '', pathMatch: 'full', redirectTo: 'taller/login' },
+  { path: 'taller/login', component: LogInComponent },
+  { path: 'taller/reporte/:start/:end', component: ReporteTablaComponent },
+  { path: 'taller/factura/:id', component: FacturaComponent },
+  { path: 'taller/notFound', component: NotFoundsComponent },
+  { path: 'taller/dashboard-admin', canLoad: [adminGuard], loadChildren: () => import('./components/dashboard-admin/dashboard-admin.module').then(x => x.DashboardAdminModule) },
+  { path: 'taller/dashboard-tecnico', canLoad: [authGuard], loadChildren: () => import('./components/dashboard-tecnico/dashboard-tecnico.module').then(x => x.DashboardTecnicoModule) },
 
 ];
 

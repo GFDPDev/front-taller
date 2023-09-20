@@ -76,7 +76,7 @@ export class ExpressComponent implements OnInit {
     private mainService: MainService,
     public dialog: MatDialog
   ) {
-    this.user = Convert.toUser(sessionStorage.getItem('user') ?? '');
+    this.user = Convert.toUser(sessionStorage.getItem('user_taller') ?? '');
   }
 
   ngAfterViewInit(): void {

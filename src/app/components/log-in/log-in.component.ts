@@ -46,11 +46,11 @@ export class LogInComponent implements OnInit {
         if (!res.error) {
           const user: User = res.data;
           sessionStorage.setItem('token',user.token);
-          sessionStorage.setItem('user', Convert.userToJson(user));
+          sessionStorage.setItem('user_taller', Convert.userToJson(user));
           if (user.tipo == 1) {
-            this.router.navigate(['/dashboard-admin']);
+            this.router.navigate(['/taller/dashboard-admin']);
           } else {
-            this.router.navigateByUrl('/dashboard-tecnico');
+            this.router.navigateByUrl('/taller/dashboard-tecnico');
           }
         } else {
           this.form.controls['password'].reset();
