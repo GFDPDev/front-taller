@@ -36,6 +36,6 @@ export class DashboardTecnicoComponent {
  }
  logout(){
   sessionStorage.clear();
-  this.router.navigate(['/login']);
+  this.router.navigate(['/taller/login']);
 }
 }

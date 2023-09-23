@@ -32,6 +32,7 @@ export class LogInComponent implements OnInit {
       curp: ['', Validators.required],
       password: ['', Validators.required],
     });
+    sessionStorage.clear();
   }
 
   ngOnInit(): void {}
