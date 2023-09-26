@@ -10,12 +10,13 @@ import * as _moment from 'moment';
 import { Moment} from 'moment';
 import 'moment/locale/es';
 
-import { UsuariosRes } from 'src/app/interfaces/usuarios';
+import { User, Convert } from 'src/app/interfaces/user';
 import { ReplaySubject, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
-import { ServiciosRes } from 'src/app/interfaces/servicios';
-import { Convert } from 'src/app/interfaces/login';
 import { MainService } from 'src/app/services/main.service';
+import { Res } from 'src/app/interfaces/response';
+import { ExpressRes } from 'src/app/interfaces/express';
+import { ToolService } from 'src/app/interfaces/toolservice';
 
 export const MY_FORMATS = {
   parse: {
@@ -44,34 +45,36 @@ export const MY_FORMATS = {
   ],
 })
 export class ExpressDialogComponent implements OnInit {
-  model = "Express";
+  private route = '/express'
   form!: UntypedFormGroup;
   mode!: Number;
   title!: String;
-  usuarios!: UsuariosRes[];
+  usuarios!: User[];
+  user!: User;
 
   public usuariosFiltro: UntypedFormControl = new UntypedFormControl();
   public usuariosControl: UntypedFormControl = new UntypedFormControl();
-  public usuariosFiltrados: ReplaySubject<UsuariosRes[]> = new ReplaySubject<UsuariosRes[]>(1);
+  public usuariosFiltrados: ReplaySubject<User[]> = new ReplaySubject<User[]>(1);
   protected _onDestroy = new Subject<void>();
 
-  profile = sessionStorage.getItem('profile');
 
   @ViewChild('singleSelectUsuarios') singleSelectUsuarios!: MatSelect;
 
   constructor(private fb: UntypedFormBuilder,
     public dialogRef: MatDialogRef<ExpressDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ServiciosRes,
+    @Inject(MAT_DIALOG_DATA) public data: ExpressRes,
     private mainService: MainService,
     private snackbar: MatSnackBar,) {
-      let user = Convert.toLoginRes(this.profile ?? '');
+      this.user = Convert.toUser(sessionStorage.getItem('user_taller')??'');
+
 
       if (this.data) {
         this.mode = 1;
         this.title = 'Actualizar';
         this.form = this.fb.group({
-            producto: [this.data.producto,Validators.required],
-            falla_detectada: [this.data.falla_detectada, Validators.required],
+            id: [this.data.id, Validators.required],
+            herramienta: [this.data.herramienta,Validators.required],
+            falla: [this.data.falla, Validators.required],
             id_usuario: [{value: this.data.id_usuario, disabled: true}, Validators.required],
             cotizacion: [this.data.cotizacion],
             importe: [this.data.importe],
@@ -81,9 +84,9 @@ export class ExpressDialogComponent implements OnInit {
         this.mode = 0;
         this.title = 'Nuevo';
         this.form = this.fb.group({
-            producto: ['', Validators.required],
-            falla_detectada: ['', Validators.required],
-            id_usuario: [{value: user.id, disabled: true}, Validators.required],
+            herramienta: ['', Validators.required],
+            falla: ['', Validators.required],
+            id_usuario: [{value: this.user.id, disabled: true}, Validators.required],
             cotizacion: [null],
             importe: [null],
         });
@@ -119,50 +122,45 @@ export class ExpressDialogComponent implements OnInit {
   }
   onAdd(): void {
 
-    const servicio: ServiciosRes = this.form.getRawValue();
+    const servicio: ToolService = this.form.getRawValue();
     if (this.isCreateMode()) {
-      this.mainService.requestOne({ _function: "fnCreateExpress", data: servicio }, this.model).subscribe
-      ((data: any)=> {
-
-        if (!data.error) {
-
-          this.dialogRef.close(servicio);
-
-        } else {
-          this.snackbar.open('Error al registrar el servicio.', 'Aceptar', {
-            duration: 4000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top'
-          });
-        }
-      });
+      this.mainService
+        .postRequest(servicio, this.route)
+        .subscribe((res: Res) => {
+          if (res.error) {
+            this.snackbar.open(`${res.data} (${res.code})`, 'Aceptar', {
+              duration: 4000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
+            });
+          } else {
+            this.dialogRef.close(servicio);
+          }
+        });
     } else {
-      servicio.id = this.data.id;
-      this.mainService.requestOne({ _function: "fnUpdateExpress", data: servicio }, this.model).subscribe
-      ((data: any)=> {
-        if (!data.error) {
-          this.dialogRef.close(servicio);
-
-        } else {
-
-          this.snackbar.open('Error al actualizar el servicio.', 'Aceptar', {
-            duration: 4000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top'
-          });
-
-        }
-      });
+      this.mainService
+        .putRequest(servicio, this.route)
+        .subscribe((res: Res) => {
+          if (res.error) {
+            this.snackbar.open(`${res.data} (${res.code})`, 'Aceptar', {
+              duration: 4000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
+            });
+          } else {
+            this.dialogRef.close(servicio);
+          }
+        });
     }
 
   }
 
   getMenus(){
-    let user = Convert.toLoginRes(this.profile ?? '');
-    this.mainService.requestOne({ _function: "fnGetUsuariosTecnico", id: user.id }, "Usuarios").subscribe((data: UsuariosRes[]) => {
-    this.usuarios = data;
+
+    this.mainService.getRequest({ id: this.user.id }, `/user/get_tech_users`).subscribe((res: Res) => {
+    this.usuarios = res.data;
     this.usuariosFiltrados.next(this.usuarios.slice());
-    let filtro = data.filter(usuario => usuario.id == user.id);
+    let filtro = res.data.filter((usuario: User) => usuario.id == this.user.id);
     this.usuariosControl.setValue(filtro[0]);
     this.usuariosControl.disable();
 
@@ -180,7 +178,7 @@ export class ExpressDialogComponent implements OnInit {
         // the form control (i.e. _initializeSelection())
         // this needs to be done after the filteredBanks are loaded initially
         // and after the mat-option elements are available
-        this.singleSelectUsuarios.compareWith = (a: UsuariosRes, b: UsuariosRes) => a && b && a.id === b.id;
+        this.singleSelectUsuarios.compareWith = (a: User, b: User) => a && b && a.id === b.id;
       });
   }
   onNoClick(): void {

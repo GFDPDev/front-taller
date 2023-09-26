@@ -20,8 +20,6 @@ import {
 } from '@angular/material/core';
 import * as _moment from 'moment';
 import 'moment/locale/es';
-import { Convert } from 'src/app/interfaces/login';
-import { UsuariosRes } from '../../../../interfaces/usuarios';
 import { ClientesRes } from '../../../../interfaces/clientes';
 import { ReplaySubject, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
@@ -39,6 +37,8 @@ import {
   NgxMatDateAdapter,
 } from '@angular-material-components/datetime-picker';
 import * as moment from 'moment';
+import { User } from 'src/app/interfaces/user';
+import { Res } from 'src/app/interfaces/response';
 
 export const MY_FORMATS = {
   parse: {
@@ -73,12 +73,12 @@ export const MY_FORMATS = {
   ],
 })
 export class ExternosDialogComponent implements OnInit {
-  model = 'Externos';
+  private route = '/external';
   form!: FormGroup;
   mode!: Number;
   title!: String;
   clientes!: ClientesRes[];
-  usuarios!: UsuariosRes[];
+  usuarios!: User[];
   estatus = [
     {
       value: 'PENDIENTE',
@@ -112,9 +112,9 @@ export class ExternosDialogComponent implements OnInit {
   ];
   public usuariosFiltro: FormControl = new FormControl();
   public usuariosControl: FormControl = new FormControl();
-  public usuariosFiltrados: ReplaySubject<UsuariosRes[]> = new ReplaySubject<
-    UsuariosRes[]
-  >(1);
+  public usuariosFiltrados: ReplaySubject<User[]> = new ReplaySubject<User[]>(
+    1
+  );
 
   public clientesFiltro: FormControl = new FormControl();
   public clientesControl: FormControl = new FormControl();
@@ -133,11 +133,11 @@ export class ExternosDialogComponent implements OnInit {
     private mainService: MainService,
     private snackbar: MatSnackBar
   ) {
-
     if (this.data) {
       this.mode = 1;
       this.title = 'Actualizar';
       this.form = this.fb.group({
+        id: [this.data.id, Validators.required],
         folio: [this.data.folio, Validators.required],
         garantia: [this.data.garantia, Validators.required],
         marca: [this.data.marca, Validators.required],
@@ -200,9 +200,12 @@ export class ExternosDialogComponent implements OnInit {
       search = search.toLowerCase();
     }
     this.usuariosFiltrados.next(
-      this.usuarios.filter(usuario => usuario.nombre.toLowerCase().indexOf(search) > -1)
+      this.usuarios.filter((usuario) => {
+        let filtrado =
+          usuario.nombre + ' ' + usuario.apellido + ' ' + usuario.curp;
+        return filtrado.toLowerCase().indexOf(search) > -1;
+      })
     );
-
   }
   protected filtrarClientes() {
     if (!this.clientes) {
@@ -238,36 +241,36 @@ export class ExternosDialogComponent implements OnInit {
   getMenus() {
     if (this.isUpdateMode()) {
       this.mainService
-        .requestMany({ _function: 'fnGetClientes' }, 'Clientes')
-        .subscribe((data: ClientesRes[]) => {
-          this.clientes = data;
+        .getRequest({}, `/client/get_active_clients`)
+        .subscribe((res: Res) => {
+          this.clientes = res.data;
           this.clientesFiltrados.next(this.clientes.slice());
-          let filtro = data.filter(
-            (cliente) => cliente.id == this.data.id_cliente
+          let filtro = res.data.filter(
+            (cliente: ClientesRes) => cliente.id == this.data.id_cliente
           );
           this.clientesControl.setValue(filtro[0]);
         });
       this.mainService
-        .requestMany({ _function: 'fnGetUsuarios' }, 'Usuarios')
-        .subscribe((data: UsuariosRes[]) => {
-          this.usuarios = data;
+        .getRequest({}, `/user/get_active_users`)
+        .subscribe((res: Res) => {
+          this.usuarios = res.data;
           this.usuariosFiltrados.next(this.usuarios.slice());
-          let filtro = data.filter(
-            (usuario) => usuario.id == this.data.id_usuario
+          let filtro = res.data.filter(
+            (usuario: User) => usuario.id == this.data.id_usuario
           );
           this.usuariosControl.setValue(filtro[0]);
         });
     } else {
       this.mainService
-        .requestMany({ _function: 'fnGetClientes' }, 'Clientes')
-        .subscribe((data: ClientesRes[]) => {
-          this.clientes = data;
+        .getRequest({}, `/client/get_active_clients`)
+        .subscribe((res: Res) => {
+          this.clientes = res.data;
           this.clientesFiltrados.next(this.clientes.slice());
         });
       this.mainService
-        .requestMany({ _function: 'fnGetUsuarios' }, 'Usuarios')
-        .subscribe((data: UsuariosRes[]) => {
-          this.usuarios = data;
+        .getRequest({}, `/user/get_active_users`)
+        .subscribe((res: Res) => {
+          this.usuarios = res.data;
           this.usuariosFiltrados.next(this.usuarios.slice());
         });
     }
@@ -276,11 +279,6 @@ export class ExternosDialogComponent implements OnInit {
     this.clientesFiltrados
       .pipe(take(1), takeUntil(this._onDestroy))
       .subscribe(() => {
-        // setting the compareWith property to a comparison function
-        // triggers initializing the selection according to the initial value of
-        // the form control (i.e. _initializeSelection())
-        // this needs to be done after the filteredBanks are loaded initially
-        // and after the mat-option elements are available
         this.singleSelectClientes.compareWith = (
           a: ClientesRes,
           b: ClientesRes
@@ -291,52 +289,38 @@ export class ExternosDialogComponent implements OnInit {
     this.usuariosFiltrados
       .pipe(take(1), takeUntil(this._onDestroy))
       .subscribe(() => {
-        // setting the compareWith property to a comparison function
-        // triggers initializing the selection according to the initial value of
-        // the form control (i.e. _initializeSelection())
-        // this needs to be done after the filteredBanks are loaded initially
-        // and after the mat-option elements are available
-        this.singleSelectUsuarios.compareWith = (a: UsuariosRes, b: UsuariosRes) => a && b && a.id === b.id;
+        this.singleSelectUsuarios.compareWith = (a: User, b: User) =>
+          a && b && a.id === b.id;
       });
   }
   onAdd(): void {
     const servicio: ExternosRes = this.form.value;
-
-
     if (this.isCreateMode()) {
       this.mainService
-        .requestOne(
-          { _function: 'fnCreateExterno', data: servicio },
-          this.model
-        )
-        .subscribe((data: any) => {
-
-          if (!data.error) {
-            this.dialogRef.close(servicio);
-          } else {
-            this.snackbar.open('Error al registrar el servicio.', 'Aceptar', {
+        .postRequest(servicio, this.route)
+        .subscribe((res: Res) => {
+          if (res.error) {
+            this.snackbar.open(`${res.data} (${res.code})`, 'Aceptar', {
               duration: 4000,
               horizontalPosition: 'center',
               verticalPosition: 'top',
             });
+          } else {
+            this.dialogRef.close(servicio);
           }
         });
     } else {
-      servicio.id = this.data.id;
       this.mainService
-        .requestOne(
-          { _function: 'fnUpdateExterno', data: servicio },
-          this.model
-        )
-        .subscribe((data: any) => {
-          if (!data.error) {
-            this.dialogRef.close(servicio);
-          } else {
-            this.snackbar.open('Error al actualizar el servicio.', 'Aceptar', {
+        .putRequest(servicio, this.route)
+        .subscribe((res: Res) => {
+          if (res.error) {
+            this.snackbar.open(`${res.data} (${res.code})`, 'Aceptar', {
               duration: 4000,
               horizontalPosition: 'center',
               verticalPosition: 'top',
             });
+          } else {
+            this.dialogRef.close(servicio);
           }
         });
     }

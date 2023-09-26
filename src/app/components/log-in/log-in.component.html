@@ -16,12 +16,12 @@
                   <mat-card-content>
                       <mat-form-field appearance="fill">
                           <mat-label>Usuario</mat-label>
-                          <input oninput="this.value = this.value.toUpperCase()" formControlName="curp" matInput autocomplete="off" placeholder="RFC sin homoclave">
+                          <input oninput="this.value = this.value.toUpperCase()" formControlName="curp" matInput autocomplete="off" placeholder="RFC sin homoclave" maxlength="10">
                       </mat-form-field>
 
                       <mat-form-field appearance="fill">
                           <mat-label>Contraseña</mat-label>
-                          <input type="password" formControlName="password" matInput autocomplete="off" placeholder="******">
+                          <input type="password" formControlName="password" matInput autocomplete="off" placeholder="******" maxlength="15">
                       </mat-form-field>
                   </mat-card-content>
                   <mat-card-actions class="justify-content-center">

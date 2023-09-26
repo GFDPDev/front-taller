@@ -22,6 +22,7 @@
 
 mat-toolbar {
   background: #004a9f;
+  stop-color: #003c69;
   color: white;
 }
 mat-sidenav-container {
@@ -30,7 +31,7 @@ mat-sidenav-container {
 mat-sidenav {
   margin: 16px;
   border-right: none;
-  background: rgb(0, 98, 173);
+  background: #0062ad;
   color: white;
   border-radius: 10px;
   padding: 16px;
@@ -48,7 +49,7 @@ mat-divider {
   display: flex;
   align-items: center;
   font-size: 1rem;
-  justify-content: start;
+  justify-content: flex-start;
   color: white !important;
   mat-icon {
       margin-right: 8px;

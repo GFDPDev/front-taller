@@ -2,32 +2,34 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { UsuariosRes } from '../../../../interfaces/usuarios';
+import { User } from '../../../../interfaces/user';
 import { MainService } from 'src/app/services/main.service';
+import { Res } from 'src/app/interfaces/response';
 
 @Component({
   selector: 'app-usuario-dialog',
   templateUrl: './usuario-dialog.component.html',
   styleUrls: ['./usuario-dialog.component.scss']
 })
-export class UsuarioDialogComponent implements OnInit {
-  model = "Usuarios";
+export class UsuarioDialogComponent{
+  private route = '/user';
   form: FormGroup;
   mode: Number;
   title: String;
   constructor( private fb: FormBuilder,
     public dialogRef: MatDialogRef<UsuarioDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: UsuariosRes,
+    @Inject(MAT_DIALOG_DATA) public data: User,
     private mainService: MainService,
     private snackbar: MatSnackBar,) {
       if (this.data) {
         this.mode = 1;
         this.title = 'Actualizar';
         this.form = this.fb.group({
+          id: [this.data.id, Validators.required],
           nombre: [this.data.nombre, Validators.required],
           apellido: [this.data.apellido, Validators.required],
-          tipo: [this.data.tipo, Validators.required],
-          curp: [this.data.curp,  [Validators.required, Validators.minLength(10)]],
+          tipo: [this.data.tipo.toString(), Validators.required],
+          curp: [this.data.curp],
           password: ['', Validators.required]
         });
       } else {
@@ -37,61 +39,41 @@ export class UsuarioDialogComponent implements OnInit {
           nombre: ['', Validators.required],
           apellido: ['', Validators.required],
           tipo: ['', Validators.required],
-          curp: ['',  [Validators.required, Validators.minLength(10)]],
+          curp: [' '],
           password: ['', Validators.required]
         });
       }
     }
-
-  ngOnInit(): void {
-  }
   onNoClick(): void {
     this.dialogRef.close();
 
   }
 
   onAdd(): void{
-    const usuario: UsuariosRes = this.form.value;
-    if (this.mode === 0) {
-      this.mainService.requestOne({ _function: "fnCreateUsuario", data: usuario }, this.model).subscribe
-      ((data: any)=> {
-        if (data.errno === 1062) {
-          this.snackbar.open('Este usuario ya está registrado.', 'Aceptar', {
-            duration: 4000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top'
-          });
-
-        } else if(data.error) {
-          this.snackbar.open('Error registrando usuario.', 'Aceptar', {
-            duration: 4000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top'
-          });
-        }
-        else {
-          this.dialogRef.close(usuario);
-        }
-      });
+    const usuario: User = this.form.value;
+    if (this.isCreateMode()) {
+      this.mainService
+        .postRequest(usuario, this.route)
+        .subscribe((res: Res) => {
+          if (res.error) {
+            this.snackbar.open(`${res.data} (${res.code})`, 'Aceptar', {
+              duration: 4000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
+            });
+          } else {
+            this.dialogRef.close(usuario);
+          }
+        });
     } else {
-      usuario.id = this.data.id;
-      this.mainService.requestOne({ _function: "fnUpdateUsuario", data: usuario }, this.model).subscribe
-      ((data: any)=> {
-        if (data.errno === 1062) {
-          this.snackbar.open('Este usuario ya está registrado.', 'Aceptar', {
+      this.mainService.putRequest(usuario, this.route).subscribe((res: Res) => {
+        if (res.error) {
+          this.snackbar.open(`${res.data} (${res.code})`, 'Aceptar', {
             duration: 4000,
             horizontalPosition: 'center',
-            verticalPosition: 'top'
+            verticalPosition: 'top',
           });
-
-        } else if(data.error) {
-          this.snackbar.open('Error actualizando usuari.', 'Aceptar', {
-            duration: 4000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top'
-          });
-        }
-        else {
+        } else {
           this.dialogRef.close(usuario);
         }
       });

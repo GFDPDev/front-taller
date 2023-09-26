@@ -1,0 +1,23 @@
+mat-card-header {
+    display: grid;
+    align-content: center;
+    text-align: center;
+  }
+  
+  .dashboard-card {
+    position: absolute;
+    display: grid;
+    top: 15px;
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+  }
+  
+  .dashboard-card-secondary {
+    position: absolute;
+    display: grid;
+    top: 0px;
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+  }

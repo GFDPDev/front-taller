@@ -21,11 +21,11 @@
 
           </mat-form-field>
           <mat-form-field  class="w-50">
-            <mat-label>Producto</mat-label>
+            <mat-label>Herramienta</mat-label>
 
-            <input formControlName="producto" oninput="this.value = this.value.toUpperCase()" matInput type="text">
-            <mat-error *ngIf="form.controls['producto'].hasError('required')">
-                El producto es <strong> requerido </strong>
+            <input formControlName="herramienta" oninput="this.value = this.value.toUpperCase()" matInput type="text">
+            <mat-error *ngIf="form.controls['herramienta'].hasError('required')">
+                La herramienta es <strong> requerido </strong>
             </mat-error>
             <mat-icon matSuffix>build</mat-icon>
 
@@ -35,7 +35,7 @@
       <div class="row">
           <mat-form-field >
               <mat-label>Falla Detectada</mat-label>
-              <textarea oninput="this.value = this.value.toUpperCase()" matInput formControlName="falla_detectada"></textarea>
+              <textarea oninput="this.value = this.value.toUpperCase()" matInput formControlName="falla"></textarea>
           </mat-form-field>
       </div>
       <div class="row">

@@ -2,34 +2,35 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
 
-import { ServiciosRes } from '../../interfaces/servicios';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { MainService } from 'src/app/services/main.service';
+import { Res } from 'src/app/interfaces/response';
+import { ToolService } from 'src/app/interfaces/toolservice';
 @Component({
   selector: 'app-factura',
   templateUrl: './factura.component.html',
   styleUrls: ['./factura.component.scss']
 })
 export class FacturaComponent implements OnInit {
-  model = "Servicios";
-  servicio!: ServiciosRes;
+  private route = '/service';
+  servicio!: ToolService;
   isLoading : boolean = true;
   mode: ProgressSpinnerMode = 'indeterminate';
-  constructor(private mainService: MainService, private route: ActivatedRoute, ) { }
+  constructor(private mainService: MainService, private router: ActivatedRoute, ) { }
 
   ngOnInit(): void {
     this.getServicio();
   }
 
   getServicio() {
-    const routeParams = this.route.snapshot.paramMap;
+    const routeParams = this.router.snapshot.paramMap;
     const id = routeParams.get('id') ?? '';
-    this.mainService.requestOne({ _function: "fnUpdateImpresion",  id: id}, this.model).subscribe((data: any)=>{
+    this.mainService.putRequest({}, `${this.route}/print/${id}`).subscribe((data: any)=>{
 
     });
-    this.mainService.requestOne({ _function: "fnGetServicio",  id: id}, this.model).subscribe((data: ServiciosRes)=>{
-      this.servicio = data;
+    this.mainService.getRequest({id:id}, `${this.route}/by_id`).subscribe((res: Res)=>{
+      this.servicio = res.data;
 
       setTimeout(()=>{
         this.isLoading = false;

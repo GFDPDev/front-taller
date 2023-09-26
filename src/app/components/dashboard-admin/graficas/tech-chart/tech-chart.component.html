@@ -1,0 +1,33 @@
+<mat-card class="dashboard-card-secondary absolute">
+  <mat-card-header>
+    <mat-card-title>Servicios por Técnico</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="text-center margen">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <div id="chartdiv3" style="height: 300px"></div>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+  <mat-card-actions class="justify-content-evenly">
+    <mat-form-field>
+      <mat-label for="monthYearForm">Mes y Año</mat-label>
+      <input
+        id="monthYearForm"
+        matInput
+        [matDatepicker]="dp"
+        [formControl]="monthForm"
+      />
+      <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+      <mat-datepicker
+        #dp
+        startView="year"
+        (monthSelected)="setMonthAndYear($event, dp)"
+        panelClass="month-picker"
+      >
+      </mat-datepicker>
+    </mat-form-field>
+  </mat-card-actions>
+</mat-card>

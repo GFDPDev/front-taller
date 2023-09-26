@@ -1,29 +1,42 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpClientModule,
+  HttpHeaders,
+  HttpResponse,
+} from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
+import { Res } from '../interfaces/response';
+import { environment } from 'src/enviroments/enviroment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MainService {
-  private api = 'http://192.168.50.200:8080/api-taller-2/';
-  //private api = 'http://localhost/api-taller-2/';
-
-  private httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'text/plain'
-    })
-  };
+  private api = environment.apiURL;
+  private httpHeaders: HttpHeaders;
+  private token: string;
   constructor(private http: HttpClient) {
+    this.token = sessionStorage.getItem('token') ?? 'No token available';
 
+    this.httpHeaders = new HttpHeaders({
+        'accept': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': `Bearer ${this.token}`,
+      })
   }
 
-  requestOne(params:any, model: String): Observable<any>{
-    return this.http.post<any>(this.api + "model" + model + '.php', params, this.httpOptions);
+  getRequest(params: any, route: String): Observable<Res> {
+    return this.http.get<Res>(this.api + route, { params: params, headers: this.httpHeaders });
   }
-
-  requestMany(params:any, model: String): Observable<any[]>{
-    return this.http.post<any[]>(this.api + "model" + model + '.php', params, this.httpOptions);
+  postRequest(params: any, route: String): Observable<Res> {
+    return this.http.post<Res>(this.api + route, params, { headers: this.httpHeaders });
+  }
+  putRequest(params: any, route: String): Observable<Res> {
+    return this.http.put<Res>(this.api + route, params, { headers: this.httpHeaders });
+  }
+  deleteRequest(params: any, route: String): Observable<Res> {
+    return this.http.delete<Res>(this.api + route, { params: params, headers: this.httpHeaders });
   }
 }

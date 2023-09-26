@@ -5,7 +5,6 @@ import { DashboardTecnicoRoutingModule } from './dashboard-tecnico-routing.modul
 import { AngularMaterialModule } from '../../angular-material.module';
 import { DashboardTecnicoComponent } from './dashboard-tecnico.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NavbarComponent } from './navbar/navbar.component';
 import { TecnicosComponent } from './tecnicos/tecnicos.component';
 import { TecnicoDialogComponent } from './tecnicos/tecnico-dialog/tecnico-dialog.component';
 import { ClientesComponent } from './clientes/clientes.component';
@@ -16,7 +15,6 @@ import { ExpressDialogComponent } from './express/express-dialog/express-dialog.
 @NgModule({
   declarations: [
     DashboardTecnicoComponent,
-    NavbarComponent,
     TecnicosComponent,
     TecnicoDialogComponent,
     ClientesComponent,

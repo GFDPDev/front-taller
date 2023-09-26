@@ -14,20 +14,20 @@
   <mat-sidenav #sidenav="matSidenav" class="mat-elevation-z8 fixed">
     <img class="avatar mat-elevation-z8 mx-auto" src="assets/logo.png" />
 
-    <h4>{{ profile.nombre }} {{ profile.apellido }}</h4>
+    <h4>{{ user.nombre }} {{ user.apellido }}</h4>
     <h5>Técnico</h5>
     <mat-divider></mat-divider>
-    <button [routerLink]="['/dashboard-tecnico']" [routerLinkActive]="'selected'" [routerLinkActiveOptions]="{ exact: true }" mat-button class="menu-button">
+    <button [routerLink]="['/taller/dashboard-tecnico']" [routerLinkActive]="'selected'" [routerLinkActiveOptions]="{ exact: true }" mat-button class="menu-button">
       <mat-icon>build_circle</mat-icon>
-      <span>Registro de Servicios</span>
+      <span>Servicios</span>
     </button>
 
-    <button [routerLink]="['/dashboard-tecnico/express']" [routerLinkActive]="'selected'" [routerLinkActiveOptions]="{ exact: true }" mat-button class="menu-button">
+    <button [routerLink]="['/taller/dashboard-tecnico/express']" [routerLinkActive]="'selected'" [routerLinkActiveOptions]="{ exact: true }" mat-button class="menu-button">
       <mat-icon>bolt</mat-icon>
-      <span>Registro de Express</span>
+      <span>Express</span>
     </button>
 
-    <button [routerLink]="['/dashboard-tecnico/clientes']" [routerLinkActive]="'selected'" [routerLinkActiveOptions]="{ exact: true }" mat-button class="menu-button">
+    <button [routerLink]="['/taller/dashboard-tecnico/clientes']" [routerLinkActive]="'selected'" [routerLinkActiveOptions]="{ exact: true }" mat-button class="menu-button">
       <mat-icon>groups</mat-icon>
       <span>Clientes</span>
     </button>

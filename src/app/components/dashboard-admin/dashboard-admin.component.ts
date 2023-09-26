@@ -3,7 +3,7 @@ import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router, NavigationEnd } from '@angular/router';
-import { LoginRes, Convert } from 'src/app/interfaces/login';
+import { Convert, User } from 'src/app/interfaces/user';
 
 @Component({
   selector: 'app-dashboard-admin',
@@ -14,10 +14,10 @@ export class DashboardAdminComponent {
  /** Based on the screen size, switch from standard to one column per row */
  @ViewChild(MatSidenav)
  sidenav!: MatSidenav;
- profile!: LoginRes;
+ user!: User;
 
  constructor(private breakpointObserver: BreakpointObserver, private observer: BreakpointObserver, private router: Router) {
-  this.profile = Convert.toLoginRes(sessionStorage.getItem('profile')??'');
+  this.user = Convert.toUser(sessionStorage.getItem('user_taller')??'');
  }
  ngAfterViewInit() {
    this.observer.observe(['(max-width: 1200px)']).subscribe((res) => {
@@ -36,7 +36,7 @@ export class DashboardAdminComponent {
  }
  logout(){
   sessionStorage.clear();
-  this.router.navigate(['/login']);
+  this.router.navigate(['/taller/login']);
 }
 
 }

@@ -11,13 +11,15 @@ import { LogInComponent } from './components/log-in/log-in.component';
 import { FacturaComponent } from './components/factura/factura.component';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { NotFoundsComponent } from './components/not-founds/not-founds.component';
+import { ReporteTablaComponent } from './components/dashboard-admin/reportes/reporte-tabla/reporte-tabla.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LogInComponent,
     FacturaComponent,
-    NotFoundsComponent
+    NotFoundsComponent,
+    ReporteTablaComponent
   ],
   imports: [
     BrowserModule,
@@ -27,11 +29,6 @@ import { NotFoundsComponent } from './components/not-founds/not-founds.component
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-  ],
-  providers: [
-    { provide: LocationStrategy, useClass: HashLocationStrategy },
-
-
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

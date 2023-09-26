@@ -2,10 +2,12 @@
 html,
 body {
     height: 100%;
+    text-size-adjust: 100%;
 }
 
 body {
     margin: 0;
+    text-size-adjust: 100%;
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
@@ -32,6 +34,6 @@ td {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 15rem;
+    max-width: 12rem;
     padding: 0px 10px;
 }
