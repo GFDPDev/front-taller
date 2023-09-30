@@ -24,6 +24,8 @@ export interface GarantiasRes {
   estado_proveedor:         string;
   id_modificado:            number;
   modificador:              string;
+  doc:              string;
+
 }
 
 

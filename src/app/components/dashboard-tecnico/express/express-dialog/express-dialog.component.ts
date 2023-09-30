@@ -17,6 +17,7 @@ import { MainService } from 'src/app/services/main.service';
 import { Res } from 'src/app/interfaces/response';
 import { ExpressRes } from 'src/app/interfaces/express';
 import { ToolService } from 'src/app/interfaces/toolservice';
+import * as moment from 'moment';
 
 export const MY_FORMATS = {
   parse: {
@@ -85,6 +86,7 @@ export class ExpressDialogComponent implements OnInit {
         this.title = 'Nuevo';
         this.form = this.fb.group({
             herramienta: ['', Validators.required],
+            fecha: [moment().format("YYYY-MM-DD")],
             falla: ['', Validators.required],
             id_usuario: [{value: this.user.id, disabled: true}, Validators.required],
             cotizacion: [null],

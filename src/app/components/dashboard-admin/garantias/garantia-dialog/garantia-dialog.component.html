@@ -1,7 +1,39 @@
-<div class="col text-center">
-  <h1 mat-dialog-title>
+<div class="col">
+  <h1 mat-dialog-title class="text-center">
     {{ title }} Garantía {{ isUpdateMode() ? data.id : "" }}
   </h1>
+</div>
+<div class="row gutter justify-content-evenly">
+  <div class="col text-center" *ngIf="form.controls['doc'].value">
+    <button
+    *ngIf="form.controls['doc'].value"
+    (click)="verDoc()"
+    type="button"
+    mat-raised-button
+    color="accent"
+  >
+    <mat-icon matSuffix>visibility</mat-icon> Ver Documento
+  </button>
+  </div>
+  <div class="col text-center" *ngIf="form.controls['doc'].value">
+
+    <span>{{
+      form.controls["doc"].value
+    }}</span>
+  </div>
+  <div class="col text-center">
+    <button
+    type="button"
+    mat-raised-button
+    (click)="fileInput.click()"
+    color="primary"
+  >
+    <mat-icon matSuffix>upload</mat-icon> Subir Documento
+  </button>
+  </div>
+
+
+  <input hidden type="file" #fileInput (change)="uploadDocumento($event)" />
 </div>
 
 <form [formGroup]="form" class="mt-3">

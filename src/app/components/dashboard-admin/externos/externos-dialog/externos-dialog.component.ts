@@ -156,6 +156,7 @@ export class ExternosDialogComponent implements OnInit {
       this.form = this.fb.group({
         folio: ['', Validators.required],
         garantia: ['', Validators.required],
+        fecha_registro: [moment().format("YYYY-MM-DD h:mm:ss")],
         marca: ['BOSCH', Validators.required],
         id_cliente: ['', Validators.required],
         id_usuario: ['', Validators.required],

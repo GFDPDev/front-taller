@@ -23,6 +23,7 @@ import { MainService } from 'src/app/services/main.service';
 import { GarantiasRes } from 'src/app/interfaces/garantias';
 import { Convert, User } from 'src/app/interfaces/user';
 import { Res } from 'src/app/interfaces/response';
+import * as moment from 'moment';
 
 export const MY_FORMATS = {
   parse: {
@@ -129,6 +130,8 @@ export class GarantiaDialogComponent {
         estado_cliente: [this.data.estado_cliente],
         estado_proveedor: [this.data.estado_proveedor],
         id_modificado: [this.user.id],
+        doc: [this.data.doc],
+
       });
     } else {
       this.mode = 0;
@@ -137,7 +140,7 @@ export class GarantiaDialogComponent {
         comprobante: ['', Validators.required],
         folio: ['', Validators.required],
         autorizo: [''],
-
+        fecha_registro: [moment().format("YYYY-MM-DD h:mm:ss")],
         producto: ['', Validators.required],
         marca: ['', Validators.required],
         modelo: ['', Validators.required],
@@ -151,6 +154,7 @@ export class GarantiaDialogComponent {
         estado_proveedor: [this.estatusP[0].value, Validators.required],
         estado_cliente: [this.estatusC[0].value, Validators.required],
         id_modificado: [this.user.id],
+        doc: [''],
       });
     }
   }
@@ -220,5 +224,31 @@ export class GarantiaDialogComponent {
 
   isUpdateMode() {
     return this.mode === 1;
+  }
+  uploadDocumento(event: any) {
+    const file: File = event!.target.files ? event.target.files[0] : "";
+    this.form.controls["doc"].setValue(file.name);
+    const formData = new FormData();
+    formData.append("doc", file);
+    this.mainService.uploadFile(formData, "/file").subscribe((res: Res) => {
+      this.snackbar.open(`${res.data} (${res.code})`, "Aceptar", {
+        duration: 5000,
+        horizontalPosition: "center",
+        verticalPosition: "top",
+      });
+    });
+  }
+  verDoc() {
+    this.mainService
+      .getFile(`/file/${this.form.controls["doc"].value}`)
+      .subscribe((file: Blob) => {
+        const url = window.URL.createObjectURL(file);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = this.form.controls["doc"].value;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      });
   }
 }
