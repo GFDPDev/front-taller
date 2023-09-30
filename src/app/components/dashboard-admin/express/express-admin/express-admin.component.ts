@@ -30,6 +30,7 @@ import { take, takeUntil } from 'rxjs/operators';
 import { MainService } from 'src/app/services/main.service';
 import { ExpressRes } from 'src/app/interfaces/express';
 import { Res } from 'src/app/interfaces/response';
+import * as moment from 'moment';
 
 export const MY_FORMATS = {
   parse: {
@@ -86,6 +87,7 @@ export class ExpressAdminComponent implements OnInit {
       this.form = this.fb.group({
         id: [this.data.id, Validators.required],
         herramienta: [this.data.herramienta, Validators.required],
+        fecha: [this.data.fecha, Validators.required],
         falla: [this.data.falla, Validators.required],
         id_usuario: [this.data.id_usuario, Validators.required],
         cotizacion: [this.data.cotizacion],
@@ -96,6 +98,7 @@ export class ExpressAdminComponent implements OnInit {
       this.title = 'Nuevo';
       this.form = this.fb.group({
         herramienta: ['', Validators.required],
+        fecha: [moment().format("YYYY-MM-DD")],
         falla: ['', Validators.required],
         id_usuario: ['', Validators.required],
         cotizacion: [null],
