@@ -1,3 +1,9 @@
 .gutter {
-    --bs-gutter-x: 0;
+  --bs-gutter-x: 0;
+}
+
+.content {
+  @media (max-width: 1024px) {
+    display: none;
+  }
 }
