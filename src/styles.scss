@@ -29,11 +29,12 @@ input[type=number] {
     background-color: rgb(222, 222, 222);
     cursor: default;
 }
-
-td {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 12rem;
-    padding: 0px 10px;
+@media (min-width: 1024px) {
+    td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 12rem;
+        padding: 0px 10px;
+    }
 }

@@ -89,6 +89,9 @@ export class GarantiaDialogComponent {
     {
       value: 'MERMA',
     },
+    {
+      value: 'NO AUTORIZADO',
+    },
   ];
   comprobante = [
     {
@@ -115,6 +118,7 @@ export class GarantiaDialogComponent {
       this.form = this.fb.group({
         id: [this.data.id, Validators.required],
         comprobante: [this.data.comprobante, Validators.required],
+        fecha_registro: [this.data.fecha_registro],
         folio: [this.data.folio, Validators.required],
         autorizo: [this.data.autorizo],
         producto: [this.data.producto, Validators.required],

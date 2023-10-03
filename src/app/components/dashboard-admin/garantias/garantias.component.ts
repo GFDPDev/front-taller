@@ -1,4 +1,12 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -13,7 +21,7 @@ import {
   MAT_DATE_LOCALE,
 } from '@angular/material/core';
 import { MatDatepicker } from '@angular/material/datepicker';
-import { interval, Subscription } from 'rxjs';
+import { BehaviorSubject, combineLatest, interval, map, mapTo, Subject, Subscription, takeUntil } from 'rxjs';
 import * as _moment from 'moment';
 // tslint:disable-next-line:no-duplicate-imports
 import { Moment } from 'moment';
@@ -53,7 +61,21 @@ export const MY_FORMATS = {
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
 })
-export class GarantiasComponent implements OnInit {
+export class GarantiasComponent implements OnInit, AfterViewInit, OnDestroy {
+  private onDestroy$ = new Subject<boolean>();
+
+  private thead!: HTMLTableSectionElement;
+  private tbody!: HTMLTableSectionElement;
+
+  private theadChanged$ = new BehaviorSubject(true);
+  private tbodyChanged$ = new Subject<boolean>();
+
+  private theadObserver = new MutationObserver(() =>
+    this.theadChanged$.next(true)
+  );
+  private tbodyObserver = new MutationObserver(() =>
+    this.tbodyChanged$.next(true)
+  );
   private route = '/warranty';
   displayedColumns: string[] = [
     'id',
@@ -73,15 +95,52 @@ export class GarantiasComponent implements OnInit {
     private snackbar: MatSnackBar,
     private mainService: MainService,
     public dialog: MatDialog,
-    private csv: CSVService
+    private csv: CSVService,
+    private table: ElementRef,
+    private renderer: Renderer2
   ) {}
 
   ngOnInit(): void {
     this.getGarantias();
+
   }
   ngAfterViewInit(): void {
+    this.thead = this.table.nativeElement.querySelector('thead');
+    this.tbody = this.table.nativeElement.querySelector('tbody');
+
+    this.theadObserver.observe(this.thead, {
+      characterData: true,
+      subtree: true,
+    });
+    this.tbodyObserver.observe(this.tbody, { childList: true });
+    combineLatest([this.theadChanged$, this.tbodyChanged$])
+      .pipe(
+        mapTo({
+          headRow: this.thead?.rows.item(0) as HTMLTableRowElement | null,
+          bodyRows: this.tbody?.rows as HTMLCollectionOf<HTMLTableRowElement>,
+        }),
+        map(({ headRow, bodyRows }) => ({
+          columnNames: headRow
+            ? Array.from(headRow.children).map((headerCell) => headerCell.textContent!)
+            : [],
+          rows: Array.from(bodyRows).map((row) => Array.from(row.children)),
+        })),
+        takeUntil(this.onDestroy$)
+      )
+      .subscribe(({ columnNames, rows }) =>
+        rows.forEach((rowCells) =>
+          rowCells.forEach((cell) =>
+            this.renderer.setAttribute(
+              cell,
+              'data-column-name',
+              columnNames[(cell as HTMLTableCellElement).cellIndex]
+            )
+          )
+        )
+      );
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    
   }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -143,7 +202,7 @@ export class GarantiasComponent implements OnInit {
   }
   createGarantia() {
     const dialogRef = this.dialog.open(GarantiaDialogComponent, {
-      width: '50%',
+      width: '70%',
       data: null,
     });
     dialogRef.afterClosed().subscribe((result: GarantiasRes) => {
@@ -161,7 +220,7 @@ export class GarantiasComponent implements OnInit {
   }
   updateGarantia(garantia: GarantiasRes) {
     const dialogRef = this.dialog.open(GarantiaDialogComponent, {
-      width: '50%',
+      width: '70%',
       data: garantia,
     });
     dialogRef.afterClosed().subscribe((result: GarantiasRes) => {
@@ -205,5 +264,11 @@ export class GarantiasComponent implements OnInit {
         'modificador',
       ]);
     }, 1500);
+  }
+  ngOnDestroy(): void {
+    this.theadObserver.disconnect();
+    this.tbodyObserver.disconnect();
+
+    this.onDestroy$.next(true);
   }
 }
