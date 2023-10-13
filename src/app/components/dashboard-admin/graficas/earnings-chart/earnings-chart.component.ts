@@ -18,8 +18,7 @@ import { Chart } from 'src/app/interfaces/chart';
 export class EarningsChartComponent implements OnInit {
   private route = '/chart/earnings';
   private earningsChart!: am4charts.XYChart;
-  private data!: Chart[];
-  public yearForm = new FormControl(new Date().getFullYear());
+  private chartData!: any;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: any,
@@ -42,9 +41,10 @@ export class EarningsChartComponent implements OnInit {
   }
   getChart() {
     this.mainService
-      .getRequest({ year: this.yearForm.value }, this.route)
-      .subscribe((res: Res) => {
-        this.data = res.data;
+      .getRequest({},this.route)
+      .subscribe((res: any) => {
+        console.log(res);
+        this.chartData = res.data;
         this.generateChart();
       });
   }
@@ -54,46 +54,42 @@ export class EarningsChartComponent implements OnInit {
       function am4themes_myTheme(target:any) {
         if (target instanceof am4core.ColorSet) {
           target.list = [
-            am4core.color("#0062ad"),
             am4core.color("#b53fa1"),
             am4core.color("#003c69"),
             am4core.color("#4f94bc"),
             am4core.color("#ad0071"),
             am4core.color("#a700ad"),
-            
 
           ];
         }
       }
-      am4core.useTheme(am4themes_animated);
-      am4core.useTheme(am4themes_material);
       am4core.useTheme(am4themes_myTheme);
-
+      am4core.useTheme(am4themes_animated);
 
       let chart = am4core.create('chartdiv', am4charts.XYChart);
 
       chart.paddingRight = 20;
 
-      chart.data = this.data;
+      chart.data = this.chartData.totals;
 
-      let mainAxis = chart.xAxes.push(new am4charts.DateAxis());
-      mainAxis.dataFields.date = 'main';
+      let mainAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+      mainAxis.dataFields.category = 'main';
+      this.chartData.years.forEach((year: number) => {
+        let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+          
+        let series = chart.series.push(new am4charts.LineSeries());
+        series.strokeWidth = 4;
+        series.bullets.push(new am4charts.CircleBullet());
+        series.dataFields.valueY = `${year}`;
+        series.dataFields.categoryX = 'main';
+        series.name = `${year}`;
+        series.showOnInit = false;
+        series.tooltipText = '{categoryX} ' + `${year}: ` + '${valueY.value}';
+        chart.cursor = new am4charts.XYCursor();
 
-      let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-
-      let series = chart.series.push(new am4charts.LineSeries());
-      series.strokeWidth = 4;
-      series.bullets.push(new am4charts.CircleBullet());
-      series.dataFields.valueY = 'total';
-      series.dataFields.dateX = 'main';
-      series.name = 'Ventas de Taller';
-      series.showOnInit = false;
-      series.tooltipText = '${valueY.value}';
-      chart.cursor = new am4charts.XYCursor();
-
-      let scrollbarX = new am4charts.XYChartScrollbar();
-      scrollbarX.series.push(series);
-      chart.scrollbarX = scrollbarX;
+      });
+      chart.legend = new am4charts.Legend();
+    
 
       this.earningsChart = chart;
     });

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
@@ -21,9 +21,8 @@ import { ToolService } from 'src/app/interfaces/toolservice';
   templateUrl: './tecnicos.component.html',
   styleUrls: ['./tecnicos.component.scss'],
 })
-export class TecnicosComponent implements OnInit {
+export class TecnicosComponent implements OnDestroy, OnInit {
   private route = '/service';
-  subscription!: Subscription;
   user!: User;
 
   displayedColumns: string[] = [
@@ -42,7 +41,7 @@ export class TecnicosComponent implements OnInit {
   dataSource = new MatTableDataSource<ToolService>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-
+  private eventSubscription!: Subscription;
   constructor(
     private snackbar: MatSnackBar,
     private mainService: MainService,
@@ -54,11 +53,12 @@ export class TecnicosComponent implements OnInit {
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    const source = interval(60000);
-    this.subscription = source.subscribe((val) => this.getServicios());
   }
   ngOnInit(): void {
     this.getServicios();
+    this.eventSubscription = this.mainService.getServerEvent(`${this.route}/sse`).subscribe(()=>{
+      this.getServicios();
+    })
   }
 
   applyFilter(event: Event) {
@@ -109,7 +109,6 @@ export class TecnicosComponent implements OnInit {
           showConfirmButton: false,
           timer: 1500,
         });
-        this.getServicios();
       }
     });
   }
@@ -127,8 +126,13 @@ export class TecnicosComponent implements OnInit {
           showConfirmButton: false,
           timer: 1500,
         });
-        this.getServicios();
       }
     });
+  }
+  ngOnDestroy(): void {
+    //Called once, before the instance is destroyed.
+    this.mainService.disconnectEventSource()
+    this.eventSubscription.unsubscribe();
+
   }
 }

@@ -175,6 +175,14 @@
           >
             <mat-icon>delete</mat-icon>
           </button>
+          <a
+          mat-icon-button
+          target="_blank"
+          matTooltip="Generar Comprobante"
+          [routerLink]="['/taller/comprobante', element.id]"
+        >
+          <mat-icon>receipt_log</mat-icon>
+        </a>
         </td>
       </ng-container>
 

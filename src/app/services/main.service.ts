@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import {
   HttpClient,
   HttpClientModule,
@@ -9,6 +9,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import { Res } from '../interfaces/response';
 import { environment } from 'src/enviroments/enviroment';
+import { SseService } from './sse.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +19,8 @@ export class MainService {
   private httpHeaders: HttpHeaders;
   private httpFileHeaders: HttpHeaders;
   private token: string;
-  constructor(private http: HttpClient) {
+  private eventSource!: EventSource;
+  constructor(private http: HttpClient, private zone: NgZone, private sseService: SseService) {
     this.token = sessionStorage.getItem('token') ?? 'No token available';
 
     this.httpHeaders = new HttpHeaders({
@@ -49,5 +51,24 @@ export class MainService {
   }
   getFile(route: String): Observable<Blob> {
     return this.http.get<Blob>(this.api + route,  { responseType: 'blob' as 'json', headers: this.httpFileHeaders },);
+  }
+
+  getServerEvent(route: string){
+    return new Observable((observer)=>{
+       this.eventSource = this.sseService.getEventSource(route);
+      this.eventSource.onmessage = (event) => {
+        this.zone.run(()=>{
+          observer.next(event);
+        })
+      };
+      this.eventSource.onerror = (error) => {
+        observer.error();
+        this.eventSource.close();
+      };
+    })
+  }
+
+  disconnectEventSource(): void {
+    this.eventSource.close();
   }
 }

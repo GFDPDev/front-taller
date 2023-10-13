@@ -79,6 +79,7 @@ export class GarantiasComponent implements OnInit, AfterViewInit, OnDestroy {
   private route = '/warranty';
   displayedColumns: string[] = [
     'id',
+    'fecha_registro',
     'comprobante',
     'folio',
     'producto',
@@ -91,6 +92,8 @@ export class GarantiasComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   date = new UntypedFormControl(moment());
+  private eventSubscription!: Subscription;
+
   constructor(
     private snackbar: MatSnackBar,
     private mainService: MainService,
@@ -102,7 +105,9 @@ export class GarantiasComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.getGarantias();
-
+    this.eventSubscription = this.mainService.getServerEvent(`${this.route}/sse`).subscribe(()=>{
+      this.getGarantias();
+    })
   }
   ngAfterViewInit(): void {
     this.thead = this.table.nativeElement.querySelector('thead');
@@ -188,7 +193,6 @@ export class GarantiasComponent implements OnInit, AfterViewInit, OnDestroy {
         this.mainService
           .deleteRequest({}, `${this.route}/${id}`)
           .subscribe((data) => {
-            this.getGarantias();
             Swal.fire('Eliminado', 'La garantía se ha eliminado', 'success');
           });
       } else if (result.dismiss === Swal.DismissReason.cancel) {
@@ -214,7 +218,6 @@ export class GarantiasComponent implements OnInit, AfterViewInit, OnDestroy {
           showConfirmButton: false,
           timer: 1500,
         });
-        this.getGarantias();
       }
     });
   }
@@ -232,7 +235,6 @@ export class GarantiasComponent implements OnInit, AfterViewInit, OnDestroy {
           showConfirmButton: false,
           timer: 1500,
         });
-        this.getGarantias();
       }
     });
   }
@@ -268,6 +270,8 @@ export class GarantiasComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     this.theadObserver.disconnect();
     this.tbodyObserver.disconnect();
+    this.mainService.disconnectEventSource()
+    this.eventSubscription.unsubscribe();
 
     this.onDestroy$.next(true);
   }

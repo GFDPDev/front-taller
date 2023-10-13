@@ -7,22 +7,9 @@
     <div class="container">
       <div class="row">
         <div class="col">
-          <div id="chartdiv" style="height: 500px"></div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <mat-form-field class="w-25">
-            <mat-label for="yearForm">Año</mat-label>
-            <input id="yearForm" matInput type="number" [formControl]="yearForm" />
-          </mat-form-field>
+          <div id="chartdiv" style="height: 550px"></div>
         </div>
       </div>
     </div>
   </mat-card-content>
-  <mat-card-actions class="justify-content-evenly">
-    <button mat-raised-button color="primary" (click)="getChart()">
-      <mat-icon>autorenew</mat-icon> Recargar Gráfica
-    </button>
-  </mat-card-actions>
 </mat-card>

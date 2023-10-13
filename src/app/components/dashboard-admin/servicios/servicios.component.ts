@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -53,8 +53,9 @@ export const MY_FORMATS = {
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
 })
-export class ServiciosComponent implements OnInit {
+export class ServiciosComponent implements OnInit, OnDestroy {
   private route = '/service';
+  eventSource!: EventSource;
   displayedColumns: string[] = [
     'id',
     'fecha_ingreso',
@@ -71,7 +72,9 @@ export class ServiciosComponent implements OnInit {
   dataSource = new MatTableDataSource<ToolService>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  date = new UntypedFormControl(moment());
+  date = new UntypedFormControl(moment())
+  private eventSubscription!: Subscription;
+
   constructor(
     private snackbar: MatSnackBar,
     private mainService: MainService,
@@ -83,6 +86,9 @@ export class ServiciosComponent implements OnInit {
   }
   ngOnInit(): void {
     this.getServicios();
+    this.eventSubscription = this.mainService.getServerEvent(`${this.route}/sse`).subscribe(()=>{
+      this.getServicios();
+    })
   }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -146,7 +152,6 @@ export class ServiciosComponent implements OnInit {
         this.mainService
           .deleteRequest({}, `${this.route}/${id}`)
           .subscribe((data) => {
-            this.getServicios();
             Swal.fire(
               'Eliminado',
               'El servicio de ' + nombre + ' ha sido eliminado del registro.',
@@ -176,7 +181,6 @@ export class ServiciosComponent implements OnInit {
           showConfirmButton: false,
           timer: 1500,
         });
-        this.getServicios();
       }
     });
   }
@@ -194,8 +198,13 @@ export class ServiciosComponent implements OnInit {
           showConfirmButton: false,
           timer: 1500,
         });
-        this.getServicios();
       }
     });
+  }
+  ngOnDestroy(): void {
+    //Called once, before the instance is destroyed.
+    this.mainService.disconnectEventSource()
+    this.eventSubscription.unsubscribe();
+
   }
 }

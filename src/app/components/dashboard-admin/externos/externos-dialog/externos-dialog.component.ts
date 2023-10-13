@@ -138,6 +138,7 @@ export class ExternosDialogComponent implements OnInit {
       this.title = 'Actualizar';
       this.form = this.fb.group({
         id: [this.data.id, Validators.required],
+        fecha_registro: [this.data.fecha_registro],
         folio: [this.data.folio, Validators.required],
         garantia: [this.data.garantia, Validators.required],
         marca: [this.data.marca, Validators.required],
@@ -156,13 +157,13 @@ export class ExternosDialogComponent implements OnInit {
       this.form = this.fb.group({
         folio: ['', Validators.required],
         garantia: ['', Validators.required],
-        fecha_registro: [moment().format("YYYY-MM-DD h:mm:ss")],
+        fecha_registro: [moment().format("YYYY-MM-DD")],
         marca: ['BOSCH', Validators.required],
         id_cliente: ['', Validators.required],
         id_usuario: ['', Validators.required],
-        cotizacion: [null],
+        cotizacion: [''],
         cita: [null],
-        importe: [null],
+        importe: [0, Validators.required],
         estado: [this.estatus[0].value, Validators.required],
         observaciones: [' '],
       });
