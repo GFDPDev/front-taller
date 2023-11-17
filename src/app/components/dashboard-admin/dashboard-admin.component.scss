@@ -29,12 +29,9 @@ mat-sidenav-container {
   height: -webkit-fill-available;
 }
 mat-sidenav {
-  margin: 16px;
-  border-right: none;
   background: #0062ad;
   color: white;
-  border-radius: 10px;
-  padding: 16px;
+  padding: 25px;
   text-align: center;
 }
 
@@ -75,8 +72,5 @@ mat-divider {
 }
 
 .content {
-  border-radius: 10px;
-  margin: 16px;
-  margin-left: 32px;
-  min-height: 96.5vh;
+  min-height: 100vh;
 }

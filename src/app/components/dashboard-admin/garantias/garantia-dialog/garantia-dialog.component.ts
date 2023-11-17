@@ -59,15 +59,15 @@ export class GarantiaDialogComponent {
   title!: String;
   user!: User;
 
-  estatusC = [
+  statusP = [
+    {
+      value: 'CANCELADO',
+    },
     {
       value: 'EN TRÁMITE',
     },
     {
-      value: 'ENVIADO',
-    },
-    {
-      value: 'AUTORIZADO',
+      value: 'NOTA DE CRÉDITO',
     },
     {
       value: 'NO AUTORIZADO',
@@ -75,23 +75,38 @@ export class GarantiaDialogComponent {
     {
       value: 'CORTESÍA',
     },
-  ];
-  estatusP = [
     {
-      value: 'EN TRÁMITE',
-    },
-    {
-      value: 'CAMBIO FÍSICO',
-    },
-    {
-      value: 'NOTA DE CRÉDITO',
+      value: 'REPARADO',
     },
     {
       value: 'MERMA',
     },
     {
+      value: 'CAMBIO FÍSICO',
+    }
+  ];
+  statusC = [
+    {
+      value: 'CANCELADO',
+    },
+    {
+      value: 'EN TRÁMITE',
+    },
+    {
       value: 'NO AUTORIZADO',
     },
+    {
+      value: 'CORTESÍA',
+    },
+    {
+      value: 'REPARADO',
+    },
+    {
+      value: 'MERMA',
+    },
+    {
+      value: 'CAMBIO FÍSICO',
+    }
   ];
   comprobante = [
     {
@@ -117,7 +132,7 @@ export class GarantiaDialogComponent {
       this.title = 'Actualizar';
       this.form = this.fb.group({
         id: [this.data.id, Validators.required],
-        comprobante: [this.data.comprobante, Validators.required],
+        traspaso: [this.data.traspaso, Validators.required],
         fecha_registro: [this.data.fecha_registro],
         folio: [this.data.folio, Validators.required],
         autorizo: [this.data.autorizo],
@@ -141,7 +156,7 @@ export class GarantiaDialogComponent {
       this.mode = 0;
       this.title = 'Nuevo';
       this.form = this.fb.group({
-        comprobante: ['', Validators.required],
+        traspaso: ['', Validators.required],
         folio: ['', Validators.required],
         autorizo: [''],
         fecha_registro: [moment().format("YYYY-MM-DD h:mm:ss")],
@@ -155,8 +170,8 @@ export class GarantiaDialogComponent {
         fecha_proveedor: [null],
         fecha_resuelto_proveedor: [null],
         fecha_resuelto_cliente: [null],
-        estado_proveedor: [this.estatusP[0].value, Validators.required],
-        estado_cliente: [this.estatusC[0].value, Validators.required],
+        estado_proveedor: [this.statusP[0].value, Validators.required],
+        estado_cliente: [this.statusC[0].value, Validators.required],
         id_modificado: [this.user.id],
         doc: [''],
       });

@@ -40,17 +40,16 @@
   <div mat-dialog-content class="text-center content">
     <div class="row">
       <mat-form-field class="w-50">
-        <mat-label>Comprobante</mat-label>
-        <mat-select formControlName="comprobante" name="comprobante">
-          <mat-option
-            [value]="option.value"
-            *ngFor="let option of comprobante"
-            >{{ option.value }}</mat-option
-          >
-        </mat-select>
+        <mat-label>Número de Traspaso</mat-label>
+
+        <input formControlName="traspaso" matInput type="number" />
+        <mat-error *ngIf="form.controls['traspaso'].hasError('required')">
+          El número de traspaso es <strong> requerido </strong>
+        </mat-error>
+        <mat-icon matSuffix>attach_money</mat-icon>
       </mat-form-field>
       <mat-form-field class="w-50">
-        <mat-label>Folio</mat-label>
+        <mat-label>Folio de Ticket o Factura</mat-label>
 
         <input
           formControlName="folio"
@@ -155,7 +154,7 @@
       <mat-form-field class="w-50">
         <mat-label>Estado Proveedor</mat-label>
         <mat-select formControlName="estado_proveedor" name="estado">
-          <mat-option [value]="option.value" *ngFor="let option of estatusP">{{
+          <mat-option [value]="option.value" *ngFor="let option of statusP">{{
             option.value
           }}</mat-option>
         </mat-select>
@@ -205,7 +204,7 @@
       <mat-form-field class="w-50">
         <mat-label>Estado Cliente</mat-label>
         <mat-select formControlName="estado_cliente" name="estado_cliente">
-          <mat-option [value]="option.value" *ngFor="let option of estatusC">{{
+          <mat-option [value]="option.value" *ngFor="let option of statusC">{{
             option.value
           }}</mat-option>
         </mat-select>

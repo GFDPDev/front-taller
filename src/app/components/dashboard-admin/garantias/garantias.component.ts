@@ -80,7 +80,6 @@ export class GarantiasComponent implements OnInit, AfterViewInit, OnDestroy {
   displayedColumns: string[] = [
     'id',
     'fecha_registro',
-    'comprobante',
     'folio',
     'producto',
     'marca',

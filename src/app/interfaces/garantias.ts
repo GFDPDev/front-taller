@@ -6,7 +6,7 @@
 
 export interface GarantiasRes {
   id:                       number;
-  comprobante:              string;
+  traspaso:                 number;
   autorizo:                 string;
   folio:                    string;
   fecha_registro:           Date;
