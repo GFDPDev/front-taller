@@ -93,6 +93,9 @@ export class GarantiaDialogComponent {
       value: 'EN TRÁMITE',
     },
     {
+      value: 'DEVOLUCIÓN',
+    },
+    {
       value: 'NO AUTORIZADO',
     },
     {
