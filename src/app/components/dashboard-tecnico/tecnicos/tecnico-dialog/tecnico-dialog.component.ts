@@ -40,6 +40,7 @@ import { MainService } from 'src/app/services/main.service';
 import { ToolService } from 'src/app/interfaces/toolservice';
 import { Res } from 'src/app/interfaces/response';
 import * as moment from 'moment';
+import { ajax } from 'rxjs/ajax';
 
 export const MY_FORMATS = {
   parse: {
@@ -342,10 +343,41 @@ export class TecnicoDialogComponent implements OnInit, AfterViewInit {
     return duration;
   }
   marcarTerminado() {
+    let telefono = this.clientesControl.value.telefono;
+    let mensaje = 'Buen día, estimado cliente. Centro de Servicio Don Pedro le informa que su ' +
+    this.data.producto +
+    ' esta listo para la entrega. Favor presentarse con su talón de entrega de equipo. Número de Folio: ' +
+    this.data.id +
+    ' Importe Total: $' +
+    this.form.value.importe +
+    '. ' +
+    this.form.value.observaciones ?? '';
     const now = moment();
     this.form.controls['estatus'].setValue('TERMINADO');
     this.form.controls['fecha_terminado'].setValue(now.format('YYYY-MM-DD'));
-    this.onAdd();
+    ajax.post("http://192.168.50.200:3001/lead", {
+      message : 
+      mensaje,
+      phone : "521" + telefono 
+    }, { 'Content-Type': 'application/json' })
+      .subscribe({
+        next: (res:any)=>{
+          console.log(res.response.responseExSave.id)
+          if(res.response.responseExSave.id != undefined){
+            this.form.controls['avisado'].setValue(2);
+            this.onAdd();
+            
+          } else {
+            this.onAdd();
+            this.snackbar.open(`No se envió el mensaje`, 'Aceptar', {
+              duration: 4000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
+            });
+
+          }
+        }
+      });
   }
   marcarEntregado() {
     const now = moment();

@@ -192,8 +192,8 @@ export class ExpressComponent implements OnInit {
         'id',
         'encargado',
         'herramienta',
-        'fecha',
         'cotizacion',
+        'falla',
         'importe',
       ]);
     }, 1500);

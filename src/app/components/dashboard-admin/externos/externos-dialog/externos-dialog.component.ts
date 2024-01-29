@@ -140,7 +140,7 @@ export class ExternosDialogComponent implements OnInit {
         id: [this.data.id, Validators.required],
         fecha_registro: [this.data.fecha_registro],
         folio: [this.data.folio, Validators.required],
-        garantia: [this.data.garantia, Validators.required],
+        garantia: [this.data.garantia.toString(), Validators.required],
         marca: [this.data.marca, Validators.required],
         id_cliente: [this.data.id_cliente, Validators.required],
         id_usuario: [this.data.id_usuario, Validators.required],

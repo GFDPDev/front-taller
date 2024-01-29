@@ -72,7 +72,7 @@ export class ServiciosComponent implements OnInit, OnDestroy {
   dataSource = new MatTableDataSource<ToolService>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  date = new UntypedFormControl(moment())
+  date = new UntypedFormControl(moment());
   private eventSubscription!: Subscription;
 
   constructor(
@@ -86,9 +86,11 @@ export class ServiciosComponent implements OnInit, OnDestroy {
   }
   ngOnInit(): void {
     this.getServicios();
-    this.eventSubscription = this.mainService.getServerEvent(`${this.route}/sse`).subscribe(()=>{
-      this.getServicios();
-    })
+    this.eventSubscription = this.mainService
+      .getServerEvent(`${this.route}/sse`)
+      .subscribe(() => {
+        this.getServicios();
+      });
   }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -174,6 +176,8 @@ export class ServiciosComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe((result: ToolService) => {
       if (result) {
+        this.getServicios();
+
         Swal.fire({
           position: 'center',
           icon: 'success',
@@ -191,6 +195,8 @@ export class ServiciosComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe((result: ToolService) => {
       if (result) {
+        this.getServicios();
+
         Swal.fire({
           position: 'center',
           icon: 'success',
@@ -203,8 +209,7 @@ export class ServiciosComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy(): void {
     //Called once, before the instance is destroyed.
-    this.mainService.disconnectEventSource()
+    this.mainService.disconnectEventSource();
     this.eventSubscription.unsubscribe();
-
   }
 }

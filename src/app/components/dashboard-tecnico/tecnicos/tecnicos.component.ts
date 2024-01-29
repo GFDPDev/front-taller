@@ -102,6 +102,8 @@ export class TecnicosComponent implements OnDestroy, OnInit {
     });
     dialogRef.afterClosed().subscribe((result: ToolService) => {
       if (result) {
+        this.getServicios()
+
         Swal.fire({
           position: 'center',
           icon: 'success',
@@ -119,6 +121,7 @@ export class TecnicosComponent implements OnDestroy, OnInit {
     });
     dialogRef.afterClosed().subscribe((result: ToolService) => {
       if (result) {
+        this.getServicios()
         Swal.fire({
           position: 'center',
           icon: 'success',

@@ -198,6 +198,7 @@ export class ExternosComponent implements OnInit {
         'garantia',
         'fecha_registro',
         'marca',
+        'encargado',
         'id_cliente',
         'nombre_cliente',
         'cotizacion',

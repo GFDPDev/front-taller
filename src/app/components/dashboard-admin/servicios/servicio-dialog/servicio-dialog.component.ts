@@ -1,5 +1,7 @@
 import { MarcasRes } from './../../../../interfaces/marcas';
 import { AfterViewInit, Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { ajax } from 'rxjs/ajax';
+
 import {
   FormBuilder,
   FormControl,
@@ -125,7 +127,7 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
     public dialogRef: MatDialogRef<ServicioDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ToolService,
     private mainService: MainService,
-    private snackbar: MatSnackBar
+    private snackbar: MatSnackBar,
   ) {
     this.user = Convert.toUser(sessionStorage.getItem('user_taller') ?? '');
 
@@ -419,10 +421,43 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
     );
   }
   marcarTerminado() {
+    let telefono = this.clientesControl.value.telefono;
+    let mensaje = 'Buen día, estimado cliente. Centro de Servicio Don Pedro le informa que su ' +
+    this.data.producto +
+    ' esta listo para la entrega. Favor presentarse con su talón de entrega de equipo. Número de Folio: ' +
+    this.data.id +
+    ' Importe Total: $' +
+    this.form.value.importe +
+    '. ' +
+    this.form.value.observaciones ?? '';
     const now = moment();
-    this.form.controls['estatus'].setValue('TERMINADO');
+    
     this.form.controls['fecha_terminado'].setValue(now.format('YYYY-MM-DD'));
-    this.onAdd();
+    this.form.controls['estatus'].setValue('TERMINADO');
+
+    ajax.post("http://192.168.50.200:3001/lead", {
+      message : 
+      mensaje,
+      phone : "521" + telefono 
+    }, { 'Content-Type': 'application/json' })
+      .subscribe({
+        next: (res:any)=>{
+          console.log(res.response.responseExSave.id)
+          if(res.response.responseExSave.id != undefined){
+            this.form.controls['avisado'].setValue(2);
+            this.onAdd();
+            
+          } else {
+            this.onAdd();
+            this.snackbar.open(`No se envió el mensaje`, 'Aceptar', {
+              duration: 4000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
+            });
+
+          }
+        }
+      });
   }
   marcarEntregado() {
     const now = moment();

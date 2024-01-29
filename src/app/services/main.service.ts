@@ -71,4 +71,11 @@ export class MainService {
   disconnectEventSource(): void {
     this.eventSource.close();
   }
+
+  sendWhatsappMsg(params: any, route: string): Observable<any>{
+    return this.http.post<any>(route, { params: params, headers:  new HttpHeaders({
+      'accept': 'application/json',
+      'Content-Type': 'application/json'
+    }) });
+  }
 }

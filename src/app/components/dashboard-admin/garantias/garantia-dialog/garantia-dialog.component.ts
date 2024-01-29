@@ -61,6 +61,9 @@ export class GarantiaDialogComponent {
 
   statusP = [
     {
+      value: 'PENDIENTE',
+    },
+    {
       value: 'CANCELADO',
     },
     {
@@ -106,6 +109,9 @@ export class GarantiaDialogComponent {
     },
     {
       value: 'CAMBIO FÍSICO',
+    },
+    {
+      value: 'DEVOLUCIÓN',
     }
   ];
   comprobante = [
