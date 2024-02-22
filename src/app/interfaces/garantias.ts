@@ -6,6 +6,7 @@
 
 export interface GarantiasRes {
   id:                       number;
+  id_servicio:              number;
   traspaso:                 number;
   autorizo:                 string;
   folio:                    string;

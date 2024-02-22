@@ -23,6 +23,10 @@ import { ReporteTablaComponent } from './reportes/reporte-tabla/reporte-tabla.co
 import { EarningsChartComponent } from './graficas/earnings-chart/earnings-chart.component';
 import { StatusChartComponent } from './graficas/status-chart/status-chart.component';
 import { TechChartComponent } from './graficas/tech-chart/tech-chart.component';
+import { AgGridModule } from 'ag-grid-angular';
+import { ButtonRendererComponent } from './ag-grid/button-renderer/button-renderer.component';
+import { CurrencyFormatComponent } from './ag-grid/currency-format/currency-format.component';
+import { DatetimeFormatComponent } from './ag-grid/datetime-format/datetime-format.component';
 
 
 @NgModule({
@@ -44,14 +48,18 @@ import { TechChartComponent } from './graficas/tech-chart/tech-chart.component';
     ExternosDialogComponent,
     EarningsChartComponent,
     StatusChartComponent,
-    TechChartComponent
+    TechChartComponent,
+    ButtonRendererComponent,
+    CurrencyFormatComponent,
+    DatetimeFormatComponent
   ],
   imports: [
     CommonModule,
     DashboardAdminRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    AngularMaterialModule
+    AngularMaterialModule,
+    AgGridModule,
 
   ],
   providers: [CSVService]

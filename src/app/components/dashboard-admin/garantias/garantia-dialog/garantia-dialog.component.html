@@ -39,7 +39,17 @@
 <form [formGroup]="form" class="mt-3">
   <div mat-dialog-content class="text-center content">
     <div class="row">
-      <mat-form-field class="w-50">
+      <mat-form-field class="w-50 col">
+        <mat-label>Folio Servicio</mat-label>
+        <input
+          formControlName="id_servicio"
+          oninput="this.value = this.value.toUpperCase()"
+          matInput
+          type="text"
+        />
+        <mat-icon matSuffix>tag</mat-icon>
+      </mat-form-field>
+      <mat-form-field class="w-50 col">
         <mat-label>Número de Traspaso</mat-label>
 
         <input formControlName="traspaso" matInput type="number" />
@@ -48,7 +58,7 @@
         </mat-error>
         <mat-icon matSuffix>attach_money</mat-icon>
       </mat-form-field>
-      <mat-form-field class="w-50">
+      <mat-form-field class="w-50 col">
         <mat-label>Folio de Ticket o Factura</mat-label>
 
         <input

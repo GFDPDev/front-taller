@@ -141,6 +141,7 @@ export class GarantiaDialogComponent {
       this.title = 'Actualizar';
       this.form = this.fb.group({
         id: [this.data.id, Validators.required],
+        id_servicio: [this.data.id_servicio],
         traspaso: [this.data.traspaso, Validators.required],
         fecha_registro: [this.data.fecha_registro],
         folio: [this.data.folio, Validators.required],
@@ -166,6 +167,7 @@ export class GarantiaDialogComponent {
       this.title = 'Nuevo';
       this.form = this.fb.group({
         traspaso: ['', Validators.required],
+        id_servicio: [null],
         folio: ['', Validators.required],
         autorizo: [''],
         fecha_registro: [moment().format("YYYY-MM-DD h:mm:ss")],
