@@ -1,61 +1,162 @@
-<mat-grid-list cols="2" [rowHeight]="475">
-    <mat-grid-tile [colspan]="1" [rowspan]="1">
-      <mat-card class="dashboard-card absolute">
-        <mat-card-header>
-            <mat-card-title>Reporte de Servicios Realizados</mat-card-title>
-            <mat-card-subtitle>Seleccione el rango mensual para generar el reporte.</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content class="text-center margen">
-            <mat-form-field  class="mt-5 w-75">
-                <mat-label>Día, Mes y Año</mat-label>
+<mat-grid-list cols="3" [rowHeight]="475">
+  <mat-grid-tile [colspan]="1" [rowspan]="1">
+    <mat-card class="dashboard-card absolute">
+      <mat-card-header>
+        <mat-card-title>Reporte de Servicios Realizados</mat-card-title>
+        <mat-card-subtitle
+          >Seleccione el rango mensual para generar el
+          reporte.</mat-card-subtitle
+        >
+      </mat-card-header>
+      <mat-card-content class="text-center margen">
+        <mat-form-field class="mt-5 w-75">
+          <mat-label>Día, Mes y Año</mat-label>
 
-                <mat-date-range-input  [formGroup]="reportRange" [rangePicker]="reportPicker">
-                  <input id="start_date" matStartDate formControlName="start_date" placeholder="Inicio">
-                  <input id="end_date" matEndDate formControlName="end_date" placeholder="Fin">
-                </mat-date-range-input>
-  
-                <mat-datepicker-toggle matSuffix [for]="reportPicker"></mat-datepicker-toggle>
-                <mat-date-range-picker #reportPicker></mat-date-range-picker>
-            </mat-form-field>
-        </mat-card-content>
-        <mat-card-actions class="justify-content-evenly">
-            <a color="primary" target="_blank" class="mb-3" mat-raised-button (click)="getReport()"> <mat-icon>post_add</mat-icon> Generar Reporte</a>
-        </mat-card-actions>
+          <mat-date-range-input
+            [formGroup]="reportRange"
+            [rangePicker]="reportPicker"
+          >
+            <input
+              id="start_date"
+              matStartDate
+              formControlName="start_date"
+              placeholder="Inicio"
+            />
+            <input
+              id="end_date"
+              matEndDate
+              formControlName="end_date"
+              placeholder="Fin"
+            />
+          </mat-date-range-input>
+
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="reportPicker"
+          ></mat-datepicker-toggle>
+          <mat-date-range-picker #reportPicker></mat-date-range-picker>
+        </mat-form-field>
+      </mat-card-content>
+      <mat-card-actions class="justify-content-evenly">
+        <a
+          color="primary"
+          target="_blank"
+          class="mb-3"
+          mat-raised-button
+          (click)="getReport()"
+        >
+          <mat-icon>post_add</mat-icon> Generar Reporte</a
+        >
+      </mat-card-actions>
     </mat-card>
-    </mat-grid-tile>
-    <mat-grid-tile [colspan]="1" [rowspan]="1">
-        <mat-card class="dashboard-card absolute">
-            <mat-card-header>
-                <mat-card-title>Excel de Servicios Registrados</mat-card-title>
-                <mat-card-subtitle>Seleccione el rango mensual para generar el reporte.</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content class="text-center margen">
-                <mat-form-field  class="mt-5 w-75">
-                  <mat-label>Día, Mes y Año</mat-label>
-    
-                  <mat-date-range-input [formGroup]="serviceRange" [rangePicker]="picker">
-                    <input id="start_dater" matStartDate formControlName="start_date" placeholder="Inicio">
-                    <input id="end_dater" matEndDate formControlName="end_date" placeholder="Fin">
-                  </mat-date-range-input>
-    
-                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                  <mat-date-range-picker #picker></mat-date-range-picker>
-    
-                </mat-form-field>
-            </mat-card-content>
-            <mat-card-actions class="justify-content-evenly">
-                <button mat-raised-button class="mb-3 csv-button" (click)="getCSVRango()"> <mat-icon>save_alt</mat-icon> Descargar Excel</button>
-            </mat-card-actions>
-        </mat-card>
-    
-    </mat-grid-tile>
-    <mat-grid-tile [colspan]="2" [rowspan]="2">
-        <app-earnings-chart></app-earnings-chart>
-    </mat-grid-tile>
-    <mat-grid-tile [colspan]="1" [rowspan]="1">
-        <app-status-chart></app-status-chart>
-    </mat-grid-tile>
-    <mat-grid-tile [colspan]="1" [rowspan]="1">
-        <app-tech-chart></app-tech-chart>
-    </mat-grid-tile>
+  </mat-grid-tile>
+  <mat-grid-tile [colspan]="1" [rowspan]="1">
+    <mat-card class="dashboard-card absolute">
+      <mat-card-header>
+        <mat-card-title>Excel de Servicios Registrados</mat-card-title>
+        <mat-card-subtitle
+          >Seleccione el rango mensual para generar el
+          reporte.</mat-card-subtitle
+        >
+      </mat-card-header>
+      <mat-card-content class="text-center margen">
+        <mat-form-field class="mt-5 w-75">
+          <mat-label>Día, Mes y Año</mat-label>
+
+          <mat-date-range-input
+            [formGroup]="serviceRange"
+            [rangePicker]="picker"
+          >
+            <input
+              id="start_dater"
+              matStartDate
+              formControlName="start_date"
+              placeholder="Inicio"
+            />
+            <input
+              id="end_dater"
+              matEndDate
+              formControlName="end_date"
+              placeholder="Fin"
+            />
+          </mat-date-range-input>
+
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+      </mat-card-content>
+      <mat-card-actions class="justify-content-evenly">
+        <button
+          mat-raised-button
+          class="mb-3 csv-button"
+          (click)="getCSVServicio()"
+        >
+          <mat-icon>save_alt</mat-icon> Descargar Excel
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </mat-grid-tile>
+  <mat-grid-tile [colspan]="1" [rowspan]="1">
+    <mat-card class="dashboard-card absolute">
+      <mat-card-header>
+        <mat-card-title>Excel de Garantías</mat-card-title>
+        <mat-card-subtitle
+          >Seleccione el rango mensual para generar el
+          reporte.</mat-card-subtitle
+        >
+      </mat-card-header>
+      <mat-card-content class="text-center margen">
+        <mat-form-field class="mt-5 w-75">
+          <mat-label>Día, Mes y Año</mat-label>
+
+          <mat-date-range-input
+            [formGroup]="warrantyRange"
+            [rangePicker]="warrantyPicker"
+          >
+            <input
+              id="start_dater"
+              matStartDate
+              formControlName="start_date"
+              placeholder="Inicio"
+            />
+            <input
+              id="end_dater"
+              matEndDate
+              formControlName="end_date"
+              placeholder="Fin"
+            />
+          </mat-date-range-input>
+
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="warrantyPicker"
+          ></mat-datepicker-toggle>
+          <mat-date-range-picker #warrantyPicker></mat-date-range-picker>
+        </mat-form-field>
+      </mat-card-content>
+      <mat-card-actions class="justify-content-evenly">
+        <button
+          mat-raised-button
+          class="mb-3 csv-button"
+          (click)="getCSVGarantia()"
+        >
+          <mat-icon>save_alt</mat-icon> Descargar Excel
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </mat-grid-tile>
+  <mat-grid-tile [colspan]="3" [rowspan]="2">
+    <app-earnings-chart></app-earnings-chart>
+  </mat-grid-tile>
+</mat-grid-list>
+<mat-grid-list cols="2" [rowHeight]="475">
+  <mat-grid-tile [colspan]="1" [rowspan]="1">
+    <app-status-chart></app-status-chart>
+  </mat-grid-tile>
+  <mat-grid-tile [colspan]="1" [rowspan]="1">
+    <app-tech-chart></app-tech-chart>
+  </mat-grid-tile>
 </mat-grid-list>

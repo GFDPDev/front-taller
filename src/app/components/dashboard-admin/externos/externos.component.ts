@@ -25,6 +25,17 @@ import { ExternosDialogComponent } from './externos-dialog/externos-dialog.compo
 import { CSVService } from 'src/app/services/csv.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Res } from 'src/app/interfaces/response';
+import {
+  CellClickedEvent,
+  ColDef,
+  GridReadyEvent,
+  SizeColumnsToContentStrategy,
+  SizeColumnsToFitGridStrategy,
+  SizeColumnsToFitProvidedWidthStrategy,
+} from 'ag-grid-community';
+import { AgGridAngular } from 'ag-grid-angular';
+import { DatetimeFormatComponent } from '../ag-grid/datetime-format/datetime-format.component';
+import { ButtonRendererComponent } from '../ag-grid/button-renderer/button-renderer.component';
 export const MY_FORMATS = {
   parse: {
     dateInput: 'MM/YYYY',
@@ -51,40 +62,116 @@ export const MY_FORMATS = {
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
 })
-export class ExternosComponent implements OnInit {
+export class ExternosComponent {
   private route = '/external';
-  displayedColumns: string[] = [
-    'id',
-    'nombre_cliente',
-    'encargado',
-    'folio',
-    'marca',
-    'cotizacion',
-    'estado',
-    'cita',
-    'acciones',
-  ];
-  dataSource = new MatTableDataSource<ExternosRes>();
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
   date = new UntypedFormControl(moment());
+  public columnDefs: ColDef[] = [
+    {
+      headerName: 'No.',
+      field: 'id',
+      cellStyle: { textAlign: 'center' },
+    },
+    {
+      headerName: 'Fecha de Registro',
+      field: 'fecha_registro',
+      cellStyle: { textAlign: 'center' },
+      filter: 'agDateColumnFilter',
+      hide: true
+    },
+    {
+      headerName: 'Garantía',
+      field: 'garantia',
+      cellStyle: { textAlign: 'center' },
+      hide: true
+    },
+    {
+      headerName: 'Cliente',
+      field: 'nombre_cliente',
+      cellStyle: { textAlign: 'center' },
+    },
+    {
+      headerName: 'Encargado',
+      field: 'encargado',
+      cellStyle: { textAlign: 'center' },
+    },
+    {
+      headerName: 'Folio',
+      field: 'folio',
+      cellStyle: { textAlign: 'center' },
+    },
+    {
+      headerName: 'Marca',
+      field: 'marca',
+      cellStyle: { textAlign: 'center' },
+    },
+    {
+      headerName: 'Cotización',
+      field: 'cotizacion',
+      cellStyle: { textAlign: 'center' },
+      width: 130,
+    },
+    {
+      headerName: 'Estado',
+      field: 'estado',
+      cellStyle: { textAlign: 'center' },
+    },
+    {
+      headerName: 'Cita',
+      field: 'cita',
+      cellRenderer: DatetimeFormatComponent,
+      cellStyle: { textAlign: 'center' },
+    },
+    {
+      headerName: 'Observaciones',
+      field: 'observaciones',
+      cellRenderer: DatetimeFormatComponent,
+      cellStyle: { textAlign: 'center' },
+      hide: true
+    },
+    {
+      headerName: '',
+      field: 'delete',
+      cellRenderer: ButtonRendererComponent,
+      cellRendererParams: {
+        icon: 'delete',
+        color: 'warn',
+        tooltip: 'Eliminar Registro',
+      },
+      cellStyle: { textAlign: 'center' },
+
+      filter: false,
+      flex: 1,
+    },
+  ];
+  public defaultColDef: ColDef = {
+    sortable: true,
+    filter: true,
+  };
+  public autoSizeStrategy:
+    | SizeColumnsToFitGridStrategy
+    | SizeColumnsToFitProvidedWidthStrategy
+    | SizeColumnsToContentStrategy = {
+    type: 'fitGridWidth',
+  };
+  public rowData: ExternosRes[] = [];
+  public paginationPageSizeSelector = [20, 50, 100];
+  public paginationPageSize = 20;
+  @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
   constructor(
     private snackbar: MatSnackBar,
-    private csv: CSVService,
     private mainService: MainService,
     public dialog: MatDialog
   ) {}
-
-  ngOnInit(): void {
+  onGridReady(params: GridReadyEvent) {
     this.getServicios();
   }
-  ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  onCellClicked(e: CellClickedEvent): void {
+    const id = e.column.getColId();
+    if (id == 'delete') {
+      this.deleteServicio(e.data);
+    } else {
+      this.updateServicio(e.data);
+    }
   }
   setMonthAndYear(
     normalizedMonthAndYear: Moment,
@@ -111,15 +198,17 @@ export class ExternosComponent implements OnInit {
             verticalPosition: 'top',
           });
         } else {
-          this.dataSource.data = res.data;
+          this.rowData = res.data;
         }
       });
   }
 
-  deleteServicio(id: String, nombre: String) {
+  deleteServicio(servicio: ExternosRes) {
     Swal.fire({
       title:
-        '¿Seguro que quiere eliminar el servicio del cliente ' + nombre + '?',
+        '¿Seguro que quiere eliminar el servicio del cliente ' +
+        servicio.nombre_cliente +
+        '?',
       text: 'Esta operación no se puede revertir.',
       icon: 'warning',
       showCancelButton: true,
@@ -128,12 +217,14 @@ export class ExternosComponent implements OnInit {
     }).then((result) => {
       if (result.value) {
         this.mainService
-          .deleteRequest({}, `${this.route}/${id}`)
+          .deleteRequest({}, `${this.route}/${servicio.id}`)
           .subscribe((data) => {
             this.getServicios();
             Swal.fire(
               'Eliminado',
-              'El servicio #' + id + ' ha sido eliminado del registro.',
+              'El servicio #' +
+                servicio.id +
+                ' ha sido eliminado del registro.',
               'success'
             );
           });
@@ -183,31 +274,6 @@ export class ExternosComponent implements OnInit {
     });
   }
   getCSVMes() {
-    let data = this.dataSource.filteredData;
-    data.forEach((servicio) => {
-      servicio.observaciones = servicio.observaciones?.replace(
-        /(\r\n|\n|\r)/gm,
-        ''
-      );
-    });
-    let jsonReporte = Convert.externosResToJson(data);
-    setTimeout(() => {
-      this.csv.downloadFile(jsonReporte, 'Externos', [
-        'id',
-        'folio',
-        'garantia',
-        'fecha_registro',
-        'marca',
-        'encargado',
-        'id_cliente',
-        'nombre_cliente',
-        'cotizacion',
-        'importe',
-        'cita',
-        'estado',
-        'observaciones',
-        'avisado',
-      ]);
-    }, 1500);
+    this.agGrid.api.exportDataAsCsv({ allColumns: true, columnSeparator: ';' });
   }
 }

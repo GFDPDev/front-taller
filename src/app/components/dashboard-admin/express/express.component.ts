@@ -1,8 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import {
   MomentDateAdapter,
   MAT_MOMENT_DATE_ADAPTER_OPTIONS,
@@ -21,11 +18,22 @@ import Swal from 'sweetalert2';
 import { UntypedFormControl } from '@angular/forms';
 import * as moment from 'moment';
 import { ExpressAdminComponent } from './express-admin/express-admin.component';
-import { CSVService } from 'src/app/services/csv.service';
 import { MainService } from 'src/app/services/main.service';
 import { ExpressRes, Convert } from 'src/app/interfaces/express';
 import { Res } from 'src/app/interfaces/response';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import {
+  CellClickedEvent,
+  ColDef,
+  GridReadyEvent,
+  SizeColumnsToContentStrategy,
+  SizeColumnsToFitGridStrategy,
+  SizeColumnsToFitProvidedWidthStrategy,
+  ValueFormatterParams,
+} from 'ag-grid-community';
+import { ButtonRendererComponent } from '../ag-grid/button-renderer/button-renderer.component';
+import { AgGridAngular } from 'ag-grid-angular';
+import { CurrencyFormatComponent } from '../ag-grid/currency-format/currency-format.component';
 export const MY_FORMATS = {
   parse: {
     dateInput: 'MM/YYYY',
@@ -52,35 +60,93 @@ export const MY_FORMATS = {
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
 })
-export class ExpressComponent implements OnInit {
+export class ExpressComponent {
   private route = '/express';
-  displayedColumns: string[] = [
-    'id',
-    'encargado',
-    'herramienta',
-    'cotizacion',
-    'falla',
-    'importe',
-    'acciones',
-  ];
-  dataSource = new MatTableDataSource<ExpressRes>();
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
   date = new UntypedFormControl(moment());
+  public columnDefs: ColDef[] = [
+    {
+      headerName: 'No.',
+      field: 'id',
+      cellStyle: { textAlign: 'center' },
+      width: 250
+
+    },
+    {
+      headerName: 'Fecha',
+      field: 'fecha',
+      hide: true
+    },
+    {
+      headerName: 'Encargado',
+      field: 'encargado',
+      cellStyle: { textAlign: 'center' },
+      width: 270
+    },
+    {
+      headerName: 'Herramienta',
+      field: 'herramienta',
+      cellStyle: { textAlign: 'center' },
+      width: 270
+    },
+    {
+      headerName: 'Cotizacion',
+      field: 'cotizacion',
+      cellStyle: { textAlign: 'center' },
+      width: 270
+
+    },
+    {
+      headerName: 'Falla',
+      field: 'falla',
+      cellStyle: { textAlign: 'center' },
+      width: 270
+
+    },
+    {
+      headerName: 'Importe',
+      field: 'importe',
+      cellRenderer: CurrencyFormatComponent,
+      cellStyle: { textAlign: 'center' },
+      width: 260,
+    },
+    {
+      headerName: '',
+      field: 'delete',
+      cellRenderer: ButtonRendererComponent,
+      cellRendererParams: {
+        icon: 'delete',
+        color: 'warn',
+        tooltip: 'Eliminar Registro',
+      },
+      cellStyle: { textAlign: 'center' },
+
+      width: 80,
+      flex: 1,
+      filter: false
+    },
+  ];
+  public defaultColDef: ColDef = {
+    sortable: true,
+    filter: true,
+  };
+  public autoSizeStrategy:
+    | SizeColumnsToFitGridStrategy
+    | SizeColumnsToFitProvidedWidthStrategy
+    | SizeColumnsToContentStrategy = {
+    type: 'fitGridWidth',
+
+  };
+  public rowData: ExpressRes[] = [];
+  public paginationPageSizeSelector = [20, 50, 100];
+  public paginationPageSize = 20;
+  @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
+
   constructor(
     private snackbar: MatSnackBar,
-    private csv: CSVService,
     private mainService: MainService,
     public dialog: MatDialog
   ) {}
 
-  ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
-  ngOnInit(): void {
-    this.getExpress();
-  }
   getExpress() {
     this.mainService
       .getRequest(
@@ -95,13 +161,20 @@ export class ExpressComponent implements OnInit {
             verticalPosition: 'top',
           });
         } else {
-          this.dataSource.data = res.data;
+          this.rowData = res.data;
         }
       });
   }
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  onGridReady(params: GridReadyEvent) {
+    this.getExpress();
+  }
+  onCellClicked(e: CellClickedEvent): void {
+    const id = e.column.getColId();
+    if (id == 'delete') {
+      this.deleteServicio(e.data);
+    } else {
+      this.updateServicio(e.data);
+    }
   }
   setMonthAndYear(
     normalizedMonthAndYear: Moment,
@@ -114,7 +187,6 @@ export class ExpressComponent implements OnInit {
     this.getExpress();
     datepicker.close();
   }
-
   createServicio() {
     const dialogRef = this.dialog.open(ExpressAdminComponent, {
       width: '50%',
@@ -152,9 +224,9 @@ export class ExpressComponent implements OnInit {
     });
   }
 
-  deleteServicio(id: String) {
+  deleteServicio(express:ExpressRes) {
     Swal.fire({
-      title: '¿Seguro que quiere eliminar el servicio #' + id + '?',
+      title: '¿Seguro que quiere eliminar el servicio #' + express.id + '?',
       text: 'Esta operación no se puede revertir.',
       icon: 'warning',
       showCancelButton: true,
@@ -163,12 +235,12 @@ export class ExpressComponent implements OnInit {
     }).then((result) => {
       if (result.value) {
         this.mainService
-          .deleteRequest({}, `${this.route}/${id}`)
+          .deleteRequest({}, `${this.route}/${express.id}`)
           .subscribe((data) => {
             this.getExpress();
             Swal.fire(
               'Eliminado',
-              'El servicio #' + id + ' ha sido eliminado del registro.',
+              'El servicio #' + express.id + ' ha sido eliminado del registro.',
               'success'
             );
           });
@@ -183,19 +255,6 @@ export class ExpressComponent implements OnInit {
     this.getExpress();
   }
   getCSVMes() {
-    this.dataSource.filteredData.forEach((servicio) => {
-      servicio.falla = servicio.falla.replace(/(\r\n|\n|\r)/gm, '');
-    });
-    let jsonReporte = Convert.expressResToJson(this.dataSource.filteredData);
-    setTimeout(() => {
-      this.csv.downloadFile(jsonReporte, 'Express', [
-        'id',
-        'encargado',
-        'herramienta',
-        'cotizacion',
-        'falla',
-        'importe',
-      ]);
-    }, 1500);
+    this.agGrid.api.exportDataAsCsv({ allColumns: true, columnSeparator: ';' });
   }
 }

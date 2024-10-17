@@ -141,12 +141,19 @@ export class GarantiaDialogComponent {
       this.title = 'Actualizar';
       this.form = this.fb.group({
         id: [this.data.id, Validators.required],
+        id_servicio: [this.data.id_servicio],
         traspaso: [this.data.traspaso, Validators.required],
         fecha_registro: [this.data.fecha_registro],
         folio: [this.data.folio, Validators.required],
         autorizo: [this.data.autorizo],
         producto: [this.data.producto, Validators.required],
         marca: [this.data.marca, Validators.required],
+        telefono: [this.data.telefono,   
+          [
+          Validators.minLength(10),
+          Validators.pattern('^[0-9]*$'),
+        ],],
+        serie: [this.data.serie],
         modelo: [this.data.modelo, Validators.required],
         cantidad: [this.data.cantidad, Validators.required],
         costo_unitario: [this.data.costo_unitario, Validators.required],
@@ -166,12 +173,18 @@ export class GarantiaDialogComponent {
       this.title = 'Nuevo';
       this.form = this.fb.group({
         traspaso: ['', Validators.required],
+        id_servicio: [null],
         folio: ['', Validators.required],
         autorizo: [''],
         fecha_registro: [moment().format("YYYY-MM-DD h:mm:ss")],
         producto: ['', Validators.required],
         marca: ['', Validators.required],
         modelo: ['', Validators.required],
+        telefono: ['',  [
+          Validators.minLength(10),
+          Validators.pattern('^[0-9]*$'),
+        ],],
+        serie: [''],
         cantidad: ['', Validators.required],
         costo_unitario: ['', Validators.required],
         total: ['', Validators.required],
@@ -266,6 +279,19 @@ export class GarantiaDialogComponent {
       });
     });
   }
+  avisar() {
+    let telefono = this.form.controls["telefono"].value;
+    let producto = this.form.controls["producto"].value;
+    let marca = this.form.controls["marca"].value;
+
+    let mensaje =
+      `Buen día, estimado cliente. Centro de Servicio Don Pedro le informa que la garantía ${this.data.id} de su ${producto} ${marca} fue aprobada. Favor pasar al Centro de Servicio para su recolección.`;
+    window.open(
+      'https://web.whatsapp.com/send?phone=521' + telefono + '&text=' + mensaje,
+      '_blank'
+    );
+  }
+
   verDoc() {
     this.mainService
       .getFile(`/file/${this.form.controls["doc"].value}`)

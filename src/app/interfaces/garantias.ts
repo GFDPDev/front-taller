@@ -6,12 +6,15 @@
 
 export interface GarantiasRes {
   id:                       number;
+  id_servicio:              number;
   traspaso:                 number;
   autorizo:                 string;
   folio:                    string;
   fecha_registro:           Date;
   producto:                 string;
   marca:                    string;
+  telefono:                 string;
+  serie:                    string;
   modelo:                   string;
   cantidad:                 number;
   costo_unitario:           number;

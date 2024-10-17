@@ -11,6 +11,7 @@ import { MainService } from 'src/app/services/main.service';
 import { Convert, ToolService } from 'src/app/interfaces/toolservice';
 import { Res } from 'src/app/interfaces/response';
 import { formatDate } from '@angular/common';
+import { GarantiasRes, Convert as ConvertG } from 'src/app/interfaces/garantias';
 
 
 export const MY_FORMATS = {
@@ -43,6 +44,8 @@ export const MY_FORMATS = {
 export class ReportesComponent {
   reportRange!: FormGroup;
   serviceRange! : FormGroup;
+  warrantyRange! : FormGroup;
+
   route = "/service/by_range"
   
   constructor(public router: Router, private csv: CSVService, private fb: FormBuilder, private mainService: MainService) {
@@ -56,6 +59,11 @@ export class ReportesComponent {
       end_date : [moment()]
 
     })
+    this.warrantyRange = this.fb.group({
+      start_date : [moment()],
+      end_date : [moment()]
+
+    })
   }
   getReport(){
     const url = this.router.serializeUrl(
@@ -63,7 +71,7 @@ export class ReportesComponent {
     );
     window.open(url, '_blank');
   }
-  getCSVRango(){
+  getCSVServicio(){
     const obj = this.serviceRange.value;
     obj.start_date = obj.start_date.format('YYYY-MM-DD')
     obj.end_date = obj.end_date.format('YYYY-MM-DD')
@@ -76,6 +84,43 @@ export class ReportesComponent {
       let jsonReporte = Convert.toolServiceToJson(data);
       setTimeout(()=>{
         this.csv.downloadFile(jsonReporte, 'Reporte', ['id','id_cliente', 'id_usuario', 'nombre_cliente', 'telefono_cliente', 'encargado', 'fecha_ingreso', 'producto', 'marca', 'modelo', 'tipo', 'serie', 'garantia', 'falla_detectada', 'cotizacion', 'fecha_terminado', 'fecha_entrega', 'importe', 'estatus', 'observaciones'])
+
+        }, 1500);
+    });
+  }
+  getCSVGarantia(){
+    const obj = this.warrantyRange.value;
+    obj.start_date = obj.start_date.format('YYYY-MM-DD')
+    obj.end_date = obj.end_date.format('YYYY-MM-DD')
+    this.mainService.getRequest(obj, '/warranty/by_range').subscribe((res: Res)=>{
+      const data: GarantiasRes[] = res.data;
+      data.forEach(garantia => {
+        garantia.motivo = garantia.motivo.replace(/(\r\n|\n|\r)/gm, "");
+      });
+      let jsonReporte = ConvertG.garantiasResToJson(data);
+      setTimeout(()=>{
+        this.csv.downloadFile(jsonReporte, 'Reporte', [
+          'id',
+          'traspaso',
+          'autorizo',
+          'folio',
+          'fecha_registro',
+          'producto',
+          'marca',
+          'modelo',
+          'cantidad',
+          'costo_unitario',
+          'total',
+          'motivo',
+          'fecha_proveedor',
+          'fecha_resuelto_proveedor',
+          'fecha_resuelto_cliente',
+          'estado_cliente',
+          'estado_proveedor',
+          'id_modificado',
+          'modificador',
+          'doc'
+        ])
 
         }, 1500);
     });

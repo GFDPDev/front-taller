@@ -4,7 +4,7 @@
   </h1>
 </div>
 <div class="row gutter justify-content-evenly">
-  <div class="col-12 col-lg-4 text-center" *ngIf="form.controls['doc'].value">
+  <div class="col-12 col-lg-3 text-center" *ngIf="form.controls['doc'].value">
     <button
     *ngIf="form.controls['doc'].value"
     (click)="verDoc()"
@@ -15,13 +15,22 @@
     <mat-icon matSuffix>visibility</mat-icon> Ver Documento
   </button>
   </div>
-  <div class="col-12 col-lg-4 text-center" *ngIf="form.controls['doc'].value">
+  <div class="col-12 col-lg-3 text-center" *ngIf="form.controls['telefono'].value">
+    <button
+    (click)="avisar()"
+    mat-raised-button
+    class="whatsapp-button"
+    >
+      <mat-icon>phone</mat-icon> Avisar a Cliente
+    </button>
+  </div>
+  <div class="col-12 col-lg-3 text-center" *ngIf="form.controls['doc'].value">
 
     <span>{{
       form.controls["doc"].value
     }}</span>
   </div>
-  <div class="col-12 col-lg-4 text-center">
+  <div class="col-12 col-lg-3 text-center">
     <button
     type="button"
     mat-raised-button
@@ -39,7 +48,17 @@
 <form [formGroup]="form" class="mt-3">
   <div mat-dialog-content class="text-center content">
     <div class="row">
-      <mat-form-field class="w-50">
+      <mat-form-field class="w-50 col">
+        <mat-label>Folio Servicio</mat-label>
+        <input
+          formControlName="id_servicio"
+          oninput="this.value = this.value.toUpperCase()"
+          matInput
+          type="text"
+        />
+        <mat-icon matSuffix>tag</mat-icon>
+      </mat-form-field>
+      <mat-form-field class="w-50 col">
         <mat-label>Número de Traspaso</mat-label>
 
         <input formControlName="traspaso" matInput type="number" />
@@ -48,7 +67,7 @@
         </mat-error>
         <mat-icon matSuffix>attach_money</mat-icon>
       </mat-form-field>
-      <mat-form-field class="w-50">
+      <mat-form-field class="w-50 col">
         <mat-label>Folio de Ticket o Factura</mat-label>
 
         <input
@@ -65,7 +84,7 @@
     </div>
 
     <div class="row">
-      <mat-form-field class="w-50">
+      <mat-form-field class="col w-50">
         <mat-label>Producto</mat-label>
 
         <input
@@ -79,7 +98,21 @@
         </mat-error>
         <mat-icon matSuffix>inventory_2</mat-icon>
       </mat-form-field>
-      <mat-form-field class="w-50">
+      <mat-form-field class="col w-50">
+        <mat-label>Serie</mat-label>
+
+        <input
+          formControlName="serie"
+          oninput="this.value = this.value.toUpperCase()"
+          matInput
+          type="text"
+        />
+        <mat-error *ngIf="form.controls['serie'].hasError('required')">
+          El número de serie es <strong> requerido </strong>
+        </mat-error>
+        <mat-icon matSuffix>pin</mat-icon>
+      </mat-form-field>
+      <mat-form-field class="col w-50">
         <mat-label>Marca</mat-label>
         <input
           formControlName="marca"
@@ -91,6 +124,19 @@
           La marca es <strong> requerida </strong>
         </mat-error>
         <mat-icon matSuffix>bookmark</mat-icon>
+      </mat-form-field>
+      <mat-form-field class="col w-50">
+        <mat-label>Teléfono</mat-label>
+
+        <input
+          pattern="^[0-9]*$"
+          formControlName="telefono"
+          matInput
+          type="text"
+          maxlength="10"
+          minlength="10"
+        />
+        <mat-icon matSuffix>phone</mat-icon>
       </mat-form-field>
     </div>
     <div class="row">
