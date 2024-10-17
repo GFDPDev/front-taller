@@ -66,6 +66,7 @@ export class ServiciosComponent implements OnDestroy {
   eventSource!: EventSource;
   date = new UntypedFormControl(moment());
   private eventSubscription!: Subscription;
+  private intervalId: any;
 
   public columnDefs: ColDef[] = [
     {
@@ -218,6 +219,10 @@ export class ServiciosComponent implements OnDestroy {
     private router: Router
   ) {}
   ngOnInit(): void {
+    this.intervalId = setInterval(() => {
+      this.getServicios();
+    }, 180000);
+
     this.eventSubscription = this.mainService
       .getServerEvent(`${this.route}/sse`)
       .subscribe(() => {
@@ -356,6 +361,9 @@ export class ServiciosComponent implements OnDestroy {
   }
   ngOnDestroy(): void {
     //Called once, before the instance is destroyed.
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
     this.mainService.disconnectEventSource();
     this.eventSubscription.unsubscribe();
   }

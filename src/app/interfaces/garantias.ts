@@ -13,6 +13,8 @@ export interface GarantiasRes {
   fecha_registro:           Date;
   producto:                 string;
   marca:                    string;
+  telefono:                 string;
+  serie:                    string;
   modelo:                   string;
   cantidad:                 number;
   costo_unitario:           number;
