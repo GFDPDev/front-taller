@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,15 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'taller_prod';
+  constructor(private updates: SwUpdate) {
+    if (this.updates.isEnabled) {
+      this.updates.versionUpdates.subscribe(event => {
+        if (event.type === 'VERSION_READY') {
+          if (confirm('Nueva versión disponible. ¿Deseas actualizar?')) {
+            window.location.reload();
+          }
+        }
+      });
+    }
+  }
 }
