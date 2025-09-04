@@ -106,7 +106,7 @@ export class StatusChartComponent implements OnInit {
       let series = chart.series.push(new am4charts.PieSeries());
 
       series.dataFields.value = "total";
-      series.dataFields.category = "main";
+      series.dataFields.category = "estatus";
 
       this.statusChart = chart;
     });

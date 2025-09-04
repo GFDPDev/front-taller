@@ -181,16 +181,11 @@
           matInput
           [matDatepicker]="pickerIngreso"
           formControlName="fecha_ingreso"
-          (dateChange)="onDateChange($event, 'fecha_ingreso')"
-
         />
         <mat-datepicker-toggle
           matSuffix
           [for]="pickerIngreso"
         ></mat-datepicker-toggle>
-        <mat-hint
-          >* Si no selecciona fecha, se guardará la fecha de hoy.</mat-hint
-        >
         <mat-datepicker #pickerIngreso></mat-datepicker>
       </mat-form-field>
     </div>

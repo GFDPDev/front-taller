@@ -138,7 +138,7 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
         id: [this.data.id, Validators.required],
         id_cliente: [this.data.id_cliente, Validators.required],
         id_usuario: [this.data.id_usuario, Validators.required],
-        fecha_ingreso: [this.data.fecha_ingreso],
+        fecha_ingreso: [{ value: this.data.fecha_ingreso, disabled: true }],
         producto: [this.data.producto, Validators.required],
         id_marca: [this.data.id_marca, Validators.required],
         modelo: [this.data.modelo, Validators.required],
@@ -162,7 +162,7 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
       this.form = this.fb.group({
         id_cliente: ['', Validators.required],
         id_usuario: ['', Validators.required],
-        fecha_ingreso: [new Date().toISOString().slice(0, 10), Validators.required],
+        fecha_ingreso: [{ value: moment().format('YYYY-MM-DD HH:mm:ss'), disabled: true }],
         producto: ['', Validators.required],
         id_marca: ['', Validators.required],
         modelo: ['', Validators.required],
@@ -226,7 +226,7 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
     
   }
   onAdd(): void {
-    const servicio = this.form.value;
+    const servicio = this.form.getRawValue();
     if (this.isCreateMode()) {
       this.mainService
         .postRequest(servicio, this.route)
@@ -395,7 +395,7 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
         ' Importe Total: $' +
         this.form.value.importe +
         '. ' +
-        this.form.value.observaciones ?? '';
+        this.form.value.observaciones;
     window.open(
       'https://web.whatsapp.com/send?phone=521' + telefono + '&text=' + mensaje,
       '_blank'
@@ -414,7 +414,8 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
         this.data.id +
         ' ¿Desea autorizar el servicio?' +
         ' ' +
-        this.form.value.observaciones ?? '';
+        this.form.value.observaciones + 
+        '\n *Aviso IMPORTANTE:* En caso de no autorizar la reparación, dispone de 3 meses para la recolección del equipo. Pasado este plazo, y por motivos de optimización de espacio, el equipo será considerado como merma y será dispuesto para su destrucción.';
     window.open(
       'https://web.whatsapp.com/send?phone=521' + telefono + '&text=' + mensaje,
       '_blank'
@@ -429,7 +430,7 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
     ' Importe Total: $' +
     this.form.value.importe +
     '. ' +
-    this.form.value.observaciones ?? '';
+    this.form.value.observaciones;
     const now = moment();
     
     this.form.controls['fecha_terminado'].setValue(now.format('YYYY-MM-DD'));

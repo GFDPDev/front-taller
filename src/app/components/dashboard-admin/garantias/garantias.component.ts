@@ -57,6 +57,7 @@ import { ButtonRendererComponent } from '../ag-grid/button-renderer/button-rende
 import { AgGridAngular } from 'ag-grid-angular';
 import { ToolService } from 'src/app/interfaces/toolservice';
 import { Router } from '@angular/router';
+import jsPDF from 'jspdf';
 export const MY_FORMATS = {
   parse: {
     dateInput: 'MM/YYYY',
@@ -115,12 +116,12 @@ export class GarantiasComponent implements OnInit, OnDestroy {
     {
       headerName: 'Numero de Traspaso',
       field: 'traspaso',
-      hide: true
+      hide: true,
     },
     {
       headerName: 'Autorizado por',
       field: 'autorizo',
-      hide: true
+      hide: true,
     },
     {
       headerName: 'F. de Registro',
@@ -151,22 +152,27 @@ export class GarantiasComponent implements OnInit, OnDestroy {
     {
       headerName: 'Modelo',
       field: 'modelo',
-      hide: true
+      hide: true,
+    },
+    {
+      headerName: 'Número de Serie',
+      field: 'serie',
+      hide: true,
     },
     {
       headerName: 'Costo Unitario',
       field: 'costo_unitario',
-      hide: true
+      hide: true,
     },
     {
       headerName: 'Total',
       field: 'total',
-      hide: true
+      hide: true,
     },
     {
       headerName: 'Motivo',
       field: 'motivo',
-      hide: true
+      hide: true,
     },
     {
       headerName: 'Estado de Cliente',
@@ -177,12 +183,12 @@ export class GarantiasComponent implements OnInit, OnDestroy {
     {
       headerName: 'Fecha de Resuelto para Cliente',
       field: 'fecha_resuelto_cliente',
-      hide: true
+      hide: true,
     },
     {
       headerName: 'Fecha de Solicitud a Proveedor',
       field: 'fecha_proveedor',
-      hide: true
+      hide: true,
     },
     {
       headerName: 'Estado de Proveedor',
@@ -193,7 +199,7 @@ export class GarantiasComponent implements OnInit, OnDestroy {
     {
       headerName: 'Fecha de Resuelto para Proveedor',
       field: 'fecha_resuelto_proveedor',
-      hide: true
+      hide: true,
     },
     {
       headerName: '',
@@ -266,10 +272,9 @@ export class GarantiasComponent implements OnInit, OnDestroy {
     const id = e.column.getColId();
     if (id == 'delete') {
       this.deleteGarantia(e.data);
-    } else if(id=='receipt') {
+    } else if (id == 'receipt') {
       this.printReceipt(e.data);
-    }
-    else {
+    } else {
       this.updateGarantia(e.data);
     }
   }
@@ -310,7 +315,7 @@ export class GarantiasComponent implements OnInit, OnDestroy {
     this.getGarantias();
     datepicker.close();
   }
-  deleteGarantia(warranty:GarantiasRes) {
+  deleteGarantia(warranty: GarantiasRes) {
     Swal.fire({
       title: '¿Seguro que quiere eliminar el registro de la garantía?',
       text: 'Esta operación no se puede revertir.',
@@ -371,10 +376,169 @@ export class GarantiasComponent implements OnInit, OnDestroy {
   getCSVGarantia() {
     this.agGrid.api.exportDataAsCsv({ allColumns: true, columnSeparator: ';' });
   }
-  printReceipt(data: GarantiasRes) {
-    const url =  this.router.createUrlTree(['/taller/comprobante', data.id]).toString();
-    window.open(url, '_blank');
 
+  formatCurrency(value: number): string {
+    return new Intl.NumberFormat('es-MX', {
+      style: 'currency',
+      currency: 'MXN',
+    }).format(value);
+  }
+  printReceipt(data: GarantiasRes) {
+    const doc = new jsPDF();
+    const logoPath = 'assets/logo.png'; // La ruta del logo que me proporcionaste en el HTML.
+
+    const xPos = 10;
+    let yPos = 10;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    console.log(doc.getFontList());
+    // Título y logo
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.addImage(logoPath, 'PNG', xPos + 10, yPos, 15, 15); // El logo. Ajusta las coordenadas y el tamaño según sea necesario.
+    doc.setTextColor(181, 63, 161); // Color gris oscuro
+    doc.text('Centro de Servicio Profesional', xPos + 18, yPos + 20, {
+      align: 'center',
+    });
+
+    // Nombre Empresa y Direccion
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0); // Color gris oscuro
+    doc.text('GRUPO FERRETERO DON PEDRO', pageWidth / 2, yPos + 5, {
+      align: 'center',
+    });
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7);
+    doc.text(
+      'CARRETERA SAN MIGUEL A CELAYA KM 2.4 POBLADO DE DON DIEGO CP. 37887',
+      pageWidth / 2,
+      yPos + 10,
+      { align: 'center' }
+    );
+    doc.text('SAN MIGUEL DE ALLENDE, GUANAJUATO', pageWidth / 2, yPos + 15, {
+      align: 'center',
+    });
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.text(`${data.id}`, pageWidth * 0.85, yPos + 10, { align: 'center' });
+    yPos += 30;
+    doc.setFontSize(16);
+    doc.text('COMPROBANTE DE GARANTÍA', pageWidth / 2, yPos, {
+      align: 'center',
+    });
+    // Sección de datos del cliente
+    yPos += 15;
+    doc.setFontSize(12);
+    doc.text('Datos del Producto', xPos, yPos);
+    doc.setDrawColor(0);
+    doc.line(xPos, yPos + 2, pageWidth - 10, yPos + 2);
+    yPos += 10;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text(`Producto: ${data.producto}`, xPos, yPos);
+    doc.text(`Modelo: ${data.modelo}`, pageWidth / 2, yPos);
+    yPos += 10;
+    doc.text(
+      `Fecha de Registro: ${this.dateFormatter(data.fecha_registro)}`,
+      xPos,
+      yPos
+    );
+    doc.text(`Marca: ${data.marca}`, pageWidth / 2, yPos);
+
+    yPos += 15;
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Diagnóstico', xPos, yPos);
+    doc.line(xPos, yPos + 2, pageWidth - 10, yPos + 2);
+    yPos += 10;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+
+    yPos += 15;
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Datos de la Compra', xPos, yPos);
+    doc.setDrawColor(0);
+    doc.line(xPos, yPos + 2, pageWidth - 10, yPos + 2);
+    yPos += 10;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text(`Cantidad: ${data.cantidad}`, xPos, yPos);
+    doc.text(
+      `Precio Unitario: ${this.formatCurrency(data.costo_unitario)}`,
+      pageWidth / 2,
+      yPos
+    );
+    yPos += 10;
+    doc.text(`Total: ${this.formatCurrency(data.total)}`, pageWidth / 2, yPos);
+    doc.text(`Folio: ${data.folio}`, xPos, yPos);
+
+    yPos += 15;
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Seguimiento de Cliente', xPos, yPos);
+    doc.setDrawColor(0);
+    doc.line(xPos, yPos + 2, pageWidth - 10, yPos + 2);
+    yPos += 10;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text(`Autorizado Por: ${data.autorizo}`, xPos, yPos);
+    doc.text(`Estado: ${data.estado_cliente}`, pageWidth / 2, yPos);
+    yPos += 10;
+    doc.text(
+      `Fecha de Resolución: ${
+        data.fecha_resuelto_cliente
+          ? this.dateFormatter(data.fecha_resuelto_cliente)
+          : 'No hay'
+      }`,
+      xPos,
+      yPos
+    );
+
+    yPos += 15;
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Seguimiento con Proveedor', xPos, yPos);
+    doc.setDrawColor(0);
+    doc.line(xPos, yPos + 2, pageWidth - 10, yPos + 2);
+    yPos += 10;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text(`Estado: ${data.estado_cliente}`, xPos, yPos);
+    doc.text(
+      `Fecha de Solicitud a Proveedor: ${
+        data.fecha_proveedor
+          ? this.dateFormatter(data.fecha_proveedor)
+          : 'No hay'
+      }`,
+      pageWidth / 2,
+      yPos
+    );
+    yPos += 10;
+    doc.text(
+      `Fecha de Resolución: ${
+        data.fecha_resuelto_proveedor
+          ? this.dateFormatter(data.fecha_resuelto_proveedor)
+          : 'No hay'
+      }`,
+      xPos,
+      yPos
+    );
+
+    // Firmas
+    yPos += 25;
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Sello Grupo Ferretero Don Pedro', pageWidth / 3.5, yPos, {
+      align: 'center',
+    });
+    doc.text('Nombre y Firma de Cliente', pageWidth / 1.38, yPos, {
+      align: 'center',
+    });
+    yPos += 20;
+    doc.line(xPos + 10, yPos, pageWidth / 2 - 5, yPos);
+    doc.line(pageWidth / 2 + 10, yPos, pageWidth - 20, yPos);
+    window.open(doc.output('bloburl'));
   }
   ngOnDestroy(): void {
     this.theadObserver.disconnect();
