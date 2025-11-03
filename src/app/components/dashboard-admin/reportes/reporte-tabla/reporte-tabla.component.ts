@@ -7,9 +7,10 @@ import { MainService } from 'src/app/services/main.service';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 @Component({
-  selector: 'app-reporte-tabla',
-  templateUrl: './reporte-tabla.component.html',
-  styleUrls: ['./reporte-tabla.component.scss']
+    selector: 'app-reporte-tabla',
+    templateUrl: './reporte-tabla.component.html',
+    styleUrls: ['./reporte-tabla.component.scss'],
+    standalone: false
 })
 export class ReporteTablaComponent implements OnInit {
   route = "/report"

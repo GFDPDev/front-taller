@@ -6,9 +6,10 @@ import { Router, NavigationEnd } from '@angular/router';
 import { User, Convert } from 'src/app/interfaces/user';
 
 @Component({
-  selector: 'app-dashboard-tecnico',
-  templateUrl: './dashboard-tecnico.component.html',
-  styleUrls: ['./dashboard-tecnico.component.scss']
+    selector: 'app-dashboard-tecnico',
+    templateUrl: './dashboard-tecnico.component.html',
+    styleUrls: ['./dashboard-tecnico.component.scss'],
+    standalone: false
 })
 export class DashboardTecnicoComponent {
 

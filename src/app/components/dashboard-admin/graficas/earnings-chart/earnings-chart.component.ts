@@ -11,9 +11,10 @@ import { FormControl } from '@angular/forms';
 import { Chart } from 'src/app/interfaces/chart';
 
 @Component({
-  selector: 'app-earnings-chart',
-  templateUrl: './earnings-chart.component.html',
-  styleUrls: ['./earnings-chart.component.scss'],
+    selector: 'app-earnings-chart',
+    templateUrl: './earnings-chart.component.html',
+    styleUrls: ['./earnings-chart.component.scss'],
+    standalone: false
 })
 export class EarningsChartComponent implements OnInit {
   private route = '/chart/earnings';

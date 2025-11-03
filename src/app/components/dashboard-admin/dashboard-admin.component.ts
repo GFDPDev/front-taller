@@ -6,9 +6,10 @@ import { Router, NavigationEnd } from '@angular/router';
 import { Convert, User } from 'src/app/interfaces/user';
 
 @Component({
-  selector: 'app-dashboard-admin',
-  templateUrl: './dashboard-admin.component.html',
-  styleUrls: ['./dashboard-admin.component.scss']
+    selector: 'app-dashboard-admin',
+    templateUrl: './dashboard-admin.component.html',
+    styleUrls: ['./dashboard-admin.component.scss'],
+    standalone: false
 })
 export class DashboardAdminComponent {
  /** Based on the screen size, switch from standard to one column per row */

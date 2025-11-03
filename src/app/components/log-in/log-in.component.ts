@@ -13,9 +13,10 @@ import { User, Convert } from 'src/app/interfaces/user';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
-  selector: 'app-log-in',
-  templateUrl: './log-in.component.html',
-  styleUrls: ['./log-in.component.scss'],
+    selector: 'app-log-in',
+    templateUrl: './log-in.component.html',
+    styleUrls: ['./log-in.component.scss'],
+    standalone: false
 })
 export class LogInComponent implements OnInit {
   form: UntypedFormGroup;

@@ -8,9 +8,10 @@ import { MainService } from 'src/app/services/main.service';
 import { Res } from 'src/app/interfaces/response';
 
 @Component({
-  selector: 'app-cliente-dialog',
-  templateUrl: './cliente-dialog.component.html',
-  styleUrls: ['./cliente-dialog.component.scss']
+    selector: 'app-cliente-dialog',
+    templateUrl: './cliente-dialog.component.html',
+    styleUrls: ['./cliente-dialog.component.scss'],
+    standalone: false
 })
 export class ClienteDialogComponent {
   private route = '/client';

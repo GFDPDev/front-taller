@@ -7,9 +7,10 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Res } from 'src/app/interfaces/response';
 @Component({
-  selector: 'app-comprobante',
-  templateUrl: './comprobante.component.html',
-  styleUrls: ['./comprobante.component.scss']
+    selector: 'app-comprobante',
+    templateUrl: './comprobante.component.html',
+    styleUrls: ['./comprobante.component.scss'],
+    standalone: false
 })
 export class ComprobanteComponent implements OnInit{
   private route = '/warranty';

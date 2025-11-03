@@ -19,9 +19,10 @@ import * as moment from 'moment';
 import jsPDF from 'jspdf';
 
 @Component({
-  selector: 'app-tecnicos',
-  templateUrl: './tecnicos.component.html',
-  styleUrls: ['./tecnicos.component.scss'],
+    selector: 'app-tecnicos',
+    templateUrl: './tecnicos.component.html',
+    styleUrls: ['./tecnicos.component.scss'],
+    standalone: false
 })
 export class TecnicosComponent implements OnDestroy, OnInit {
   private route = '/service';

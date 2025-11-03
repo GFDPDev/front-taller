@@ -11,9 +11,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Res } from 'src/app/interfaces/response';
 
 @Component({
-  selector: 'app-clientes',
-  templateUrl: './clientes.component.html',
-  styleUrls: ['./clientes.component.scss'],
+    selector: 'app-clientes',
+    templateUrl: './clientes.component.html',
+    styleUrls: ['./clientes.component.scss'],
+    standalone: false
 })
 export class ClientesComponent implements OnInit {
   private route = '/client';

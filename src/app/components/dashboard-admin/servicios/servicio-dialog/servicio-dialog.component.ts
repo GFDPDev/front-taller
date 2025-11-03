@@ -49,19 +49,19 @@ export const MY_FORMATS = {
   },
 };
 @Component({
-  selector: 'app-servicio-dialog',
-  templateUrl: './servicio-dialog.component.html',
-  styleUrls: ['./servicio-dialog.component.scss'],
-  providers: [
-    { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
-    {
-      provide: DateAdapter,
-      useClass: MomentDateAdapter,
-      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
-    },
-
-    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
-  ],
+    selector: 'app-servicio-dialog',
+    templateUrl: './servicio-dialog.component.html',
+    styleUrls: ['./servicio-dialog.component.scss'],
+    providers: [
+        { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
+        {
+            provide: DateAdapter,
+            useClass: MomentDateAdapter,
+            deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
+        },
+        { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+    ],
+    standalone: false
 })
 export class ServicioDialogComponent implements OnInit, AfterViewInit {
   private route = '/service';

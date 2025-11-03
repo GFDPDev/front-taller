@@ -2,8 +2,9 @@ import { Component } from '@angular/core';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 
 @Component({
-  selector: 'app-currency-format',
-  template: `{{ value | currency:'USD':'symbol':'1.2-2' }}`,
+    selector: 'app-currency-format',
+    template: `{{ value | currency:'USD':'symbol':'1.2-2' }}`,
+    standalone: false
 })
 export class CurrencyFormatComponent implements ICellRendererAngularComp {
   params: any;

@@ -48,19 +48,19 @@ export const MY_FORMATS = {
   },
 };
 @Component({
-  selector: 'app-externos',
-  templateUrl: './externos.component.html',
-  styleUrls: ['./externos.component.scss'],
-  providers: [
-    { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
-    {
-      provide: DateAdapter,
-      useClass: MomentDateAdapter,
-      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
-    },
-
-    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
-  ],
+    selector: 'app-externos',
+    templateUrl: './externos.component.html',
+    styleUrls: ['./externos.component.scss'],
+    providers: [
+        { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
+        {
+            provide: DateAdapter,
+            useClass: MomentDateAdapter,
+            deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
+        },
+        { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+    ],
+    standalone: false
 })
 export class ExternosComponent {
   private route = '/external';

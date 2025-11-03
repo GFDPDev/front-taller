@@ -8,9 +8,10 @@ import { MainService } from 'src/app/services/main.service';
 import { Res } from 'src/app/interfaces/response';
 import { ToolService } from 'src/app/interfaces/toolservice';
 @Component({
-  selector: 'app-factura',
-  templateUrl: './factura.component.html',
-  styleUrls: ['./factura.component.scss']
+    selector: 'app-factura',
+    templateUrl: './factura.component.html',
+    styleUrls: ['./factura.component.scss'],
+    standalone: false
 })
 export class FacturaComponent implements OnInit {
   private route = '/service';

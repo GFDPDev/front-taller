@@ -27,19 +27,19 @@ export const MY_FORMATS = {
 };
 
 @Component({
-  selector: 'app-reportes',
-  templateUrl: './reportes.component.html',
-  styleUrls: ['./reportes.component.scss'],
-  providers: [
-    {provide: MAT_DATE_LOCALE, useValue: 'es-ES'},
-    {
-      provide: DateAdapter,
-      useClass: MomentDateAdapter,
-      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
-    },
-
-    {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS},
-  ],
+    selector: 'app-reportes',
+    templateUrl: './reportes.component.html',
+    styleUrls: ['./reportes.component.scss'],
+    providers: [
+        { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
+        {
+            provide: DateAdapter,
+            useClass: MomentDateAdapter,
+            deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
+        },
+        { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+    ],
+    standalone: false
 })
 export class ReportesComponent {
   reportRange!: FormGroup;

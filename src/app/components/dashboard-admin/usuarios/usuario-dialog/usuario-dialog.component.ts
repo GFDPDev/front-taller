@@ -7,9 +7,10 @@ import { MainService } from 'src/app/services/main.service';
 import { Res } from 'src/app/interfaces/response';
 
 @Component({
-  selector: 'app-usuario-dialog',
-  templateUrl: './usuario-dialog.component.html',
-  styleUrls: ['./usuario-dialog.component.scss']
+    selector: 'app-usuario-dialog',
+    templateUrl: './usuario-dialog.component.html',
+    styleUrls: ['./usuario-dialog.component.scss'],
+    standalone: false
 })
 export class UsuarioDialogComponent{
   private route = '/user';

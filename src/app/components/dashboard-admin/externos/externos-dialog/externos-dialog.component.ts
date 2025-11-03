@@ -49,25 +49,25 @@ export const MY_FORMATS = {
   },
 };
 @Component({
-  selector: 'app-externos-dialog',
-  templateUrl: './externos-dialog.component.html',
-  styleUrls: ['./externos-dialog.component.scss'],
-  providers: [
-    { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
-    {
-      provide: DateAdapter,
-      useClass: MomentDateAdapter,
-      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
-    },
-
-    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
-    {
-      provide: NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS,
-      useValue: { useUtc: true },
-    },
-    { provide: NGX_MAT_DATE_FORMATS, useValue: MY_FORMATS },
-    { provide: NgxMatDateAdapter, useClass: NgxMatMomentAdapter },
-  ],
+    selector: 'app-externos-dialog',
+    templateUrl: './externos-dialog.component.html',
+    styleUrls: ['./externos-dialog.component.scss'],
+    providers: [
+        { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
+        {
+            provide: DateAdapter,
+            useClass: MomentDateAdapter,
+            deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
+        },
+        { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+        {
+            provide: NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS,
+            useValue: { useUtc: true },
+        },
+        { provide: NGX_MAT_DATE_FORMATS, useValue: MY_FORMATS },
+        { provide: NgxMatDateAdapter, useClass: NgxMatMomentAdapter },
+    ],
+    standalone: false
 })
 export class ExternosDialogComponent implements OnInit {
   private route = '/external';

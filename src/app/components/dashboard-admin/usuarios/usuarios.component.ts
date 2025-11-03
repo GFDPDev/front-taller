@@ -11,9 +11,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Res } from 'src/app/interfaces/response';
 
 @Component({
-  selector: 'app-usuarios',
-  templateUrl: './usuarios.component.html',
-  styleUrls: ['./usuarios.component.scss'],
+    selector: 'app-usuarios',
+    templateUrl: './usuarios.component.html',
+    styleUrls: ['./usuarios.component.scss'],
+    standalone: false
 })
 export class UsuariosComponent implements OnInit {
   private route = '/user';
