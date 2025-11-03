@@ -1,5 +1,11 @@
 import { MarcasRes } from './../../../../interfaces/marcas';
-import { AfterViewInit, Component, Inject, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  Inject,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { ajax } from 'rxjs/ajax';
 
 import {
@@ -127,7 +133,7 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
     public dialogRef: MatDialogRef<ServicioDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ToolService,
     private mainService: MainService,
-    private snackbar: MatSnackBar,
+    private snackbar: MatSnackBar
   ) {
     this.user = Convert.toUser(sessionStorage.getItem('user_taller') ?? '');
 
@@ -162,7 +168,9 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
       this.form = this.fb.group({
         id_cliente: ['', Validators.required],
         id_usuario: ['', Validators.required],
-        fecha_ingreso: [{ value: moment().format('YYYY-MM-DD HH:mm:ss'), disabled: true }],
+        fecha_ingreso: [
+          { value: moment().format('YYYY-MM-DD HH:mm:ss'), disabled: true },
+        ],
         producto: ['', Validators.required],
         id_marca: ['', Validators.required],
         modelo: ['', Validators.required],
@@ -221,9 +229,7 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
     }
     if (this.singleSelectUsuarios) {
       this.setInitialValueUsuarios();
-
     }
-    
   }
   onAdd(): void {
     const servicio = this.form.getRawValue();
@@ -322,11 +328,11 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
   }
   onDateChange(event: any, controlName: string) {
     const selectedDate = event.value;
-    
+
     if (selectedDate) {
       // Formatear la fecha seleccionada al formato "YYYY-MM-DD"
       const formattedDate = selectedDate.format('YYYY-MM-DD');
-      
+
       // Actualizar el valor del FormControl con la fecha formateada
       this.form.controls[controlName].setValue(formattedDate);
     }
@@ -389,13 +395,13 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
     this.form.controls['avisado'].setValue('2');
     let mensaje =
       'Buen día, estimado cliente. Centro de Servicio Don Pedro le informa que su ' +
-        this.data.producto +
-        ' esta listo para la entrega. Favor presentarse con su talón de entrega de equipo. Número de Folio: ' +
-        this.data.id +
-        ' Importe Total: $' +
-        this.form.value.importe +
-        '. ' +
-        this.form.value.observaciones;
+      this.data.producto +
+      ' esta listo para la entrega. Favor presentarse con su talón de entrega de equipo. Número de Folio: ' +
+      this.data.id +
+      ' Importe Total: $' +
+      this.form.value.importe +
+      '. ' +
+      this.form.value.observaciones;
     window.open(
       'https://web.whatsapp.com/send?phone=521' + telefono + '&text=' + mensaje,
       '_blank'
@@ -405,17 +411,19 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
   autorizar() {
     let telefono = this.clientesControl.value.telefono;
     this.form.controls['avisado'].setValue('1');
-    let mensaje =
-      '--- *ESTE ES UN MENSAJE DE AUTORIZACIÓN* --- \nBuen día, estimado cliente. Centro de Servicio Don Pedro le informa que la *revisión de su ' +
-        this.data.producto +
-        ' fue realizada. El cobro total definido es de $' +
-        this.form.value.importe +
-        '.* Número de Folio: ' +
-        this.data.id +
-        ' ¿Desea autorizar el servicio?' +
-        ' ' +
-        this.form.value.observaciones + 
-        '\n *Aviso IMPORTANTE:* En caso de no autorizar la reparación, dispone de 3 meses para la recolección del equipo. Pasado este plazo, y por motivos de optimización de espacio, el equipo será considerado como merma y será dispuesto para su destrucción.';
+    let mensaje = `--- *ESTE ES UN MENSAJE DE AUTORIZACIÓN* ---
+
+Buen día, estimado cliente. Centro de Servicio Don Pedro le informa que la revisión de su *${this.data.producto} ${this.data.marca} ${this.data.modelo}* fue realizada. 
+
+El cobro total definido es de *$${this.form.value.importe}*.
+Número de Folio: ${this.data.id}
+
+¿Desea autorizar el servicio?
+${this.form.value.observaciones}
+
+*Aviso IMPORTANTE:* 
+En caso de no autorizar la reparación, dispone de 3 meses para la recolección del equipo. 
+Pasado este plazo, y por motivos de optimización de espacio, el equipo será considerado como merma y será dispuesto para su destrucción.`;
     window.open(
       'https://web.whatsapp.com/send?phone=521' + telefono + '&text=' + mensaje,
       '_blank'
@@ -423,23 +431,24 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
   }
   marcarTerminado() {
     let telefono = this.clientesControl.value.telefono;
-    let mensaje = '--- *SERVICIO TERMINADO* --- \nBuen día, estimado cliente. Centro de Servicio Don Pedro le informa que su ' +
-    this.data.producto +
-    ' esta *listo para la entrega.* Favor presentarse con su talón de entrega de equipo. Número de Folio: ' +
-    this.data.id +
-    ' Importe Total: $' +
-    this.form.value.importe +
-    '. ' +
-    this.form.value.observaciones;
+    let mensaje =
+      '--- *SERVICIO TERMINADO* --- \nBuen día, estimado cliente. Centro de Servicio Don Pedro le informa que su ' +
+      this.data.producto +
+      ' esta *listo para la entrega.* Favor presentarse con su talón de entrega de equipo. Número de Folio: ' +
+      this.data.id +
+      ' Importe Total: $' +
+      this.form.value.importe +
+      '. ' +
+      this.form.value.observaciones;
     const now = moment();
-    
+
     this.form.controls['fecha_terminado'].setValue(now.format('YYYY-MM-DD'));
     this.form.controls['estatus'].setValue('TERMINADO');
 
     // ajax.post("http://192.168.50.200:3001/lead", {
-    //   message : 
+    //   message :
     //   mensaje,
-    //   phone : "521" + telefono 
+    //   phone : "521" + telefono
     // }, { 'Content-Type': 'application/json' })
     //   .subscribe({
     //     next: (res:any)=>{
@@ -447,7 +456,7 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
     //       if(res.response.responseExSave.id != undefined){
     //         this.form.controls['avisado'].setValue(2);
     //         this.onAdd();
-            
+
     //       } else {
     //         this.onAdd();
     //         this.snackbar.open(`No se envió el mensaje`, 'Aceptar', {

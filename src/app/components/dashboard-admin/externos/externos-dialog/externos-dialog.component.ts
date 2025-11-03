@@ -26,13 +26,10 @@ import { take, takeUntil } from 'rxjs/operators';
 import { MainService } from 'src/app/services/main.service';
 import { ExternosRes } from 'src/app/interfaces/externos';
 import {
-  NgxMatMomentModule,
   NgxMatMomentAdapter,
   NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS,
 } from '@angular-material-components/moment-adapter';
 import {
-  NgxMatDatetimePickerModule,
-  NgxMatTimepickerModule,
   NGX_MAT_DATE_FORMATS,
   NgxMatDateAdapter,
 } from '@angular-material-components/datetime-picker';

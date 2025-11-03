@@ -453,7 +453,8 @@ export class GarantiasComponent implements OnInit, OnDestroy {
     yPos += 10;
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
-
+    const splitMotivo = doc.splitTextToSize(data.motivo, pageWidth - 20);
+    doc.text(splitMotivo, xPos, yPos);
     yPos += 15;
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');

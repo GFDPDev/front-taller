@@ -371,8 +371,7 @@ export class ServiciosComponent implements OnDestroy {
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
     const lineHeight = 5; // Altura de línea para el texto
-    const observaciones =
-      data.observaciones.replace(/(\r\n|\n|\r)/gm, '').trim() ?? 'Ninguno';
+    const observaciones = data.observaciones ? data.observaciones.replace(/(\r\n|\n|\r)/gm, '').trim() : 'Ninguno';
     const falla = data.falla_detectada.replace(/(\r\n|\n|\r)/gm, '').trim();
     console.log(doc.getFontList());
     // Título y logo
