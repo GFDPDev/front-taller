@@ -5,7 +5,7 @@ import { MatSelect } from '@angular/material/select';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/material-moment-adapter';
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
-import * as _moment from 'moment';
+
 // tslint:disable-next-line:no-duplicate-imports
 import { Moment} from 'moment';
 import 'moment/locale/es';
@@ -17,7 +17,7 @@ import { MainService } from 'src/app/services/main.service';
 import { Res } from 'src/app/interfaces/response';
 import { ExpressRes } from 'src/app/interfaces/express';
 import { ToolService } from 'src/app/interfaces/toolservice';
-import * as moment from 'moment';
+import moment from 'moment';
 
 export const MY_FORMATS = {
   parse: {

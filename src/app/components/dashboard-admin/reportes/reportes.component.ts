@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import {MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/material-moment-adapter';
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
-import * as _moment from 'moment';
+
 import 'moment/locale/es';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import * as moment from 'moment';
+import moment from 'moment';
 import { CSVService } from '../../../services/csv.service';
 import { MainService } from 'src/app/services/main.service';
 import { Convert, ToolService } from 'src/app/interfaces/toolservice';

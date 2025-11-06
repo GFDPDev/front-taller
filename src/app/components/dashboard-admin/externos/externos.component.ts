@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import * as moment from 'moment';
+import moment from 'moment';
 import { MainService } from 'src/app/services/main.service';
 // tslint:disable-next-line:no-duplicate-imports
 import { Moment } from 'moment';
@@ -20,9 +20,8 @@ import {
 } from '@angular/material/core';
 import { MatDatepicker } from '@angular/material/datepicker';
 import { UntypedFormControl } from '@angular/forms';
-import { Convert, ExternosRes } from 'src/app/interfaces/externos';
+import { ExternosRes } from 'src/app/interfaces/externos';
 import { ExternosDialogComponent } from './externos-dialog/externos-dialog.component';
-import { CSVService } from 'src/app/services/csv.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Res } from 'src/app/interfaces/response';
 import {
@@ -239,7 +238,8 @@ export class ExternosComponent {
   }
   createServicio() {
     const dialogRef = this.dialog.open(ExternosDialogComponent, {
-      width: '50%',
+      width: "900px",
+      maxWidth: "95vw",
       data: null,
     });
     dialogRef.afterClosed().subscribe((result: ExternosRes) => {
@@ -257,7 +257,8 @@ export class ExternosComponent {
   }
   updateServicio(servicio: ExternosRes) {
     const dialogRef = this.dialog.open(ExternosDialogComponent, {
-      width: '50%',
+      width: "900px",
+      maxWidth: "95vw",
       data: servicio,
     });
     dialogRef.afterClosed().subscribe((result: ExternosRes) => {

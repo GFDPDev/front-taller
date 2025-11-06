@@ -12,7 +12,7 @@ import {
   DateAdapter,
   MAT_DATE_FORMATS,
 } from '@angular/material/core';
-import * as moment from 'moment';
+import moment from 'moment';
 import { MatDatepicker } from '@angular/material/datepicker';
 import { Res } from 'src/app/interfaces/response';
 import { MainService } from 'src/app/services/main.service';
@@ -106,7 +106,7 @@ export class StatusChartComponent implements OnInit {
       let series = chart.series.push(new am4charts.PieSeries());
 
       series.dataFields.value = "total";
-      series.dataFields.category = "estatus";
+      series.dataFields.category = "main";
 
       this.statusChart = chart;
     });

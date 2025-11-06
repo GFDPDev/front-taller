@@ -10,6 +10,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatNativeDateModule, MatRippleModule } from '@angular/material/core';
+import {MatTimepickerModule} from '@angular/material/timepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -35,11 +36,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
-import {
-  NgxMatDatetimePickerModule,
-  NgxMatNativeDateModule,
-  NgxMatTimepickerModule
-} from '@angular-material-components/datetime-picker';
+
 const materialModules = [
   CdkTreeModule,
   MatAutocompleteModule,
@@ -76,10 +73,8 @@ const materialModules = [
   MatRadioModule,
   MatDatepickerModule,
   MatTooltipModule,
-  NgxMatSelectSearchModule,
-  NgxMatDatetimePickerModule,
-  NgxMatTimepickerModule,
-  NgxMatNativeDateModule
+  MatTimepickerModule,
+  NgxMatSelectSearchModule
 ];
 @NgModule({
   imports: [

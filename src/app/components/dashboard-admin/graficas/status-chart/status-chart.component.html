@@ -1,24 +1,34 @@
-<mat-card class="dashboard-card-secondary absolute">
-    <mat-card-header>
-      <mat-card-title>Estado de Servicios</mat-card-title>
-    </mat-card-header>
-    <mat-card-content class="text-center margen">
-      <div class="container">
-        <div class="row">
-          <div class="col">
-            <div id="chartdiv2" style="height: 300px"></div>
-          </div>
-        </div>
-      </div>
-    </mat-card-content>
-    <mat-card-actions class="justify-content-evenly">
-        <mat-form-field>
-            <mat-label for="monthForm">Mes y Año</mat-label>
-            <input id="monthForm" matInput [matDatepicker]="dp" [formControl]="monthForm">
-            <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
-            <mat-datepicker #dp startView="year" (monthSelected)="setMonthAndYear($event, dp)" panelClass="month-picker">
-            </mat-datepicker>
-        </mat-form-field>
-    </mat-card-actions>
-  </mat-card>
-  
+<mat-card class="space-y-8">
+  <mat-card-header class="flex justify-center">
+    <mat-card-title class="text-center"
+      >Ventas del Taller por Servicios</mat-card-title
+    >
+    <mat-card-subtitle class="text-center"
+      >Ventas divididas por mes</mat-card-subtitle
+    >
+  </mat-card-header>
+  <mat-card-content class="text-center">
+    <div class="grid grid-rows-1 grid-cols-1">
+      <div id="chartdiv2" style="height: 300px"></div>
+    </div>
+  </mat-card-content>
+  <mat-card-actions class="flex justify-center">
+    <mat-form-field>
+      <mat-label for="monthForm">Mes y Año</mat-label>
+      <input
+        id="monthForm"
+        matInput
+        [matDatepicker]="dp"
+        [formControl]="monthForm"
+      />
+      <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+      <mat-datepicker
+        #dp
+        startView="year"
+        (monthSelected)="setMonthAndYear($event, dp)"
+        panelClass="month-picker"
+      >
+      </mat-datepicker>
+    </mat-form-field>
+  </mat-card-actions>
+</mat-card>

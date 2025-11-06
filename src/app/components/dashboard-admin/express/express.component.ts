@@ -10,13 +10,12 @@ import {
   MAT_DATE_LOCALE,
 } from '@angular/material/core';
 import { MatDatepicker } from '@angular/material/datepicker';
-import * as _moment from 'moment';
 // tslint:disable-next-line:no-duplicate-imports
 import { Moment } from 'moment';
 import 'moment/locale/es';
 import Swal from 'sweetalert2';
 import { UntypedFormControl } from '@angular/forms';
-import * as moment from 'moment';
+import moment from 'moment';
 import { ExpressAdminComponent } from './express-admin/express-admin.component';
 import { MainService } from 'src/app/services/main.service';
 import { ExpressRes, Convert } from 'src/app/interfaces/express';

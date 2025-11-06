@@ -1,5 +1,26 @@
+@use '@angular/material' as mat;
+@use './theme/_theme-colors' as my-theme; // location of generated file
+
 @import "ag-grid-community/styles/ag-grid.css";
 @import "ag-grid-community/styles/ag-theme-quartz.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+html {
+  @include mat.theme((
+    color: (
+      primary: my-theme.$primary-palette,
+      tertiary: my-theme.$tertiary-palette,
+    ),
+    typography: "Roboto",
+    density: 0,
+  ));
+}
+:root {
+  --mat-sys-body-medium-font : "Roboto", "Helvetica Neue", sans-serif;
+  --mdc-dialog-subhead-weight: 600;
+}
 
 /* You can add global styles to this file, and also import other style files */
 html,
@@ -19,7 +40,9 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-
+.mat-mdc-icon-button {
+  display: flex !important;
+}
 /* Firefox */
 
 input[type="number"] {
@@ -34,10 +57,7 @@ input[type="number"] {
 .ag-header-cell-label {
   justify-content: center !important;
 }
-.mat-mdc-card {
-  border-radius: 10px !important;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
-}
+
 @media (min-width: 1024px) {
   td {
     overflow: hidden;

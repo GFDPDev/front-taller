@@ -12,7 +12,7 @@ import {
   DateAdapter,
   MAT_DATE_FORMATS,
 } from '@angular/material/core';
-import * as moment from 'moment';
+import moment from 'moment';
 import { MatDatepicker } from '@angular/material/datepicker';
 import { Res } from 'src/app/interfaces/response';
 import { MainService } from 'src/app/services/main.service';

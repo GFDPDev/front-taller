@@ -6,6 +6,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { ClientesRes } from '../../../../interfaces/clientes';
 import { MainService } from 'src/app/services/main.service';
 import { Res } from 'src/app/interfaces/response';
+import { DataService } from 'src/app/services/data.service';
 
 @Component({
     selector: 'app-cliente-dialog',
@@ -20,6 +21,7 @@ export class ClienteDialogComponent {
   title!: String;
   constructor(
     private fb: UntypedFormBuilder,
+    private dataService: DataService,
     public dialogRef: MatDialogRef<ClienteDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ClientesRes, private mainService: MainService, private snackbar: MatSnackBar,) {
       if (this.data) {
@@ -52,6 +54,7 @@ export class ClienteDialogComponent {
   }
   onAdd(): void {
     const cliente: ClientesRes = this.form.value;
+    this.dataService.invalidateClientsCache();
     if (this.isCreateMode()) {
       this.mainService
         .postRequest(cliente, this.route)

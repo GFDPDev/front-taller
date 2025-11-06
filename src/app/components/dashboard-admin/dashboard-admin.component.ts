@@ -16,21 +16,15 @@ export class DashboardAdminComponent {
  @ViewChild(MatSidenav)
  sidenav!: MatSidenav;
  user!: User;
-
+ sidenavMode: 'over' | 'side' = 'side';
+ opened = true;
+ title='Panel'
  constructor(private breakpointObserver: BreakpointObserver, private observer: BreakpointObserver, private router: Router) {
   this.user = Convert.toUser(sessionStorage.getItem('user_taller')??'');
  }
  ngAfterViewInit() {
-   this.observer.observe(['(max-width: 1200px)']).subscribe((res) => {
-     setTimeout(() => {
-       if (res.matches) {
-         this.sidenav.mode = 'over';
-         this.sidenav.close();
-       } else {
-         this.sidenav.mode = 'side';
-         this.sidenav.open();
-       }
-     }, 300);
+   this.observer.observe([Breakpoints.Handset]).subscribe((res) => {
+      this.sidenavMode = 'side';
 
    });
 
@@ -39,5 +33,8 @@ export class DashboardAdminComponent {
   sessionStorage.clear();
   this.router.navigate(['/taller/login']);
 }
+setMenuTitle(title: string) {
+    this.title = title;
+  }
 
 }

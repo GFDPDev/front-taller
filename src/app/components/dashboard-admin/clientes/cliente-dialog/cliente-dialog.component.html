@@ -1,70 +1,74 @@
 <h1 mat-dialog-title class="text-center">{{ title }} Cliente</h1>
 <form [formGroup]="form">
-  <div mat-dialog-content class="text-center">
-    <div class="row mb-2">
-      <mat-form-field class="w-50">
-        <mat-label>Nombre</mat-label>
-        <input
-          formControlName="nombre"
-          oninput="this.value = this.value.toUpperCase()"
-          matInput
-          type="text"
-        />
-        <mat-error *ngIf="form.controls['nombre'].hasError('required')">
-          El nombre es <strong> requerido </strong>
-        </mat-error>
-        <mat-icon matSuffix>person</mat-icon>
-      </mat-form-field>
+  <div mat-dialog-content class="text-center space-y-2">
+    <div class="text-center grid grid-rows-1">
+      <div class="grid grid-cols-2 gap-3">
+        <mat-form-field class="w-50">
+          <mat-label>Nombre</mat-label>
+          <input
+            formControlName="nombre"
+            oninput="this.value = this.value.toUpperCase()"
+            matInput
+            type="text"
+          />
+          <mat-error *ngIf="form.controls['nombre'].hasError('required')">
+            El nombre es <strong> requerido </strong>
+          </mat-error>
+          <mat-icon matSuffix>person</mat-icon>
+        </mat-form-field>
 
-      <mat-form-field class="w-50">
-        <mat-label>Apellido</mat-label>
+        <mat-form-field class="w-50">
+          <mat-label>Apellido</mat-label>
 
-        <input
-          formControlName="apellido"
-          oninput="this.value = this.value.toUpperCase()"
-          matInput
-          type="text"
-        />
-        <mat-error *ngIf="form.controls['apellido'].hasError('required')">
-          El apellido es <strong> requerido </strong>
-        </mat-error>
-        <mat-icon matSuffix>people</mat-icon>
-      </mat-form-field>
+          <input
+            formControlName="apellido"
+            oninput="this.value = this.value.toUpperCase()"
+            matInput
+            type="text"
+          />
+          <mat-error *ngIf="form.controls['apellido'].hasError('required')">
+            El apellido es <strong> requerido </strong>
+          </mat-error>
+          <mat-icon matSuffix>people</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field class="w-100">
+          <mat-label>Teléfono</mat-label>
+
+          <input
+            pattern="^[0-9]*$"
+            formControlName="telefono"
+            matInput
+            type="text"
+            maxlength="10"
+            minlength="10"
+          />
+          <mat-error *ngIf="form.controls['telefono'].hasError('required')">
+            El teléfono es <strong> requerido </strong>
+          </mat-error>
+          <mat-error *ngIf="form.controls['telefono'].hasError('minlength')">
+            El teléfono debe tener mínimo <strong> 10 dígitos </strong>
+          </mat-error>
+          <mat-error *ngIf="form.controls['telefono'].hasError('pattern')">
+            El teléfono debe tener solo <strong> números </strong>
+          </mat-error>
+
+          <mat-icon matSuffix>phone</mat-icon>
+        </mat-form-field>
+        <mat-form-field class="w-100">
+          <mat-label>RFC (opcional)</mat-label>
+
+          <input formControlName="curp" matInput type="text" />
+          <mat-icon matSuffix>badge</mat-icon>
+        </mat-form-field>
+      </div>
     </div>
-
-    <mat-form-field class="w-100 mb-2">
-      <mat-label>Teléfono</mat-label>
-
-      <input
-        pattern="^[0-9]*$"
-        formControlName="telefono"
-        matInput
-        type="text"
-        maxlength="10"
-        minlength="10"
-      />
-      <mat-error *ngIf="form.controls['telefono'].hasError('required')">
-        El teléfono es <strong> requerido </strong>
-      </mat-error>
-      <mat-error *ngIf="form.controls['telefono'].hasError('minlength')">
-        El teléfono debe tener mínimo <strong> 10 dígitos </strong>
-      </mat-error>
-      <mat-error *ngIf="form.controls['telefono'].hasError('pattern')">
-        El teléfono debe tener solo <strong> números </strong>
-      </mat-error>
-
-      <mat-icon matSuffix>phone</mat-icon>
-    </mat-form-field>
-    <mat-form-field class="w-100">
-      <mat-label>RFC (opcional)</mat-label>
-
-      <input formControlName="curp" matInput type="text" />
-      <mat-icon matSuffix>badge</mat-icon>
-    </mat-form-field>
   </div>
   <div mat-dialog-actions align="end">
+    <button mat-button (click)="onNoClick()">Cancelar</button>
+
     <button
-      mat-button
+      matButton="filled"
       *ngIf="isCreateMode()"
       [disabled]="form.invalid"
       (click)="onAdd()"
@@ -72,13 +76,12 @@
       Agregar
     </button>
     <button
-      mat-button
+      matButton="filled"
       *ngIf="isUpdateMode()"
       [disabled]="form.invalid"
       (click)="onAdd()"
     >
       Actualizar
     </button>
-    <button mat-button (click)="onNoClick()">Cancelar</button>
   </div>
 </form>

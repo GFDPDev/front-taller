@@ -1,4 +1,3 @@
-import { MarcasRes } from './../../../../interfaces/marcas';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import {
   FormBuilder,
@@ -9,43 +8,30 @@ import {
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSelect } from '@angular/material/select';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import {
-  MomentDateAdapter,
-  MAT_MOMENT_DATE_ADAPTER_OPTIONS,
-} from '@angular/material-moment-adapter';
-import {
-  DateAdapter,
-  MAT_DATE_FORMATS,
-  MAT_DATE_LOCALE,
-} from '@angular/material/core';
-import * as _moment from 'moment';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
+import {provideNativeDateAdapter} from '@angular/material/core';
+import { forkJoin} from 'rxjs';
+import { tap } from 'rxjs/operators';
 import 'moment/locale/es';
 import { ClientesRes } from '../../../../interfaces/clientes';
 import { ReplaySubject, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 import { MainService } from 'src/app/services/main.service';
 import { ExternosRes } from 'src/app/interfaces/externos';
-import {
-  NgxMatMomentAdapter,
-  NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS,
-} from '@angular-material-components/moment-adapter';
-import {
-  NGX_MAT_DATE_FORMATS,
-  NgxMatDateAdapter,
-} from '@angular-material-components/datetime-picker';
-import * as moment from 'moment';
+import moment from 'moment';
 import { User } from 'src/app/interfaces/user';
 import { Res } from 'src/app/interfaces/response';
+import { DataService } from 'src/app/services/data.service';
 
 export const MY_FORMATS = {
   parse: {
-    dateInput: 'DD/MM/YYYY, h:mm:ss',
+    dateInput: 'DD/MM/YYYY',
   },
   display: {
-    dateInput: 'DD/MM/YYYY, h:mm a',
-    monthYearLabel: 'DD MMMM YYYY',
+    dateInput: 'DD/MM/YYYY',
+    monthYearLabel: 'MMMM YYYY',
     dateA11yLabel: 'LL',
-    monthYearA11yLabel: 'DD MMMM YYYY',
+    monthYearA11yLabel: 'MMMM YYYY',
   },
 };
 @Component({
@@ -53,27 +39,19 @@ export const MY_FORMATS = {
     templateUrl: './externos-dialog.component.html',
     styleUrls: ['./externos-dialog.component.scss'],
     providers: [
-        { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
-        {
-            provide: DateAdapter,
-            useClass: MomentDateAdapter,
-            deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
-        },
-        { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
-        {
-            provide: NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS,
-            useValue: { useUtc: true },
-        },
-        { provide: NGX_MAT_DATE_FORMATS, useValue: MY_FORMATS },
-        { provide: NgxMatDateAdapter, useClass: NgxMatMomentAdapter },
+        provideNativeDateAdapter(),
+        { provide: MAT_DATE_LOCALE, useValue: 'es-ES' }
     ],
     standalone: false
 })
 export class ExternosDialogComponent implements OnInit {
   private route = '/external';
+  public isLoading: boolean = true;
   form!: FormGroup;
   mode!: Number;
   title!: String;
+  maxDate: Date = new Date();
+  minDate: Date = new Date();
   clientes!: ClientesRes[];
   usuarios!: User[];
   estatus = [
@@ -125,14 +103,19 @@ export class ExternosDialogComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private dataService: DataService,
     public dialogRef: MatDialogRef<ExternosDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ExternosRes,
     private mainService: MainService,
     private snackbar: MatSnackBar
   ) {
+    // Configurar fechas mínimas y máximas
+    const now = moment().format("YYYY-MM-DD h:mm:ss");
+
     if (this.data) {
       this.mode = 1;
       this.title = 'Actualizar';
+
       this.form = this.fb.group({
         id: [this.data.id, Validators.required],
         fecha_registro: [this.data.fecha_registro],
@@ -154,12 +137,11 @@ export class ExternosDialogComponent implements OnInit {
       this.form = this.fb.group({
         folio: ['', Validators.required],
         garantia: ['', Validators.required],
-        fecha_registro: [moment().format("YYYY-MM-DD")],
         marca: ['BOSCH', Validators.required],
         id_cliente: ['', Validators.required],
         id_usuario: ['', Validators.required],
         cotizacion: [''],
-        cita: [null],
+        cita: [now],
         importe: [0, Validators.required],
         estado: [this.estatus[0].value, Validators.required],
         observaciones: [' '],
@@ -185,6 +167,22 @@ export class ExternosDialogComponent implements OnInit {
       .subscribe(() => {
         this.filtrarClientes();
       });
+
+      // Sincronizar los valores de fecha y hora
+    if (this.form.get('cita')) {
+      this.form.get('cita')!.valueChanges.subscribe(value => {
+        if (value instanceof Date) {
+          console.log(value)
+          const hours = value.getHours();
+          const minutes = value.getMinutes();
+          const date = new Date(value);
+          date.setHours(hours);
+          date.setMinutes(minutes);
+          const formattedDate = moment(date).format('YYYY-MM-DDTHH:mm:ssZ');
+          this.form.patchValue({ cita: formattedDate }, { emitEvent: false });
+        }
+      });
+    }
   }
   protected filtrarUsuarios() {
     if (!this.usuarios) {
@@ -234,45 +232,72 @@ export class ExternosDialogComponent implements OnInit {
     this._onDestroy.complete();
   }
   ngAfterViewInit(): void {
-    this.setInitialValueClientes();
-    this.setInitialValueUsuarios();
+    if (this.singleSelectClientes) {
+      this.setInitialValueClientes();
+    }
+    if (this.singleSelectUsuarios) {
+      this.setInitialValueUsuarios();
+    }
   }
   getMenus() {
-    if (this.isUpdateMode()) {
-      this.mainService
-        .getRequest({}, `/client/get_active_clients`)
-        .subscribe((res: Res) => {
+    // 1. Define las dos peticiones HTTP como observables
+    const clientes$ = this.dataService.getActiveClients()
+      .pipe(
+        // Uso de tap para procesar los datos de clientes apenas llegan
+        // Esto mantiene el código de procesamiento fuera de la suscripción final
+        tap((res: Res) => {
           this.clientes = res.data;
           this.clientesFiltrados.next(this.clientes.slice());
-          let filtro = res.data.filter(
+          
+          // El procesamiento específico de updateMode se manejará en la suscripción final.
+        })
+      );
+
+    const usuarios$ = this.mainService
+      .getRequest({}, `/user/get_active_users`)
+      .pipe(
+        // Uso de tap para procesar los datos de usuarios
+        tap((res: Res) => {
+          this.usuarios = res.data;
+          this.usuariosFiltrados.next(this.usuarios.slice());
+
+          // El procesamiento específico de updateMode se manejará en la suscripción final.
+        })
+      );
+    
+    // 2. Ejecuta ambas peticiones en paralelo
+    forkJoin({
+      clientesRes: clientes$,
+      usuariosRes: usuarios$,
+    }).subscribe({
+      next: ({ clientesRes, usuariosRes }) => {
+        // Este bloque se ejecuta una vez que ambas peticiones han retornado con éxito.
+        
+        // Si estamos en modo de actualización, se realiza la lógica de filtrado y asignación
+        if (this.isUpdateMode()) {
+          
+          // Lógica para Clientes
+          let filtroClientes = clientesRes.data.filter(
             (cliente: ClientesRes) => cliente.id == this.data.id_cliente
           );
-          this.clientesControl.setValue(filtro[0]);
-        });
-      this.mainService
-        .getRequest({}, `/user/get_active_users`)
-        .subscribe((res: Res) => {
-          this.usuarios = res.data;
-          this.usuariosFiltrados.next(this.usuarios.slice());
-          let filtro = res.data.filter(
+          this.clientesControl.setValue(filtroClientes[0]);
+
+          // Lógica para Usuarios
+          let filtroUsuarios = usuariosRes.data.filter(
             (usuario: User) => usuario.id == this.data.id_usuario
           );
-          this.usuariosControl.setValue(filtro[0]);
-        });
-    } else {
-      this.mainService
-        .getRequest({}, `/client/get_active_clients`)
-        .subscribe((res: Res) => {
-          this.clientes = res.data;
-          this.clientesFiltrados.next(this.clientes.slice());
-        });
-      this.mainService
-        .getRequest({}, `/user/get_active_users`)
-        .subscribe((res: Res) => {
-          this.usuarios = res.data;
-          this.usuariosFiltrados.next(this.usuarios.slice());
-        });
-    }
+          this.usuariosControl.setValue(filtroUsuarios[0]);
+        }
+      },
+      error: (err) => {
+        console.error('Error al cargar menús:', err);
+        // Opcional: Manejar errores aquí
+      },
+      complete: () => {
+        // Este bloque se ejecuta al final, después de procesar todo
+        this.isLoading = false;
+      }
+    });
   }
   protected setInitialValueClientes() {
     this.clientesFiltrados
@@ -293,7 +318,7 @@ export class ExternosDialogComponent implements OnInit {
       });
   }
   onAdd(): void {
-    const servicio: ExternosRes = this.form.value;
+    const servicio = this.form.value;
     if (this.isCreateMode()) {
       this.mainService
         .postRequest(servicio, this.route)
@@ -331,19 +356,18 @@ export class ExternosDialogComponent implements OnInit {
   isUpdateMode() {
     return this.mode === 1;
   }
+
   avisar() {
     let telefono = this.clientesControl.value.telefono;
-    let fecha = moment(new Date(this.form.value.cita)).format(
+    let fecha = moment(this.form.value.cita).locale('es').format(
       'dddd DD [de] MMMM [a las] h:mm a'
     );
 
     this.form.controls['avisado'].setValue('1');
-    let mensaje =
-      'Buen día, estimado cliente. Centro de Servicio Don Pedro le informa hemos recibido su reporte reralizado a ' +
-      this.form.value.marca +
-      '. La fecha y hora asignadas para la visita del técnico es ' +
-      fecha +
-      '. En caso de tener inconvenientes con la fecha y hora asignadas, favor mencionarlos en este mismo chat.';
+    let mensaje = `Buen día, estimado cliente. Centro de Servicio Don Pedro le informa hemos recibido su reporte realizado a ${this.form.value.marca}.
+La fecha y hora asignadas para la visita del técnico es ${fecha}.
+En caso de tener inconvenientes con la fecha y hora asignadas, favor mencionarlos en este mismo chat.`;
+
     window.open(
       'https://web.whatsapp.com/send?phone=521' + telefono + '&text=' + mensaje,
       '_blank'

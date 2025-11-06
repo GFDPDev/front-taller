@@ -1,17 +1,11 @@
-<div class="container-fluid">
-  <div class="row">
-    <div class="col text-center">
-      <h2>Servicios</h2>
-    </div>
-  </div>
-  
-    <div class="row">
-      <div class="col">
-        <button mat-raised-button class="csv-button" (click)="getCSV()">
+<div class="mx-auto">
+    <div class="grid xl:grid-rows-1 grid-rows-3 xl:grid-cols-3 grid-cols-1 gap-5">
+      <div class="text-center xl:text-left">
+        <button matButton="outlined" (click)="getCSV()">
           <mat-icon>save_alt</mat-icon> Descargar Excel
         </button>
       </div>
-      <div class="col text-center">
+      <div class="text-center">
         <mat-form-field>
           <mat-label>Mes y Año</mat-label>
           <input matInput [matDatepicker]="dp" [formControl]="date" />
@@ -25,8 +19,8 @@
           </mat-datepicker>
         </mat-form-field>
       </div>
-      <div class="text-end col-lg-4">
-        <button mat-raised-button color="primary" (click)="createServicio()">
+      <div class="text-center md:text-end">
+        <button matButton="filled" color="primary" (click)="createServicio()">
           <mat-icon>add</mat-icon> Agregar Servicio
         </button>
       </div>
@@ -34,7 +28,7 @@
     
 
   <ag-grid-angular
-    class="ag-theme-quartz d-grid"
+    class="ag-theme-quartz grid"
     style="width: 100%; height: 80vh"
     [pagination]="true"
     [columnDefs]="columnDefs"

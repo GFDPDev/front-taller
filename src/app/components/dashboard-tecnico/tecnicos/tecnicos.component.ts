@@ -15,14 +15,14 @@ import { Convert, User } from 'src/app/interfaces/user';
 import { Res } from 'src/app/interfaces/response';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ToolService } from 'src/app/interfaces/toolservice';
-import * as moment from 'moment';
+import moment from 'moment';
 import jsPDF from 'jspdf';
 
 @Component({
-    selector: 'app-tecnicos',
-    templateUrl: './tecnicos.component.html',
-    styleUrls: ['./tecnicos.component.scss'],
-    standalone: false
+  selector: 'app-tecnicos',
+  templateUrl: './tecnicos.component.html',
+  styleUrls: ['./tecnicos.component.scss'],
+  standalone: false,
 })
 export class TecnicosComponent implements OnDestroy, OnInit {
   private route = '/service';
@@ -102,7 +102,8 @@ export class TecnicosComponent implements OnDestroy, OnInit {
   }
   createServicio() {
     const dialogRef = this.dialog.open(TecnicoDialogComponent, {
-      width: '50%',
+      width: '800px',
+      maxWidth: '95vw',
       data: null,
     });
     dialogRef.afterClosed().subscribe((result: ToolService) => {
@@ -121,7 +122,8 @@ export class TecnicosComponent implements OnDestroy, OnInit {
   }
   updateServicio(servicio: ToolService) {
     const dialogRef = this.dialog.open(TecnicoDialogComponent, {
-      width: '50%',
+      width: '800px',
+      maxWidth: '95vw',
       data: servicio,
     });
     dialogRef.afterClosed().subscribe((result: ToolService) => {
@@ -153,7 +155,8 @@ export class TecnicosComponent implements OnDestroy, OnInit {
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
     const lineHeight = 5; // Altura de línea para el texto
-    const observaciones = data.observaciones.replace(/(\r\n|\n|\r)/gm, '').trim() ?? 'Ninguno';
+    const observaciones =
+      data.observaciones.replace(/(\r\n|\n|\r)/gm, '').trim() ?? 'Ninguno';
     const falla = data.falla_detectada.replace(/(\r\n|\n|\r)/gm, '').trim();
     console.log(doc.getFontList());
     // Título y logo
@@ -262,11 +265,7 @@ export class TecnicosComponent implements OnDestroy, OnInit {
     yPos += 10;
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
-    doc.text(
-      falla,
-      xPos,
-      yPos
-    );
+    doc.text(falla, xPos, yPos);
 
     // Diagnóstico
     yPos += 10;
@@ -277,10 +276,7 @@ export class TecnicosComponent implements OnDestroy, OnInit {
     yPos += 10;
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
-    const diagnostico = doc.splitTextToSize(
-      observaciones,
-      pageWidth - 20
-    );
+    const diagnostico = doc.splitTextToSize(observaciones, pageWidth - 20);
     diagnostico.forEach((line: string | string[]) => {
       doc.text(line, xPos, yPos);
       yPos += 5; // Ajusta el espaciado de línea

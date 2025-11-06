@@ -16,14 +16,14 @@ import {
   MAT_DATE_FORMATS,
   MAT_DATE_LOCALE,
 } from '@angular/material/core';
-import * as _moment from 'moment';
+
 import 'moment/locale/es';
 import { Subject } from 'rxjs';
 import { MainService } from 'src/app/services/main.service';
 import { GarantiasRes } from 'src/app/interfaces/garantias';
 import { Convert, User } from 'src/app/interfaces/user';
 import { Res } from 'src/app/interfaces/response';
-import * as moment from 'moment';
+import moment from 'moment';
 
 export const MY_FORMATS = {
   parse: {
@@ -206,13 +206,13 @@ export class GarantiaDialogComponent {
   onAdd(): void {
     const garantia = this.form.value;
     garantia.fecha_proveedor = garantia.fecha_proveedor
-      ? _moment(garantia.fecha_proveedor).format('YYYY-MM-DD')
+      ? moment(garantia.fecha_proveedor).format('YYYY-MM-DD')
       : null;
     garantia.fecha_resuelto_proveedor = garantia.fecha_resuelto_proveedor
-      ? _moment(garantia.fecha_resuelto_proveedor).format('YYYY-MM-DD')
+      ? moment(garantia.fecha_resuelto_proveedor).format('YYYY-MM-DD')
       : null;
     garantia.fecha_resuelto_cliente = garantia.fecha_resuelto_cliente
-      ? _moment(garantia.fecha_resuelto_cliente).format('YYYY-MM-DD')
+      ? moment(garantia.fecha_resuelto_cliente).format('YYYY-MM-DD')
       : null;
     if (this.isCreateMode()) {
       this.mainService

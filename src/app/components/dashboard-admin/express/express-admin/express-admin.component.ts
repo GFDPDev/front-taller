@@ -21,7 +21,7 @@ import {
   MAT_DATE_FORMATS,
   MAT_DATE_LOCALE,
 } from '@angular/material/core';
-import * as _moment from 'moment';
+
 import 'moment/locale/es';
 
 import { User } from 'src/app/interfaces/user';
@@ -30,7 +30,7 @@ import { take, takeUntil } from 'rxjs/operators';
 import { MainService } from 'src/app/services/main.service';
 import { ExpressRes } from 'src/app/interfaces/express';
 import { Res } from 'src/app/interfaces/response';
-import * as moment from 'moment';
+import moment from 'moment';
 
 export const MY_FORMATS = {
   parse: {

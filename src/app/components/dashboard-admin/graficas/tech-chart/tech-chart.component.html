@@ -1,17 +1,18 @@
-<mat-card class="dashboard-card-secondary absolute">
-  <mat-card-header>
-    <mat-card-title>Servicios por Técnico</mat-card-title>
+<mat-card class="space-y-8">
+  <mat-card-header class="flex justify-center">
+    <mat-card-title class="text-center"
+      >Ventas del Taller por Servicios</mat-card-title
+    >
+    <mat-card-subtitle class="text-center"
+      >Ventas divididas por mes</mat-card-subtitle
+    >
   </mat-card-header>
-  <mat-card-content class="text-center margen">
-    <div class="container">
-      <div class="row">
-        <div class="col">
-          <div id="chartdiv3" style="height: 300px"></div>
-        </div>
-      </div>
+  <mat-card-content class="text-center">
+    <div class="grid grid-rows-1 grid-cols-1">
+      <div id="chartdiv3" style="height: 300px"></div>
     </div>
   </mat-card-content>
-  <mat-card-actions class="justify-content-evenly">
+  <mat-card-actions class="flex justify-center">
     <mat-form-field>
       <mat-label for="monthYearForm">Mes y Año</mat-label>
       <input

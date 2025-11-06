@@ -6,8 +6,6 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ajax } from 'rxjs/ajax';
-
 import {
   FormBuilder,
   FormControl,
@@ -26,16 +24,16 @@ import {
   MAT_DATE_FORMATS,
   MAT_DATE_LOCALE,
 } from '@angular/material/core';
-import * as _moment from 'moment';
+
 import 'moment/locale/es';
 import { ClientesRes } from '../../../../interfaces/clientes';
 import { ReplaySubject, Subject } from 'rxjs';
-import { take, takeUntil } from 'rxjs/operators';
+import { take, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MainService } from 'src/app/services/main.service';
 import { User, Convert } from 'src/app/interfaces/user';
 import { ToolService } from 'src/app/interfaces/toolservice';
 import { Res } from 'src/app/interfaces/response';
-import * as moment from 'moment';
+import moment from 'moment';
 
 export const MY_FORMATS = {
   parse: {
@@ -197,12 +195,20 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
       this.form.controls['id_cliente'].setValue(data.id);
     });
     this.usuariosFiltro.valueChanges
-      .pipe(takeUntil(this._onDestroy))
+      .pipe(
+        takeUntil(this._onDestroy),
+        debounceTime(300),
+        distinctUntilChanged()
+      )
       .subscribe(() => {
         this.filtrarUsuarios();
       });
     this.clientesFiltro.valueChanges
-      .pipe(takeUntil(this._onDestroy))
+      .pipe(
+        takeUntil(this._onDestroy),
+        debounceTime(300),
+        distinctUntilChanged()
+      )
       .subscribe(() => {
         this.filtrarClientes();
       });
@@ -264,49 +270,65 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
     }
   }
   getMenus() {
-    this.mainService.getRequest({}, `/brand`).subscribe((res: Res) => {
-      this.marcas = res.data;
+    // Carga inicial optimizada
+    Promise.resolve().then(() => {
+      this.mainService.getRequest({}, `/brand`).subscribe((res: Res) => {
+        this.marcas = res.data;
+      });
+
+      if (this.isUpdateMode()) {
+        this.mainService
+          .getRequest({}, `/client/get_active_clients`)
+          .subscribe((res: Res) => {
+            this.clientes = res.data;
+            // Inicialmente mostramos solo los primeros 30 resultados
+            this.clientesFiltrados.next(this.clientes.slice(0, 30));
+            
+            // Si estamos en modo actualización, buscamos el cliente específico
+            let filtro = res.data.filter(
+              (cliente: ClientesRes) => cliente.id == this.data.id_cliente
+            );
+            if (filtro.length > 0) {
+              this.clientesControl.setValue(filtro[0]);
+            }
+            this.filtrarClientes();
+            this.isLoading = false;
+          });
+
+        this.mainService
+          .getRequest({}, `/user/get_active_users`)
+          .subscribe((res: Res) => {
+            this.usuarios = res.data;
+            // Inicialmente mostramos solo los primeros 30 resultados
+            this.usuariosFiltrados.next(this.usuarios.slice(0, 30));
+            
+            // Si estamos en modo actualización, buscamos el usuario específico
+            let filtro = res.data.filter(
+              (usuario: User) => usuario.id == this.data.id_usuario
+            );
+            if (filtro.length > 0) {
+              this.usuariosControl.setValue(filtro[0]);
+            }
+          });
+      } else {
+        this.mainService
+          .getRequest({}, `/client/get_active_clients`)
+          .subscribe((res: Res) => {
+            this.clientes = res.data;
+            // Inicialmente mostramos solo los primeros 30 resultados
+            this.clientesFiltrados.next(this.clientes.slice(0, 30));
+            this.isLoading = false;
+          });
+
+        this.mainService
+          .getRequest({}, `/user/get_active_users`)
+          .subscribe((res: Res) => {
+            this.usuarios = res.data;
+            // Inicialmente mostramos solo los primeros 30 resultados
+            this.usuariosFiltrados.next(this.usuarios.slice(0, 30));
+          });
+      }
     });
-    if (this.isUpdateMode()) {
-      this.mainService
-        .getRequest({}, `/client/get_active_clients`)
-        .subscribe((res: Res) => {
-          this.clientes = res.data;
-          this.isLoading = false;
-
-          this.clientesFiltrados.next(this.clientes.slice());
-          let filtro = res.data.filter(
-            (cliente: ClientesRes) => cliente.id == this.data.id_cliente
-          );
-          this.clientesControl.setValue(filtro[0]);
-        });
-      this.mainService
-        .getRequest({}, `/user/get_active_users`)
-        .subscribe((res: Res) => {
-          this.usuarios = res.data;
-          this.usuariosFiltrados.next(this.usuarios.slice());
-          let filtro = res.data.filter(
-            (usuario: User) => usuario.id == this.data.id_usuario
-          );
-          this.usuariosControl.setValue(filtro[0]);
-        });
-    } else {
-      this.mainService
-        .getRequest({}, `/client/get_active_clients`)
-        .subscribe((res: Res) => {
-          this.clientes = res.data;
-          this.isLoading = false;
-
-          this.clientesFiltrados.next(this.clientes.slice());
-        });
-      this.mainService
-        .getRequest({}, `/user/get_active_users`)
-        .subscribe((res: Res) => {
-          this.usuarios = res.data;
-
-          this.usuariosFiltrados.next(this.usuarios.slice());
-        });
-    }
   }
   protected setInitialValueUsuarios() {
     this.usuariosFiltrados
@@ -341,41 +363,73 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
     if (!this.usuarios) {
       return;
     }
-    // get the search keyword
+
+    let filteredUsers = [...this.usuarios];
+    const selectedUser = this.usuariosControl.value;
+    
+    // Aplicar filtro de búsqueda si existe
     let search = this.usuariosFiltro.value;
-    if (!search) {
-      this.usuariosFiltrados.next(this.usuarios.slice());
-      return;
-    } else {
+    if (search) {
       search = search.toLowerCase();
+      const searchTerms = search.split(' ').filter((term: string) => term.length > 0);
+      filteredUsers = this.usuarios.filter((usuario) => {
+        const searchString = (usuario.nombre + ' ' + usuario.apellido + ' ' + usuario.curp).toLowerCase();
+        return searchTerms.every((term: string) => searchString.includes(term));
+      });
     }
-    this.usuariosFiltrados.next(
-      this.usuarios.filter((usuario) => {
-        let filtrado =
-          usuario.nombre + ' ' + usuario.apellido + ' ' + usuario.curp;
-        return filtrado.toLowerCase().indexOf(search) > -1;
-      })
-    );
+
+    // Asegurar que el usuario seleccionado esté siempre en la lista
+    if (selectedUser && !filteredUsers.some(u => u.id === selectedUser.id)) {
+      filteredUsers = [selectedUser, ...filteredUsers];
+    }
+
+    // Limitar resultados pero asegurando que el seleccionado esté incluido
+    if (filteredUsers.length > 30 && !search) {
+      const firstItems = filteredUsers.slice(0, 29);
+      if (selectedUser && !firstItems.some(u => u.id === selectedUser.id)) {
+        filteredUsers = [selectedUser, ...firstItems];
+      } else {
+        filteredUsers = firstItems;
+      }
+    }
+
+    this.usuariosFiltrados.next(filteredUsers);
   }
   protected filtrarClientes() {
     if (!this.clientes) {
       return;
     }
-    // get the search keyword
+
+    let filteredClients = [...this.clientes];
+    const selectedClient = this.clientesControl.value;
+    
+    // Aplicar filtro de búsqueda si existe
     let search = this.clientesFiltro.value;
-    if (!search) {
-      this.clientesFiltrados.next(this.clientes.slice());
-      return;
-    } else {
+    if (search) {
       search = search.toLowerCase();
+      const searchTerms = search.split(' ').filter((term: string) => term.length > 0);
+      filteredClients = this.clientes.filter((cliente) => {
+        const searchString = (cliente.nombre + ' ' + cliente.apellido + ' ' + cliente.telefono).toLowerCase();
+        return searchTerms.every((term: string) => searchString.includes(term));
+      });
     }
-    this.clientesFiltrados.next(
-      this.clientes.filter((cliente) => {
-        let filtrado =
-          cliente.nombre + ' ' + cliente.apellido + ' ' + cliente.telefono;
-        return filtrado.toLowerCase().indexOf(search) > -1;
-      })
-    );
+
+    // Asegurar que el cliente seleccionado esté siempre en la lista
+    if (selectedClient && !filteredClients.some(c => c.id === selectedClient.id)) {
+      filteredClients = [selectedClient, ...filteredClients];
+    }
+
+    // Limitar resultados pero asegurando que el seleccionado esté incluido
+    if (filteredClients.length > 30 && !search) {
+      const firstItems = filteredClients.slice(0, 29);
+      if (selectedClient && !firstItems.some(c => c.id === selectedClient.id)) {
+        filteredClients = [selectedClient, ...firstItems];
+      } else {
+        filteredClients = firstItems;
+      }
+    }
+
+    this.clientesFiltrados.next(filteredClients);
   }
   isCreateMode() {
     return this.mode === 0;

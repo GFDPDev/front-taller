@@ -5,6 +5,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ClientesRes } from '../../../../interfaces/clientes';
 import { MainService } from 'src/app/services/main.service';
 import { Res } from 'src/app/interfaces/response';
+import { DataService } from 'src/app/services/data.service';
 
 @Component({
     selector: 'app-cliente-dialog',
@@ -19,6 +20,7 @@ export class ClienteDialogComponent {
   title!: String;
   constructor(
     private fb: FormBuilder,
+    private dataService: DataService,
     public dialogRef: MatDialogRef<ClienteDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ClientesRes,
     private mainService: MainService,
@@ -65,6 +67,7 @@ export class ClienteDialogComponent {
   onAdd(): void {
     const cliente: ClientesRes = this.form.value;
     if (this.isCreateMode()) {
+      this.dataService.invalidateClientsCache();
       this.mainService
         .postRequest(cliente, this.route)
         .subscribe((res: Res) => {
@@ -79,6 +82,7 @@ export class ClienteDialogComponent {
           }
         });
     } else {
+      this.dataService.invalidateClientsCache();
       this.mainService.putRequest(cliente, this.route).subscribe((res: Res) => {
         if (res.error) {
           this.snackbar.open(`${res.data} (${res.code})`, 'Aceptar', {

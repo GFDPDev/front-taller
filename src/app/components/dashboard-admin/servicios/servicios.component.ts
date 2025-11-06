@@ -11,14 +11,13 @@ import {
 } from '@angular/material/core';
 import { MatDatepicker } from '@angular/material/datepicker';
 import { interval, Subscription } from 'rxjs';
-import * as _moment from 'moment';
 // tslint:disable-next-line:no-duplicate-imports
 import { Moment } from 'moment';
 import 'moment/locale/es';
 import Swal from 'sweetalert2';
 import { UntypedFormControl } from '@angular/forms';
 import { ServicioDialogComponent } from './servicio-dialog/servicio-dialog.component';
-import * as moment from 'moment';
+import moment from 'moment';
 import { MainService } from 'src/app/services/main.service';
 import { ToolService } from 'src/app/interfaces/toolservice';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -323,7 +322,8 @@ export class ServiciosComponent implements OnDestroy {
   }
   createServicio() {
     const dialogRef = this.dialog.open(ServicioDialogComponent, {
-      width: '50%',
+      width: "800px",
+      maxWidth: "95vw",
       data: null,
     });
     dialogRef.afterClosed().subscribe((result: ToolService) => {
@@ -342,7 +342,8 @@ export class ServiciosComponent implements OnDestroy {
   }
   updateServicio(data: ToolService) {
     const dialogRef = this.dialog.open(ServicioDialogComponent, {
-      width: '50%',
+      width: "1000px",
+      maxWidth: "95vw",
       data: data,
     });
     dialogRef.afterClosed().subscribe((result: ToolService) => {
@@ -360,7 +361,7 @@ export class ServiciosComponent implements OnDestroy {
     });
   }
   getCSV() {
-    this.agGrid.api.exportDataAsCsv({ allColumns: true, columnSeparator: ';' });
+    this.agGrid.api.exportDataAsCsv({ allColumns: true });
   }
   printReceipt(data: ToolService) {
     const doc = new jsPDF();

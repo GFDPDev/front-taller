@@ -14,13 +14,13 @@ import {
 } from '@angular/material/core';
 import { MatDatepicker } from '@angular/material/datepicker';
 import { interval, Subscription } from 'rxjs';
-import * as _moment from 'moment';
+
 // tslint:disable-next-line:no-duplicate-imports
 import { Moment } from 'moment';
 import 'moment/locale/es';
 import Swal from 'sweetalert2';
 import { UntypedFormControl } from '@angular/forms';
-import * as moment from 'moment';
+import moment from 'moment';
 import { ExpressDialogComponent } from './express-dialog/express-dialog.component';
 import { MainService } from 'src/app/services/main.service';
 import { User, Convert } from 'src/app/interfaces/user';

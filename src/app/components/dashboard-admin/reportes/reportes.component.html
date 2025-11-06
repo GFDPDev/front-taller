@@ -1,14 +1,16 @@
-<mat-grid-list cols="3" [rowHeight]="475">
-  <mat-grid-tile [colspan]="1" [rowspan]="1">
-    <mat-card class="dashboard-card absolute">
-      <mat-card-header>
-        <mat-card-title>Reporte de Servicios Realizados</mat-card-title>
-        <mat-card-subtitle
+<div class="grid grid-rows-1 grid-cols-3 gap-3">
+  <div>
+    <mat-card class="space-y-8">
+      <mat-card-header class="flex justify-center">
+        <mat-card-title class="text-center"
+          >Reporte de Servicios Realizados</mat-card-title
+        >
+        <mat-card-subtitle class="text-center"
           >Seleccione el rango mensual para generar el
           reporte.</mat-card-subtitle
         >
       </mat-card-header>
-      <mat-card-content class="text-center margen">
+      <mat-card-content class="text-center">
         <mat-form-field class="mt-5 w-75">
           <mat-label>Día, Mes y Año</mat-label>
 
@@ -37,24 +39,26 @@
           <mat-date-range-picker #reportPicker></mat-date-range-picker>
         </mat-form-field>
       </mat-card-content>
-      <mat-card-actions class="justify-content-evenly">
+      <mat-card-actions class="flex justify-center">
         <a
           color="primary"
           target="_blank"
           class="mb-3"
-          mat-raised-button
+          matButton="filled"
           (click)="getReport()"
         >
           <mat-icon>post_add</mat-icon> Generar Reporte</a
         >
       </mat-card-actions>
     </mat-card>
-  </mat-grid-tile>
-  <mat-grid-tile [colspan]="1" [rowspan]="1">
-    <mat-card class="dashboard-card absolute">
-      <mat-card-header>
-        <mat-card-title>Excel de Servicios Registrados</mat-card-title>
-        <mat-card-subtitle
+  </div>
+  <div>
+    <mat-card class="space-y-8">
+      <mat-card-header class="flex justify-center">
+        <mat-card-title class="text-center"
+          >Excel de Servicios Registrados</mat-card-title
+        >
+        <mat-card-subtitle class="text-center"
           >Seleccione el rango mensual para generar el
           reporte.</mat-card-subtitle
         >
@@ -88,9 +92,9 @@
           <mat-date-range-picker #picker></mat-date-range-picker>
         </mat-form-field>
       </mat-card-content>
-      <mat-card-actions class="justify-content-evenly">
+      <mat-card-actions class="flex justify-center">
         <button
-          mat-raised-button
+          matButton="filled"
           class="mb-3 csv-button"
           (click)="getCSVServicio()"
         >
@@ -98,12 +102,12 @@
         </button>
       </mat-card-actions>
     </mat-card>
-  </mat-grid-tile>
-  <mat-grid-tile [colspan]="1" [rowspan]="1">
-    <mat-card class="dashboard-card absolute">
-      <mat-card-header>
-        <mat-card-title>Excel de Garantías</mat-card-title>
-        <mat-card-subtitle
+  </div>
+  <div>
+    <mat-card class="space-y-8">
+      <mat-card-header class="flex justify-center">
+        <mat-card-title class="text-center">Excel de Garantías</mat-card-title>
+        <mat-card-subtitle class="text-center"
           >Seleccione el rango mensual para generar el
           reporte.</mat-card-subtitle
         >
@@ -137,9 +141,9 @@
           <mat-date-range-picker #warrantyPicker></mat-date-range-picker>
         </mat-form-field>
       </mat-card-content>
-      <mat-card-actions class="justify-content-evenly">
+      <mat-card-actions class="flex justify-center">
         <button
-          mat-raised-button
+          matButton="filled"
           class="mb-3 csv-button"
           (click)="getCSVGarantia()"
         >
@@ -147,16 +151,13 @@
         </button>
       </mat-card-actions>
     </mat-card>
-  </mat-grid-tile>
-  <mat-grid-tile [colspan]="3" [rowspan]="2">
-    <app-earnings-chart></app-earnings-chart>
-  </mat-grid-tile>
-</mat-grid-list>
-<mat-grid-list cols="2" [rowHeight]="475">
-  <mat-grid-tile [colspan]="1" [rowspan]="1">
-    <app-status-chart></app-status-chart>
-  </mat-grid-tile>
-  <mat-grid-tile [colspan]="1" [rowspan]="1">
-    <app-tech-chart></app-tech-chart>
-  </mat-grid-tile>
-</mat-grid-list>
+  </div>
+  <div class="col-span-3">
+  <app-earnings-chart></app-earnings-chart>
+
+  </div>
+</div>
+<div class="grid grid-rows-1 grid-flow-col gap-3 mt-3">
+  <app-status-chart></app-status-chart>
+  <app-tech-chart></app-tech-chart>
+</div>

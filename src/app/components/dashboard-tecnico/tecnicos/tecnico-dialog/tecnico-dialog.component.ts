@@ -28,7 +28,7 @@ import {
   MAT_DATE_FORMATS,
   MAT_DATE_LOCALE,
 } from '@angular/material/core';
-import * as _moment from 'moment';
+
 // tslint:disable-next-line:no-duplicate-imports
 import { Moment } from 'moment';
 import 'moment/locale/es';
@@ -39,7 +39,7 @@ import { take, takeUntil } from 'rxjs/operators';
 import { MainService } from 'src/app/services/main.service';
 import { ToolService } from 'src/app/interfaces/toolservice';
 import { Res } from 'src/app/interfaces/response';
-import * as moment from 'moment';
+import moment from 'moment';
 import { ajax } from 'rxjs/ajax';
 
 export const MY_FORMATS = {
@@ -228,10 +228,10 @@ export class TecnicoDialogComponent implements OnInit, AfterViewInit {
   onAdd(): void {
     const servicio = this.form.getRawValue();
     servicio.fecha_terminado = servicio.fecha_terminado
-      ? _moment(servicio.fecha_terminado).format('YYYY-MM-DD')
+      ? moment(servicio.fecha_terminado).format('YYYY-MM-DD')
       : null;
     servicio.fecha_entrega = servicio.fecha_entrega
-      ? _moment(servicio.fecha_entrega).format('YYYY-MM-DD')
+      ? moment(servicio.fecha_entrega).format('YYYY-MM-DD')
       : null;
     if (this.isCreateMode()) {
       this.mainService
@@ -343,41 +343,10 @@ export class TecnicoDialogComponent implements OnInit, AfterViewInit {
     return duration;
   }
   marcarTerminado() {
-    let telefono = this.clientesControl.value.telefono;
-    let mensaje = '--- *SERVICIO TERMINADO* --- \nBuen día, estimado cliente. Centro de Servicio Don Pedro le informa que su ' +
-    this.data.producto +
-    ' esta *listo para la entrega.* Favor presentarse con su talón de entrega de equipo. Número de Folio: ' +
-    this.data.id +
-    ' Importe Total: $' +
-    this.form.value.importe +
-    '. ' +
-    this.form.value.observaciones ?? '';
     const now = moment();
     this.form.controls['estatus'].setValue('TERMINADO');
     this.form.controls['fecha_terminado'].setValue(now.format('YYYY-MM-DD'));
-    // ajax.post("http://192.168.50.200:3001/lead", {
-    //   message : 
-    //   mensaje,
-    //   phone : "521" + telefono 
-    // }, { 'Content-Type': 'application/json' })
-    //   .subscribe({
-    //     next: (res:any)=>{
-    //       console.log(res.response.responseExSave.id)
-    //       if(res.response.responseExSave.id != undefined){
-    //         this.form.controls['avisado'].setValue(2);
-    //         this.onAdd();
-            
-    //       } else {
-    //         this.onAdd();
-    //         this.snackbar.open(`No se envió el mensaje`, 'Aceptar', {
-    //           duration: 4000,
-    //           horizontalPosition: 'center',
-    //           verticalPosition: 'top',
-    //         });
-
-    //       }
-    //     }
-    //   });
+    this.onAdd();
   }
   marcarEntregado() {
     const now = moment();

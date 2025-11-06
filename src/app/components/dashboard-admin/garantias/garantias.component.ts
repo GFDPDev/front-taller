@@ -1,10 +1,7 @@
 import {
-  AfterViewInit,
   Component,
-  ElementRef,
   OnDestroy,
   OnInit,
-  Renderer2,
   ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -23,25 +20,19 @@ import {
 import { MatDatepicker } from '@angular/material/datepicker';
 import {
   BehaviorSubject,
-  combineLatest,
-  interval,
-  map,
-  mapTo,
   Subject,
   Subscription,
-  takeUntil,
 } from 'rxjs';
-import * as _moment from 'moment';
+
 // tslint:disable-next-line:no-duplicate-imports
 import { Moment } from 'moment';
 import 'moment/locale/es';
 import Swal from 'sweetalert2';
 import { UntypedFormControl } from '@angular/forms';
-import * as moment from 'moment';
+import moment from 'moment';
 import { MainService } from 'src/app/services/main.service';
 import { GarantiasRes, Convert } from 'src/app/interfaces/garantias';
 import { GarantiaDialogComponent } from './garantia-dialog/garantia-dialog.component';
-import { CSVService } from 'src/app/services/csv.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Res } from 'src/app/interfaces/response';
 import {
@@ -341,7 +332,8 @@ export class GarantiasComponent implements OnInit, OnDestroy {
   }
   createGarantia() {
     const dialogRef = this.dialog.open(GarantiaDialogComponent, {
-      width: '70%',
+      width: "900px",
+      maxWidth: "95vw",
       data: null,
     });
     dialogRef.afterClosed().subscribe((result: GarantiasRes) => {
@@ -358,7 +350,8 @@ export class GarantiasComponent implements OnInit, OnDestroy {
   }
   updateGarantia(garantia: GarantiasRes) {
     const dialogRef = this.dialog.open(GarantiaDialogComponent, {
-      width: '70%',
+      width: "900px",
+      maxWidth: "95vw",
       data: garantia,
     });
     dialogRef.afterClosed().subscribe((result: GarantiasRes) => {
@@ -374,7 +367,7 @@ export class GarantiasComponent implements OnInit, OnDestroy {
     });
   }
   getCSVGarantia() {
-    this.agGrid.api.exportDataAsCsv({ allColumns: true, columnSeparator: ';' });
+    this.agGrid.api.exportDataAsCsv({ allColumns: true, columnSeparator: ',' });
   }
 
   formatCurrency(value: number): string {
