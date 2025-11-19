@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 import { Res } from 'src/app/interfaces/response';
 import { User, Convert } from 'src/app/interfaces/user';
 import { AuthService } from 'src/app/services/auth.service';
+import packageJson from '../../../../package.json';
 
 @Component({
     selector: 'app-log-in',
@@ -22,6 +23,7 @@ export class LogInComponent implements OnInit {
   form: UntypedFormGroup;
   route = '/login';
   mode: ProgressSpinnerMode = 'indeterminate';
+  version = packageJson.version;
   isLoading: boolean = false;
   constructor(
     private fb: FormBuilder,

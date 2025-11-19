@@ -6,19 +6,13 @@ import { AngularMaterialModule } from './angular-material.module';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LogInComponent } from './components/log-in/log-in.component';
-import { FacturaComponent } from './components/factura/factura.component';
 import { NotFoundsComponent } from './components/not-founds/not-founds.component';
-import { ReporteTablaComponent } from './components/dashboard-admin/reportes/reporte-tabla/reporte-tabla.component';
-import { ComprobanteComponent } from './components/comprobante/comprobante.component';
 import { MAT_CARD_CONFIG } from '@angular/material/card';
 
 @NgModule({ declarations: [
         AppComponent,
         LogInComponent,
-        FacturaComponent,
-        NotFoundsComponent,
-        ReporteTablaComponent,
-        ComprobanteComponent
+        NotFoundsComponent
     ],
     bootstrap: [AppComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA], imports: [BrowserModule,

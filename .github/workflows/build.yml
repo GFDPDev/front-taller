@@ -1,0 +1,40 @@
+name: Build Electron App
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Build Electron app
+        run: npm run electron:build-exe
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: Forzar Publicación del Release
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }} 
+          TAG: ${{ github.ref_name }}
+          GH_REPO: 'GFDPDev/taller'
+          
+        run: |
+          echo "Forzando a que la Release $env:TAG esté publicada..."
+          
+          gh release edit $env:TAG --repo $env:GH_REPO --draft=false
+          
+          echo "Release publicada con éxito."
+        shell: pwsh

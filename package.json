@@ -6,7 +6,45 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "build-for-electron": "ng build --base-href ./",
+    "electron:start": "electron .",
+    "electron:build-exe": "npm run build-for-electron && electron-builder --win nsis --x64 --publish onTag"
+  },
+  "description": "Control de Taller para Grupo Ferretero Don Pedro",
+  "author": {
+    "name": "Freddy Marcel Flores Chavarria",
+    "email": "dev.gfdp@gmail.com"
+  },
+  "main": "main.js",
+  "build": {
+    "appId": "com.gfdp.taller",
+    "productName": "GFDP Taller",
+    "directories": {
+      "output": "release-builds"
+    },
+    "files": [
+      "dist/taller_prod/browser/**/*",
+      "main.js",
+      "package.json"
+    ],
+    "publish": {
+      "provider": "github",
+      "owner": "GFDPDev",
+      "repo": "taller"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "logo.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "GFDP Taller"
+    }
   },
   "private": true,
   "dependencies": {
@@ -24,6 +62,8 @@
     "@angular/router": "^20.3.9",
     "ag-grid-angular": "^31.0.3",
     "ag-grid-community": "^31.0.3",
+    "electron-log": "^5.4.3",
+    "electron-updater": "^6.6.2",
     "jquery": "^3.7.0",
     "jspdf": "^2.5.1",
     "moment": "^2.29.4",
@@ -40,6 +80,8 @@
     "@types/jasmine": "~4.3.0",
     "autoprefixer": "^10.4.21",
     "jasmine-core": "~4.5.0",
+    "electron": "^39.2.1",
+    "electron-builder": "^26.0.12",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.1.0",
     "karma-coverage": "~2.2.0",

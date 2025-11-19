@@ -9,7 +9,6 @@ import { ExpressComponent } from './express/express.component';
 import { GarantiasComponent } from './garantias/garantias.component';
 import { ExternosComponent } from './externos/externos.component';
 import { adminGuard } from 'src/app/auth/admin.guard';
-import { ReporteTablaComponent } from './reportes/reporte-tabla/reporte-tabla.component';
 
 const routes: Routes = [
   {
