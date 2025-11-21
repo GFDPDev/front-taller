@@ -1,6 +1,6 @@
 {
   "name": "taller",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -26,6 +26,7 @@
     "files": [
       "dist/taller_prod/browser/**/*",
       "main.js",
+      "preload.js",
       "package.json"
     ],
     "publish": {
