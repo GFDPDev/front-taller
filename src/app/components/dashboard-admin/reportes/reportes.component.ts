@@ -273,7 +273,7 @@ export class ReportesComponent {
     doc.setFont('helvetica', 'bold');
     doc.text(`IMPORTE TOTAL: $${this.report.service_report['importe_total'].toFixed(2)}`, pageWidth / 2, yPos, { align: 'center' });
 
-    window.open(doc.output('bloburl'));
+    window.open(doc.output('bloburl'),'_blank');
   }
 
   private drawTable(

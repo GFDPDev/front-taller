@@ -615,7 +615,7 @@ export class ServiciosComponent implements OnDestroy {
 
     // doc.text(`Falla: ${data.falla_detectada}`, pageWidth / 1.5 + 20, yPos);
     // doc.save(`orden_servicio_${data.id}.pdf`);
-    window.open(doc.output('bloburl'));
+    window.open(doc.output('bloburl'),'_blank');
   }
   ngOnDestroy(): void {
     //Called once, before the instance is destroyed.

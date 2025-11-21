@@ -532,7 +532,7 @@ export class GarantiasComponent implements OnInit, OnDestroy {
     yPos += 20;
     doc.line(xPos + 10, yPos, pageWidth / 2 - 5, yPos);
     doc.line(pageWidth / 2 + 10, yPos, pageWidth - 20, yPos);
-    window.open(doc.output('bloburl'));
+    window.open(doc.output('bloburl'),'_blank');
   }
   ngOnDestroy(): void {
     this.theadObserver.disconnect();
