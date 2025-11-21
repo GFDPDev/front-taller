@@ -1,8 +1,11 @@
-const { app, BrowserWindow, screen, dialog, shell } = require('electron');
+const { app, BrowserWindow, screen, dialog, shell, ipcMain, safeStorage } = require('electron');
+const fs = require('fs');
 const path = require('path');
 const { autoUpdater } = require('electron-updater');
 const log = require('electron-log');
 Object.assign(console, log.functions);
+const userDataPath = app.getPath('userData');
+const credentialsPath = path.join(userDataPath, 'user_credentials.enc');
 function createWindow() {
   const size = screen.getPrimaryDisplay().workAreaSize;
 
@@ -14,6 +17,9 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
+      partition: 'persist:taller',
+      webSecurity: true,
+      preload: path.join(__dirname, 'preload.js')
     },
   });
 
@@ -49,6 +55,51 @@ function createWindow() {
 
 
 
+ipcMain.handle('save-credentials', async (event, data) => {
+  try {
+    if (safeStorage.isEncryptionAvailable()) {
+      const buffer = safeStorage.encryptString(data.password);
+      const json = JSON.stringify({
+        username: data.username,
+        password: buffer.toString('base64') // Guardamos el buffer como base64
+      });
+      fs.writeFileSync(credentialsPath, json);
+      return { success: true };
+    }
+    return { success: false, error: 'Encryption not available' };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('get-credentials', async () => {
+  try {
+    if (fs.existsSync(credentialsPath) && safeStorage.isEncryptionAvailable()) {
+      const json = JSON.parse(fs.readFileSync(credentialsPath, 'utf-8'));
+      const buffer = Buffer.from(json.password, 'base64');
+      const decryptedPassword = safeStorage.decryptString(buffer);
+      return { 
+        username: json.username, 
+        password: decryptedPassword 
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error('Error retrieving credentials:', error);
+    return null;
+  }
+});
+
+ipcMain.handle('delete-credentials', async () => {
+  try {
+    if (fs.existsSync(credentialsPath)) {
+      fs.unlinkSync(credentialsPath);
+    }
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
 
 app.whenReady().then(() => {
 createWindow();

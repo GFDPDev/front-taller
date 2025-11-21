@@ -14,8 +14,10 @@
               oninput="this.value = this.value.toUpperCase()"
               formControlName="curp"
               matInput
-              autocomplete="off"
-              placeholder="RFC sin homoclave"
+              type="text"
+              name="username"
+              autocomplete="username"
+              placeholder="Usuario"
             />
           </mat-form-field>
 
@@ -23,12 +25,18 @@
             <mat-label>Contraseña</mat-label>
             <input
               type="password"
+              name="password"
               formControlName="password"
               matInput
-              autocomplete="off"
+              autocomplete="current-password"
               placeholder="******"
             />
           </mat-form-field>
+          <div class="w-full text-center">
+            <mat-checkbox formControlName="remember" color="primary">
+              Recordar mis datos
+            </mat-checkbox>
+          </div>
         </mat-card-content>
         <mat-card-actions class="justify-center">
           <button

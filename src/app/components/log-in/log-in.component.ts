@@ -12,7 +12,15 @@ import { Res } from 'src/app/interfaces/response';
 import { User, Convert } from 'src/app/interfaces/user';
 import { AuthService } from 'src/app/services/auth.service';
 import packageJson from '../../../../package.json';
-
+declare global {
+  interface Window {
+    electronAPI: {
+      saveCredentials: (data: any) => Promise<any>;
+      getCredentials: () => Promise<any>;
+      deleteCredentials: () => Promise<any>;
+    };
+  }
+}
 @Component({
     selector: 'app-log-in',
     templateUrl: './log-in.component.html',
@@ -21,6 +29,7 @@ import packageJson from '../../../../package.json';
 })
 export class LogInComponent implements OnInit {
   form: UntypedFormGroup;
+  rememberMe: boolean = false;
   route = '/login';
   mode: ProgressSpinnerMode = 'indeterminate';
   version = packageJson.version;
@@ -34,11 +43,28 @@ export class LogInComponent implements OnInit {
     this.form = this.fb.group({
       curp: ['', Validators.required],
       password: ['', Validators.required],
+      remember: [false]
     });
     sessionStorage.clear();
   }
 
-  ngOnInit(): void {}
+  async ngOnInit(): Promise<void> {
+    await this.checkSavedCredentials();
+  }
+
+  async checkSavedCredentials() {
+    if (window.electronAPI) {
+      const credentials = await window.electronAPI.getCredentials();
+      if (credentials) {
+        this.form.patchValue({
+          curp: credentials.username,
+          password: credentials.password,
+          remember: true
+        });
+        this.rememberMe = true;
+      }
+    }
+  }
 
   login() {
     let curp = this.form.value.curp;
@@ -48,6 +74,14 @@ export class LogInComponent implements OnInit {
       .loginRequest({ curp: curp, password: password }, this.route)
       .subscribe((res: Res) => {
         if (!res.error) {
+          console.log(window.electronAPI)
+          if (window.electronAPI) {
+            if (this.form.value.remember) {
+              window.electronAPI.saveCredentials({ username: curp, password: password });
+            } else {
+              window.electronAPI.deleteCredentials();
+            }
+          }
           const user: User = res.data;
           sessionStorage.setItem('token',user.token);
           sessionStorage.setItem('user_taller', Convert.userToJson(user));
