@@ -1,6 +1,6 @@
 {
   "name": "taller",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "build-for-electron": "ng build --base-href ./",
-    "electron:start": "electron .",
+    "electron:start": "npx electron .",
     "electron:build-exe": "npm run build-for-electron && electron-builder --win nsis --x64 --publish onTag"
   },
   "description": "Control de Taller para Grupo Ferretero Don Pedro",

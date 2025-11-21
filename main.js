@@ -18,8 +18,17 @@ function createWindow() {
   });
 
   win.webContents.setWindowOpenHandler(({ url }) => {
-    shell.openExternal(url);
-    return { action: 'deny' };
+    // Permitir blobs (PDFs, etc) para que se abran normalmente
+    if (url.startsWith('blob:')) {
+      return { action: 'allow' };
+    }
+    // Para URLs externas (como wa.me, http, https), abrir con navegador predeterminado
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('wa.me')) {
+      shell.openExternal(url);
+      return { action: 'deny' };
+    }
+    // Permitir otras acciones
+    return { action: 'allow' };
   });
 
   if (!app.isPackaged) {
