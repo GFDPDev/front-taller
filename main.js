@@ -17,6 +17,11 @@ function createWindow() {
     },
   });
 
+  win.webContents.setWindowOpenHandler(({ url }) => {
+    shell.openExternal(url);
+    return { action: 'deny' };
+  });
+
   if (!app.isPackaged) {
     win.loadURL('http://localhost:4200');
     win.webContents.openDevTools();
