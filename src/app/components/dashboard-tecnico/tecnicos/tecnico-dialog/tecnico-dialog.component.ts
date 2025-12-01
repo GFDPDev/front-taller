@@ -225,7 +225,9 @@ export class TecnicoDialogComponent implements OnInit, AfterViewInit {
     this._onDestroy.complete();
   }
   ngAfterViewInit(): void {
-    this.setInitialValueClientes();
+    if (this.singleSelectClientes) {
+      this.setInitialValueClientes();
+    }
   }
   onAdd(): void {
     const servicio = this.form.getRawValue();
