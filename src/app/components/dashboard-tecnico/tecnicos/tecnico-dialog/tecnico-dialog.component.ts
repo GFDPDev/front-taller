@@ -34,13 +34,14 @@ import { Moment } from 'moment';
 import 'moment/locale/es';
 import { Convert, User } from 'src/app/interfaces/user';
 import { ClientesRes } from 'src/app/interfaces/clientes';
-import { ReplaySubject, Subject } from 'rxjs';
-import { take, takeUntil } from 'rxjs/operators';
+import { forkJoin, ReplaySubject, Subject } from 'rxjs';
+import { take, takeUntil, tap } from 'rxjs/operators';
 import { MainService } from 'src/app/services/main.service';
 import { ToolService } from 'src/app/interfaces/toolservice';
 import { Res } from 'src/app/interfaces/response';
 import moment from 'moment';
 import { ajax } from 'rxjs/ajax';
+import { DataService } from 'src/app/services/data.service';
 
 export const MY_FORMATS = {
   parse: {
@@ -134,6 +135,7 @@ export class TecnicoDialogComponent implements OnInit, AfterViewInit {
     public dialogRef: MatDialogRef<TecnicoDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ToolService,
     private mainService: MainService,
+    private dataService: DataService,
     private snackbar: MatSnackBar
   ) {
     this.user = Convert.toUser(sessionStorage.getItem('user_taller') ?? '');
@@ -264,40 +266,55 @@ export class TecnicoDialogComponent implements OnInit, AfterViewInit {
     }
   }
   getMenus() {
-    this.mainService.getRequest({}, `/brand`).subscribe((res: Res) => {
-      this.marcas = res.data;
-    });
-    if (this.isUpdateMode()) {
-      this.mainService
-        .getRequest({}, `/client/get_active_clients`)
-        .subscribe((res: Res) => {
-          this.clientes = res.data;
-          this.clientesFiltrados.next(this.clientes.slice());
-          let filtro = res.data.filter(
+    const brands$ =this.dataService.getBrands();
+    
+    // 1. Define las dos peticiones HTTP como observables
+    const clientes$ = this.dataService.getActiveClients().pipe(
+      // Uso de tap para procesar los datos de clientes apenas llegan
+      // Esto mantiene el código de procesamiento fuera de la suscripción final
+      tap((res: Res) => {
+        this.clientes = res.data;
+        this.clientesFiltrados.next(this.clientes.slice(0, 30));
+
+        // El procesamiento específico de updateMode se manejará en la suscripción final.
+      })
+    );
+
+    const usuarios$ = this.mainService.getRequest({ id: this.user.id }, `/user/get_tech_users`)
+
+  
+    // 2. Ejecuta ambas peticiones en paralelo
+    forkJoin({
+      clientesRes: clientes$,
+      usuariosRes: usuarios$,
+      brandRes: brands$
+    }).subscribe({
+      next: ({ clientesRes, usuariosRes, brandRes }) => {
+        // Este bloque se ejecuta una vez que ambas peticiones han retornado con éxito.
+        this.marcas = brandRes.data;
+        this.usuarios = usuariosRes.data;
+        // Si estamos en modo de actualización, se realiza la lógica de filtrado y asignación
+        if (this.isUpdateMode()) {
+          // Lógica para Clientes
+          let filtroClientes = clientesRes.data.filter(
             (cliente: ClientesRes) => cliente.id == this.data.id_cliente
           );
-          this.clientesControl.setValue(filtro[0]);
-          this.isLoading = false;
-        });
-      this.mainService
-        .getRequest({ id: this.user.id }, `/user/get_tech_users`)
-        .subscribe((res: Res) => {
-          this.usuarios = res.data;
-        });
-    } else {
-      this.mainService.getRequest({}, `/client/get_active_clients`).subscribe({
-        next: (res: Res) => (this.clientes = res.data),
-        complete: () => {
-          this.clientesFiltrados.next(this.clientes.slice());
-          this.isLoading = false;
-        },
-      });
-      this.mainService
-        .getRequest({ id: this.user.id }, `/user/get_tech_users`)
-        .subscribe((res: Res) => {
-          this.usuarios = res.data;
-        });
-    }
+          if (filtroClientes.length > 0) {
+            this.clientesControl.setValue(filtroClientes[0]);
+          }
+          this.filtrarClientes();
+        }
+      },
+      error: (err) => {
+        console.error('Error al cargar menús:', err);
+        // Opcional: Manejar errores aquí
+      },
+      complete: () => {
+        // Este bloque se ejecuta al final, después de procesar todo
+        this.isLoading = false;
+      },
+    });
+    
   }
   protected setInitialValueClientes() {
     this.clientesFiltrados
@@ -313,21 +330,51 @@ export class TecnicoDialogComponent implements OnInit, AfterViewInit {
     if (!this.clientes) {
       return;
     }
-    // get the search keyword
+
+    let filteredClients = [...this.clientes];
+    const selectedClient = this.clientesControl.value;
+
+    // Aplicar filtro de búsqueda si existe
     let search = this.clientesFiltro.value;
-    if (!search) {
-      this.clientesFiltrados.next(this.clientes.slice());
-      return;
-    } else {
+    if (search) {
       search = search.toLowerCase();
+      const searchTerms = search
+        .split(' ')
+        .filter((term: string) => term.length > 0);
+      filteredClients = this.clientes.filter((cliente) => {
+        const searchString = (
+          cliente.nombre +
+          ' ' +
+          cliente.apellido +
+          ' ' +
+          cliente.telefono
+        ).toLowerCase();
+        return searchTerms.every((term: string) => searchString.includes(term));
+      });
     }
-    this.clientesFiltrados.next(
-      this.clientes.filter((cliente) => {
-        let filtrado =
-          cliente.nombre + ' ' + cliente.apellido + ' ' + cliente.telefono;
-        return filtrado.toLowerCase().indexOf(search) > -1;
-      })
-    );
+
+    // Asegurar que el cliente seleccionado esté siempre en la lista
+    if (
+      selectedClient &&
+      !filteredClients.some((c) => c.id === selectedClient.id)
+    ) {
+      filteredClients = [selectedClient, ...filteredClients];
+    }
+
+    // Limitar resultados pero asegurando que el seleccionado esté incluido
+    if (filteredClients.length > 30 && !search) {
+      const firstItems = filteredClients.slice(0, 29);
+      if (
+        selectedClient &&
+        !firstItems.some((c) => c.id === selectedClient.id)
+      ) {
+        filteredClients = [selectedClient, ...firstItems];
+      } else {
+        filteredClients = firstItems;
+      }
+    }
+
+    this.clientesFiltrados.next(filteredClients);
   }
   isCreateMode() {
     return this.mode === 0;

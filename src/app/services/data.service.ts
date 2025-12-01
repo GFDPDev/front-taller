@@ -11,6 +11,7 @@ import { Res } from '../interfaces/response';
 export class DataService {
   private readonly CLIENTS_CACHE_KEY = 'active_clients';
   private readonly USERS_CACHE_KEY = 'active_users';
+  private readonly BRANDS_CACHE_KEY = 'active_brands';
   private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
 
   constructor(
@@ -52,6 +53,23 @@ export class DataService {
     this.cacheService.set(this.USERS_CACHE_KEY, request, this.CACHE_DURATION);
     return request;
   }
+  
+  getBrands(): Observable<Res> {
+    const cached = this.cacheService.get(this.BRANDS_CACHE_KEY);
+    if (cached) {
+      return cached;
+    }
+
+    const request = this.mainService.getRequest({}, '/brand')
+      .pipe(
+        tap(() => {
+          setTimeout(() => this.invalidateUsersCache(), this.CACHE_DURATION);
+        })
+      );
+
+    this.cacheService.set(this.BRANDS_CACHE_KEY, request, this.CACHE_DURATION);
+    return request;
+  }
 
   invalidateClientsCache(): void {
     this.cacheService.invalidate(this.CLIENTS_CACHE_KEY);
@@ -59,5 +77,8 @@ export class DataService {
 
   invalidateUsersCache(): void {
     this.cacheService.invalidate(this.USERS_CACHE_KEY);
+  }
+  invalidateBrandsCache(): void {
+    this.cacheService.invalidate(this.BRANDS_CACHE_KEY);
   }
 }

@@ -102,7 +102,7 @@ export class TecnicosComponent implements OnDestroy, OnInit {
   }
   createServicio() {
     const dialogRef = this.dialog.open(TecnicoDialogComponent, {
-      width: '800px',
+      width: '1000px',
       maxWidth: '95vw',
       data: null,
     });
@@ -122,7 +122,7 @@ export class TecnicosComponent implements OnDestroy, OnInit {
   }
   updateServicio(servicio: ToolService) {
     const dialogRef = this.dialog.open(TecnicoDialogComponent, {
-      width: '800px',
+      width: '1000px',
       maxWidth: '95vw',
       data: servicio,
     });

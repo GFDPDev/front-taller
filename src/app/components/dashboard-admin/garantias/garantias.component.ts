@@ -350,7 +350,7 @@ export class GarantiasComponent implements OnInit, OnDestroy {
   }
   updateGarantia(garantia: GarantiasRes) {
     const dialogRef = this.dialog.open(GarantiaDialogComponent, {
-      width: "900px",
+      width: "1000px",
       maxWidth: "95vw",
       data: garantia,
     });

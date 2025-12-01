@@ -66,8 +66,8 @@ export class ClienteDialogComponent {
 
   onAdd(): void {
     const cliente: ClientesRes = this.form.value;
+    this.dataService.invalidateClientsCache();
     if (this.isCreateMode()) {
-      this.dataService.invalidateClientsCache();
       this.mainService
         .postRequest(cliente, this.route)
         .subscribe((res: Res) => {
@@ -82,7 +82,6 @@ export class ClienteDialogComponent {
           }
         });
     } else {
-      this.dataService.invalidateClientsCache();
       this.mainService.putRequest(cliente, this.route).subscribe((res: Res) => {
         if (res.error) {
           this.snackbar.open(`${res.data} (${res.code})`, 'Aceptar', {

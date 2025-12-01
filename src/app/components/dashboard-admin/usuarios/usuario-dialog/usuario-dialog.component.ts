@@ -5,6 +5,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { User } from '../../../../interfaces/user';
 import { MainService } from 'src/app/services/main.service';
 import { Res } from 'src/app/interfaces/response';
+import { DataService } from 'src/app/services/data.service';
 
 @Component({
     selector: 'app-usuario-dialog',
@@ -21,6 +22,7 @@ export class UsuarioDialogComponent{
     public dialogRef: MatDialogRef<UsuarioDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: User,
     private mainService: MainService,
+    private dataService: DataService,
     private snackbar: MatSnackBar,) {
       if (this.data) {
         this.mode = 1;
@@ -52,6 +54,7 @@ export class UsuarioDialogComponent{
 
   onAdd(): void{
     const usuario: User = this.form.value;
+    this.dataService.invalidateUsersCache();
     if (this.isCreateMode()) {
       this.mainService
         .postRequest(usuario, this.route)

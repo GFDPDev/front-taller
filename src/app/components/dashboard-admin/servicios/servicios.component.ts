@@ -322,7 +322,7 @@ export class ServiciosComponent implements OnDestroy {
   }
   createServicio() {
     const dialogRef = this.dialog.open(ServicioDialogComponent, {
-      width: "800px",
+      width: "1000px",
       maxWidth: "95vw",
       data: null,
     });

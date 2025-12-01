@@ -27,13 +27,20 @@ import {
 
 import 'moment/locale/es';
 import { ClientesRes } from '../../../../interfaces/clientes';
-import { ReplaySubject, Subject } from 'rxjs';
-import { take, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { forkJoin, ReplaySubject, Subject } from 'rxjs';
+import {
+  take,
+  takeUntil,
+  debounceTime,
+  distinctUntilChanged,
+  tap,
+} from 'rxjs/operators';
 import { MainService } from 'src/app/services/main.service';
 import { User, Convert } from 'src/app/interfaces/user';
 import { ToolService } from 'src/app/interfaces/toolservice';
 import { Res } from 'src/app/interfaces/response';
 import moment from 'moment';
+import { DataService } from 'src/app/services/data.service';
 
 export const MY_FORMATS = {
   parse: {
@@ -47,19 +54,19 @@ export const MY_FORMATS = {
   },
 };
 @Component({
-    selector: 'app-servicio-dialog',
-    templateUrl: './servicio-dialog.component.html',
-    styleUrls: ['./servicio-dialog.component.scss'],
-    providers: [
-        { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
-        {
-            provide: DateAdapter,
-            useClass: MomentDateAdapter,
-            deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
-        },
-        { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
-    ],
-    standalone: false
+  selector: 'app-servicio-dialog',
+  templateUrl: './servicio-dialog.component.html',
+  styleUrls: ['./servicio-dialog.component.scss'],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
+    {
+      provide: DateAdapter,
+      useClass: MomentDateAdapter,
+      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
+    },
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+  ],
+  standalone: false,
 })
 export class ServicioDialogComponent implements OnInit, AfterViewInit {
   private route = '/service';
@@ -131,6 +138,7 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
     public dialogRef: MatDialogRef<ServicioDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ToolService,
     private mainService: MainService,
+    private dataService: DataService,
     private snackbar: MatSnackBar
   ) {
     this.user = Convert.toUser(sessionStorage.getItem('user_taller') ?? '');
@@ -270,64 +278,67 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
     }
   }
   getMenus() {
-    // Carga inicial optimizada
-    Promise.resolve().then(() => {
-      this.mainService.getRequest({}, `/brand`).subscribe((res: Res) => {
-        this.marcas = res.data;
-      });
+    const brands$ =this.dataService.getBrands();
 
-      if (this.isUpdateMode()) {
-        this.mainService
-          .getRequest({}, `/client/get_active_clients`)
-          .subscribe((res: Res) => {
-            this.clientes = res.data;
-            // Inicialmente mostramos solo los primeros 30 resultados
-            this.clientesFiltrados.next(this.clientes.slice(0, 30));
-            
-            // Si estamos en modo actualización, buscamos el cliente específico
-            let filtro = res.data.filter(
-              (cliente: ClientesRes) => cliente.id == this.data.id_cliente
-            );
-            if (filtro.length > 0) {
-              this.clientesControl.setValue(filtro[0]);
-            }
-            this.filtrarClientes();
-            this.isLoading = false;
-          });
+    // 1. Define las dos peticiones HTTP como observables
+    const clientes$ = this.dataService.getActiveClients().pipe(
+      // Uso de tap para procesar los datos de clientes apenas llegan
+      // Esto mantiene el código de procesamiento fuera de la suscripción final
+      tap((res: Res) => {
+        this.clientes = res.data;
+        this.clientesFiltrados.next(this.clientes.slice(0, 30));
 
-        this.mainService
-          .getRequest({}, `/user/get_active_users`)
-          .subscribe((res: Res) => {
-            this.usuarios = res.data;
-            // Inicialmente mostramos solo los primeros 30 resultados
-            this.usuariosFiltrados.next(this.usuarios.slice(0, 30));
-            
-            // Si estamos en modo actualización, buscamos el usuario específico
-            let filtro = res.data.filter(
-              (usuario: User) => usuario.id == this.data.id_usuario
-            );
-            if (filtro.length > 0) {
-              this.usuariosControl.setValue(filtro[0]);
-            }
-          });
-      } else {
-        this.mainService
-          .getRequest({}, `/client/get_active_clients`)
-          .subscribe((res: Res) => {
-            this.clientes = res.data;
-            // Inicialmente mostramos solo los primeros 30 resultados
-            this.clientesFiltrados.next(this.clientes.slice(0, 30));
-            this.isLoading = false;
-          });
+        // El procesamiento específico de updateMode se manejará en la suscripción final.
+      })
+    );
 
-        this.mainService
-          .getRequest({}, `/user/get_active_users`)
-          .subscribe((res: Res) => {
-            this.usuarios = res.data;
-            // Inicialmente mostramos solo los primeros 30 resultados
-            this.usuariosFiltrados.next(this.usuarios.slice(0, 30));
-          });
-      }
+    const usuarios$ = this.dataService
+      .getActiveUsers()
+      .pipe(
+        // Uso de tap para procesar los datos de usuarios
+        tap((res: Res) => {
+          this.usuarios = res.data;
+          this.usuariosFiltrados.next(this.usuarios.slice());
+
+          // El procesamiento específico de updateMode se manejará en la suscripción final.
+        })
+      );
+
+    // 2. Ejecuta ambas peticiones en paralelo
+    forkJoin({
+      clientesRes: clientes$,
+      usuariosRes: usuarios$,
+      brandRes: brands$
+    }).subscribe({
+      next: ({ clientesRes, usuariosRes, brandRes }) => {
+        // Este bloque se ejecuta una vez que ambas peticiones han retornado con éxito.
+        this.marcas = brandRes.data;
+        // Si estamos en modo de actualización, se realiza la lógica de filtrado y asignación
+        if (this.isUpdateMode()) {
+          // Lógica para Clientes
+          let filtroClientes = clientesRes.data.filter(
+            (cliente: ClientesRes) => cliente.id == this.data.id_cliente
+          );
+          if (filtroClientes.length > 0) {
+            this.clientesControl.setValue(filtroClientes[0]);
+          }
+          this.filtrarClientes();
+          let filtroUsuarios = usuariosRes.data.filter(
+            (usuario: User) => usuario.id == this.data.id_usuario
+          );
+          if (filtroUsuarios.length > 0) {
+            this.usuariosControl.setValue(filtroUsuarios[0]);
+          }
+        }
+      },
+      error: (err) => {
+        console.error('Error al cargar menús:', err);
+        // Opcional: Manejar errores aquí
+      },
+      complete: () => {
+        // Este bloque se ejecuta al final, después de procesar todo
+        this.isLoading = false;
+      },
     });
   }
   protected setInitialValueUsuarios() {
@@ -366,27 +377,35 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
 
     let filteredUsers = [...this.usuarios];
     const selectedUser = this.usuariosControl.value;
-    
+
     // Aplicar filtro de búsqueda si existe
     let search = this.usuariosFiltro.value;
     if (search) {
       search = search.toLowerCase();
-      const searchTerms = search.split(' ').filter((term: string) => term.length > 0);
+      const searchTerms = search
+        .split(' ')
+        .filter((term: string) => term.length > 0);
       filteredUsers = this.usuarios.filter((usuario) => {
-        const searchString = (usuario.nombre + ' ' + usuario.apellido + ' ' + usuario.curp).toLowerCase();
+        const searchString = (
+          usuario.nombre +
+          ' ' +
+          usuario.apellido +
+          ' ' +
+          usuario.curp
+        ).toLowerCase();
         return searchTerms.every((term: string) => searchString.includes(term));
       });
     }
 
     // Asegurar que el usuario seleccionado esté siempre en la lista
-    if (selectedUser && !filteredUsers.some(u => u.id === selectedUser.id)) {
+    if (selectedUser && !filteredUsers.some((u) => u.id === selectedUser.id)) {
       filteredUsers = [selectedUser, ...filteredUsers];
     }
 
     // Limitar resultados pero asegurando que el seleccionado esté incluido
     if (filteredUsers.length > 30 && !search) {
       const firstItems = filteredUsers.slice(0, 29);
-      if (selectedUser && !firstItems.some(u => u.id === selectedUser.id)) {
+      if (selectedUser && !firstItems.some((u) => u.id === selectedUser.id)) {
         filteredUsers = [selectedUser, ...firstItems];
       } else {
         filteredUsers = firstItems;
@@ -402,27 +421,41 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
 
     let filteredClients = [...this.clientes];
     const selectedClient = this.clientesControl.value;
-    
+
     // Aplicar filtro de búsqueda si existe
     let search = this.clientesFiltro.value;
     if (search) {
       search = search.toLowerCase();
-      const searchTerms = search.split(' ').filter((term: string) => term.length > 0);
+      const searchTerms = search
+        .split(' ')
+        .filter((term: string) => term.length > 0);
       filteredClients = this.clientes.filter((cliente) => {
-        const searchString = (cliente.nombre + ' ' + cliente.apellido + ' ' + cliente.telefono).toLowerCase();
+        const searchString = (
+          cliente.nombre +
+          ' ' +
+          cliente.apellido +
+          ' ' +
+          cliente.telefono
+        ).toLowerCase();
         return searchTerms.every((term: string) => searchString.includes(term));
       });
     }
 
     // Asegurar que el cliente seleccionado esté siempre en la lista
-    if (selectedClient && !filteredClients.some(c => c.id === selectedClient.id)) {
+    if (
+      selectedClient &&
+      !filteredClients.some((c) => c.id === selectedClient.id)
+    ) {
       filteredClients = [selectedClient, ...filteredClients];
     }
 
     // Limitar resultados pero asegurando que el seleccionado esté incluido
     if (filteredClients.length > 30 && !search) {
       const firstItems = filteredClients.slice(0, 29);
-      if (selectedClient && !firstItems.some(c => c.id === selectedClient.id)) {
+      if (
+        selectedClient &&
+        !firstItems.some((c) => c.id === selectedClient.id)
+      ) {
         filteredClients = [selectedClient, ...firstItems];
       } else {
         filteredClients = firstItems;
