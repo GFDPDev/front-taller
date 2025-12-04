@@ -1,0 +1,16 @@
+@import "ag-grid-community/styles/ag-grid.css";
+@import "ag-grid-community/styles/ag-theme-quartz.css";
+.ag-theme-quartz {
+  --ag-font-size: 14px;
+  --ag-background-color: transparent;
+  --ag-header-background-color: transparent;
+  --ag-font-family: "Work Sans", sans-serif;
+}
+.ag-theme-quartz .ag-header-cell {
+  font-size: 14px;
+  font-weight: 500;
+  color: black;
+}
+.ag-header-cell-label {
+  justify-content: center !important;
+}

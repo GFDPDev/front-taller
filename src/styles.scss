@@ -13,12 +13,12 @@ html {
       primary: my-theme.$primary-palette,
       tertiary: my-theme.$tertiary-palette,
     ),
-    typography: "Roboto",
+    typography: "Work Sans",
     density: 0,
   ));
 }
 :root {
-  --mat-sys-body-medium-font : "Roboto", "Helvetica Neue", sans-serif;
+  --mat-sys-body-medium-font : "Work Sans", "Helvetica Neue", sans-serif;
   --mdc-dialog-subhead-weight: 600;
 }
 
@@ -31,8 +31,9 @@ body {
 
 body {
   margin: 0;
-  text-size-adjust: 100%;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: "Work Sans", "Helvetica Neue", sans-serif;
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
 }
 
 input::-webkit-outer-spin-button,
@@ -69,13 +70,17 @@ input[type="number"] {
 }
 .ag-theme-quartz {
   --ag-font-size: 14px;
-  --ag-background-color: #FAFAFA;
-  --ag-header-background-color: #FAFAFA;
+  --ag-background-color: transparent;
+  --ag-header-background-color: transparent;
+  --ag-font-family: "Work Sans", sans-serif;
 }
 .ag-theme-quartz .ag-header-cell {
   font-size: 14px;
   font-weight: 500;
   color: black;
+}
+.ag-header-cell-label {
+  justify-content: center !important;
 }
 .small-icon-button {
    width: 36px !important;

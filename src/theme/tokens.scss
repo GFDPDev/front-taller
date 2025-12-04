@@ -1,18 +1,3 @@
-/* These tokens are generated using https://themes.angular-material.dev/ */
-/* Preview: https://themes.angular-material.dev/?bold-font-weight=700&brand-font-family=Work%20Sans&medium-font-weight=500&plain-font-family=Work%20Sans&regular-font-weight=400&seed-error=%23a80710&seed-neutral=%2375777d&seed-neutral-variant=%23717782&seed-primary=%230062AD&seed-secondary=%23198754&seed-tertiary=%233A7CBE */
-/* Seed Colors: primary: #0062AD, secondary: #198754, tertiary: #3A7CBE, error: #a80710, neutral: #75777d, neutral-variant: #717782 */
-/* Seed Typography: plain-font-family: Roboto, brand-font-family: Roboto, bold-font-weight: 700, medium-font-weight: 500, regular-font-weight: 400 */
-
-/* Make sure to import fonts in `<head>` of html */
-/*
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Roboto&family=Roboto&display=swap');
-</style>
-
-OR
-
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&family=Roboto&display=swap">
-*/
 
 @use "@angular/material" as mat;
 
@@ -142,15 +127,15 @@ OR
 /* Typography */
 :root, :host {
   /* core typography tokens are not generating css variables, hence below */
-  --mat-sys-brand-font-family: Roboto;
-  --mat-sys-plain-font-family: Roboto;
+  --mat-sys-brand-font-family: Work Sans;
+  --mat-sys-plain-font-family: Work Sans;
   --mat-sys-bold-font-weight: 700;
   --mat-sys-medium-font-weight: 500;
   --mat-sys-regular-font-weight: 400;
 
   @include mat.theme-overrides((
-    brand-family: Roboto,
-    plain-family: Roboto,
+    brand-family: Work Sans,
+    plain-family: Work Sans,
     bold-weight: 700,
     medium-weight: 500,
     regular-weight: 400,
