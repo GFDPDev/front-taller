@@ -70,8 +70,8 @@ input[type="number"] {
 }
 .ag-theme-quartz {
   --ag-font-size: 14px;
-  --ag-background-color: transparent;
-  --ag-header-background-color: transparent;
+  --ag-background-color: var(--mat-sys-surface);;
+  --ag-header-background-color: var(--mat-sys-surface);;
   --ag-font-family: "Work Sans", sans-serif;
 }
 .ag-theme-quartz .ag-header-cell {
