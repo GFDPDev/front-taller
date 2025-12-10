@@ -176,17 +176,17 @@ export class ReportesComponent {
 
     const headers1 = ['ESTATUS', 'CANTIDAD', 'PORCENTAJE'];
     const data1 = [
-      ['POR AUTORIZAR', this.report.service_report['por_autorizar'].toString(), (this.report.service_report['porc_pa']).toFixed(1) + '%'],
-      ['NO AUTORIZADO', this.report.service_report['no_autorizado'].toString(), (this.report.service_report['porc_na']).toFixed(1) + '%'],
-      ['PENDIENTE', this.report.service_report['pendiente'].toString(), (this.report.service_report['porc_p']).toFixed(1) + '%'],
-      ['TERMINADO', this.report.service_report['terminado'].toString(), (this.report.service_report['porc_t']).toFixed(1) + '%'],
-      ['ENTREGADO', this.report.service_report['entregado'].toString(), (this.report.service_report['porc_e']).toFixed(1) + '%'],
-      ['TOTAL', this.report.service_report['total'].toString(), '100.0%'],
+      ['POR AUTORIZAR', this.report.service_report['por_autorizar']?.toString() ?? '0', (this.report.service_report['porc_pa']).toFixed(1) + '%'],
+      ['NO AUTORIZADO', this.report.service_report['no_autorizado']?.toString() ?? '0', (this.report.service_report['porc_na']).toFixed(1) + '%'],
+      ['PENDIENTE', this.report.service_report['pendiente']?.toString() ?? '0', (this.report.service_report['porc_p']).toFixed(1) + '%'],
+      ['TERMINADO', this.report.service_report['terminado']?.toString() ?? '0', (this.report.service_report['porc_t']).toFixed(1) + '%'],
+      ['ENTREGADO', this.report.service_report['entregado']?.toString() ?? '0', (this.report.service_report['porc_e']).toFixed(1) + '%'],
+      ['TOTAL', this.report.service_report['total']?.toString() ?? '0', '100.0%'],
     ];
 
     yPos = this.drawTable(doc, xPos, yPos, headers1, data1, pageHeight);
 
-    yPos += 5;
+    yPos += 10;
 
     // Tabla 2: Reporte de Usuarios
     if (this.report.user_report && this.report.user_report.length > 0) {
@@ -210,6 +210,7 @@ export class ReportesComponent {
       yPos = this.drawTable(doc, xPos, yPos, headers2, data2, pageHeight);
       yPos += 5;
     }
+    yPos += 5;
 
     // Tabla 3: Ingresos
     if (this.report.earnings_report && this.report.earnings_report.length > 0) {
@@ -221,13 +222,14 @@ export class ReportesComponent {
       const headers3 = ['ENCARGADO', 'IMPORTE', 'PORCENTAJE'];
       const data3 = this.report.earnings_report.map(user => [
         user.encargado,
-        '$' + user.importe.toFixed(2),
+        '$' + (user.importe ?? 0).toFixed(2),
         (user.porcentaje ?? 0).toFixed(1) + '%'
       ]);
 
       yPos = this.drawTable(doc, xPos, yPos, headers3, data3, pageHeight);
       yPos += 5;
     }
+    yPos += 5;
 
     // Tabla 4: Express
     if (this.report.express_report && this.report.express_report.length > 0) {
@@ -239,13 +241,14 @@ export class ReportesComponent {
       const headers4 = ['ENCARGADO', 'IMPORTE', 'SERVICIOS'];
       const data4 = this.report.express_report.map(user => [
         user.encargado,
-        '$' + user.importe.toFixed(2),
-        user.servicios.toString()
+        '$' + (user.importe ?? 0).toFixed(2),
+        (user.servicios ?? 0).toString()
       ]);
 
       yPos = this.drawTable(doc, xPos, yPos, headers4, data4, pageHeight);
       yPos += 5;
     }
+    yPos += 5;
 
     // Tabla 5: Externos
     if (this.report.external_report && this.report.external_report.length > 0) {
@@ -268,10 +271,10 @@ export class ReportesComponent {
     }
 
     // Importe Total
-    yPos += 10;
+    yPos += 5;
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
-    doc.text(`IMPORTE TOTAL: $${this.report.service_report['importe_total'].toFixed(2)}`, pageWidth / 2, yPos, { align: 'center' });
+    doc.text(`IMPORTE TOTAL: $${this.report.service_report['importe_total']?.toFixed(2) ?? 0}`, pageWidth / 2, yPos, { align: 'center' });
 
     window.open(doc.output('bloburl'),'_blank');
   }

@@ -193,7 +193,7 @@ export class GarantiasComponent implements OnInit, OnDestroy {
       hide: true,
     },
     {
-      headerName: '',
+      headerName: 'Acciones',
       field: 'delete',
       cellRenderer: ButtonRendererComponent,
       cellRendererParams: {
@@ -203,12 +203,11 @@ export class GarantiasComponent implements OnInit, OnDestroy {
       },
       cellStyle: { textAlign: 'center' },
 
-      width: 80,
-      flex: 1,
+      width: 100,
       filter: false,
     },
     {
-      headerName: '',
+      headerName: 'Comprobante',
       field: 'receipt',
       cellRenderer: ButtonRendererComponent,
       cellRendererParams: {
@@ -219,7 +218,7 @@ export class GarantiasComponent implements OnInit, OnDestroy {
       cellStyle: { textAlign: 'center' },
 
       filter: false,
-      width: 80,
+      resizable:false,
       flex: 1,
     },
   ];

@@ -128,7 +128,7 @@ export class ExternosComponent {
       hide: true
     },
     {
-      headerName: '',
+      headerName: 'Acciones',
       field: 'delete',
       cellRenderer: ButtonRendererComponent,
       cellRendererParams: {
@@ -137,7 +137,7 @@ export class ExternosComponent {
         tooltip: 'Eliminar Registro',
       },
       cellStyle: { textAlign: 'center' },
-
+      resizable: false,
       filter: false,
       flex: 1,
     },

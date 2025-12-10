@@ -23,25 +23,61 @@ export class CSVService {
         document.body.removeChild(dwldLink);
     }
 
+    formatCSVValue(value: any): string {
+        if (value === null || value === undefined) {
+            return '""'; // Campo vacío entre comillas
+        }
+
+        // Convertir el valor a cadena para manejar números, fechas, etc.
+        let stringValue = String(value);
+
+        // ESCAPE: Reemplazar todas las comillas dobles internas (") con doble comilla doble ("").
+        // Ej: "Dato con comillas" -> ""Dato con comillas""
+        stringValue = stringValue.replace(/"/g, '""');
+
+        // ENVOLTURA: Encerrar el valor escapado en comillas dobles.
+        // Ej: Dato sin comillas -> "Dato sin comillas"
+        return `"${stringValue}"`;
+    }
+
+
+    /**
+     * 2. Función principal ConvertToCSV modificada.
+     * - Cambia el separador de ';' a ','.
+     * - Utiliza formatCSVValue para cada celda.
+     */
     ConvertToCSV(objArray: any, headerList: any) {
-         let array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
-         let str = '';
-         let row = 'registro;';
+        let array = typeof objArray !== 'object' ? JSON.parse(objArray) : objArray;
+        let str = '';
+        
+        // Cambiar la cabecera 'registro;' por 'registro,'
+        let row = this.formatCSVValue('registro'); 
 
-         for (let index in headerList) {
-             row += headerList[index] + ';';
-         }
-         row = row.slice(0, -1);
-         str += row + '\r\n';
-         for (let i = 0; i < array.length; i++) {
-             let line = (i+1)+'';
-             for (let index in headerList) {
+        // Construcción de la fila de cabeceras
+        for (let index in headerList) {
+            // Usar ',' como separador y formatCSVValue para envolver el nombre de la columna
+            row += ',' + this.formatCSVValue(headerList[index]); 
+        }
+        
+        // No es necesario row = row.slice(0, -1); porque no hay un separador al final
+
+        str += row + '\r\n'; // Agregar salto de línea
+
+        // Construcción de las filas de datos
+        for (let i = 0; i < array.length; i++) {
+            // Iniciar la línea con el número de registro formateado
+            let line = this.formatCSVValue(i + 1); 
+            
+            for (let index in headerList) {
                 let head = headerList[index];
+                let cellValue = array[i][head];
 
-                 line += ';' + array[i][head];
-             }
-             str += line + '\r\n';
-         }
-         return str;
-     }
+                // Usar ',' como separador y formatCSVValue para formatear el valor de la celda
+                line += ',' + this.formatCSVValue(cellValue);
+            }
+            str += line + '\r\n'; // Agregar la línea completa con salto de línea
+        }
+        
+        return str;
+    }
 }

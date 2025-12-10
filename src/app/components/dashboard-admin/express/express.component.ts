@@ -109,7 +109,7 @@ export class ExpressComponent {
       width: 260,
     },
     {
-      headerName: '',
+      headerName: 'Acciones',
       field: 'delete',
       cellRenderer: ButtonRendererComponent,
       cellRendererParams: {
@@ -119,7 +119,7 @@ export class ExpressComponent {
       },
       cellStyle: { textAlign: 'center' },
 
-      width: 80,
+      resizable: false,
       flex: 1,
       filter: false
     },

@@ -160,7 +160,7 @@ export class ServiciosComponent implements OnDestroy {
       hide: true,
     },
     {
-      headerName: '',
+      headerName: 'Acciones',
       field: 'delete',
       cellRenderer: ButtonRendererComponent,
       cellRendererParams: {
@@ -169,13 +169,11 @@ export class ServiciosComponent implements OnDestroy {
         tooltip: 'Eliminar Registro',
       },
       cellStyle: { textAlign: 'center' },
-
-      filter: false,
       width: 80,
-      flex: 1,
+      filter: false,
     },
     {
-      headerName: '',
+      headerName: 'Comprobante',
       field: 'receipt',
       cellRenderer: ButtonRendererComponent,
       cellRendererParams: {
@@ -184,9 +182,8 @@ export class ServiciosComponent implements OnDestroy {
         tooltip: 'Generar Recibo',
       },
       cellStyle: { textAlign: 'center' },
-
+      resizable: false,
       filter: false,
-      width: 80,
       flex: 1,
     },
   ];
