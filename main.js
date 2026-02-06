@@ -1,4 +1,4 @@
-const { app, BrowserWindow, screen, dialog, shell, ipcMain, safeStorage } = require('electron');
+const { app, BrowserWindow, screen, dialog, shell, ipcMain, safeStorage, Menu } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const { autoUpdater } = require('electron-updater');
@@ -6,6 +6,50 @@ const log = require('electron-log');
 Object.assign(console, log.functions);
 const userDataPath = app.getPath('userData');
 const credentialsPath = path.join(userDataPath, 'user_credentials.enc');
+autoUpdater.autoDownload = false;
+autoUpdater.autoInstallOnAppQuit = false;
+
+function createMenu(win) {
+  const template = [
+    {
+      label: 'Archivo',
+      submenu: [
+        { label: 'Salir', role: 'quit' }
+      ]
+    },
+    {
+      label: 'Herramientas',
+      submenu: [
+        {
+          label: 'Vista de Desarrollador',
+          accelerator: 'F12',
+          click: () => { win.webContents.toggleDevTools(); }
+        },
+        { type: 'separator' },
+        { label: 'Recargar', role: 'reload' }
+      ]
+    },
+    {
+      label: 'Actualizaciones',
+      submenu: [
+        {
+          label: 'Buscar actualizaciones...',
+          click: () => { 
+            autoUpdater.checkForUpdates();
+            // Opcional: Avisar que empezó la búsqueda
+            log.info('Busqueda manual iniciada');
+          }
+        },
+        { type: 'separator' },
+        { label: `Versión actual: ${app.getVersion()}`, enabled: false }
+      ]
+    }
+  ];
+
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
+}
+
 function createWindow() {
   const size = screen.getPrimaryDisplay().workAreaSize;
 
@@ -22,7 +66,7 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js')
     },
   });
-
+  createMenu(win);
   win.webContents.setWindowOpenHandler(({ url }) => {
     // Permitir blobs (PDFs, etc) para que se abran normalmente
     if (url.startsWith('blob:')) {
@@ -101,42 +145,69 @@ ipcMain.handle('delete-credentials', async () => {
   }
 });
 
+autoUpdater.on('update-available', (info) => {
+  dialog.showMessageBox({
+    type: 'question',
+    title: 'Actualización encontrada',
+    message: `Hay una versión nueva (${info.version}).`,
+    detail: '¿Quieres descargarla ahora? La descarga se realizará en segundo plano.',
+    buttons: ['Descargar e instalar', 'Cancelar'],
+    defaultId: 0
+  }).then((result) => {
+    if (result.response === 0) {
+      autoUpdater.downloadUpdate(); // Inicia la descarga manual
+      
+      // Opcional: Avisar que empezó
+      dialog.showMessageBox({ message: 'La descarga ha comenzado. Te avisaremos al terminar.' });
+    }
+  });
+});
+
+// 2. SEGUIMIENTO DEL PROGRESO
+autoUpdater.on('download-progress', (progressObj) => {
+  let log_message = "Velocidad: " + progressObj.bytesPerSecond;
+  log_message = log_message + ' - Descargado ' + progressObj.percent + '%';
+  
+  // Mostramos el progreso en la barra de tareas de Windows (el icono verde que se llena)
+  const mainWindow = BrowserWindow.getAllWindows()[0];
+  if (mainWindow) {
+    mainWindow.setProgressBar(progressObj.percent / 100);
+  }
+  
+  console.log(log_message);
+});
+
+// 3. CUANDO TERMINA
+autoUpdater.on('update-downloaded', () => {
+  // Quitamos la barra de progreso del icono
+  const mainWindow = BrowserWindow.getAllWindows()[0];
+  if (mainWindow) mainWindow.setProgressBar(-1);
+
+  dialog.showMessageBox({
+    type: 'info',
+    title: '¡Listo!',
+    message: 'Actualización descargada.',
+    detail: 'La aplicación debe reiniciarse para aplicar los cambios.',
+    buttons: ['Reiniciar ahora', 'Más tarde']
+  }).then((result) => {
+    if (result.response === 0) {
+      autoUpdater.quitAndInstall();
+    }
+  });
+});
+
+// 4. SI NO HAY NADA (Para el botón manual)
+autoUpdater.on('update-not-available', () => {
+  dialog.showMessageBox({
+    title: 'Sin actualizaciones',
+    message: 'Ya tienes la última versión instalada.'
+  });
+});
+
 app.whenReady().then(() => {
 createWindow();
 });
 
-app.on('ready', function() {
-  console.log('App is ready, checking for updates...');
-  
-  autoUpdater.checkForUpdates();
-  
-  autoUpdater.on('update-available', (info) => {
-    dialog.showMessageBox({
-      type: 'info',
-      title: 'Actualización disponible',
-      message: 'Nueva versión disponible',
-      detail: `Versión ${info.version} está lista para descargar.`,
-      buttons: ['Descargar ahora', 'Más tarde']
-    }).then((result) => {
-      if (result.response === 0) {
-        autoUpdater.downloadUpdate();
-      }
-    });
-  });
-  
-  autoUpdater.on('update-downloaded', () => {
-    dialog.showMessageBox({
-      type: 'info',
-      title: 'Actualización lista',
-      message: 'Se instalará al reiniciar la aplicación',
-      buttons: ['Reiniciar ahora', 'Después']
-    }).then((result) => {
-      if (result.response === 0) {
-        autoUpdater.quitAndInstall();
-      }
-    });
-  });
-});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
