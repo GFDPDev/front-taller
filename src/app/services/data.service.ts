@@ -12,7 +12,7 @@ export class DataService {
   private readonly CLIENTS_CACHE_KEY = 'active_clients';
   private readonly USERS_CACHE_KEY = 'active_users';
   private readonly BRANDS_CACHE_KEY = 'active_brands';
-  private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
+  private readonly CACHE_DURATION = 120 * 60 * 1000; // 120 minutos
 
   constructor(
     private mainService: MainService,

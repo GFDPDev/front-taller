@@ -69,7 +69,7 @@ export class LogInComponent implements OnInit {
   login() {
     let curp = this.form.value.curp;
     let password = this.form.value.password;
-
+    this.isLoading = true;
     this.authService
       .loginRequest({ curp: curp, password: password }, this.route)
       .subscribe((res: Res) => {
@@ -91,6 +91,7 @@ export class LogInComponent implements OnInit {
             this.router.navigateByUrl('/taller/dashboard-tecnico');
           }
         } else {
+          this.isLoading = false;
           this.form.controls['password'].reset();
           this.snackbar.open(`${res.data} (${res.code})`, 'Aceptar', {
             duration: 4000,

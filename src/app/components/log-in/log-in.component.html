@@ -44,9 +44,13 @@
             matButton="filled"
             color="primary"
             class="w-1/2 mb-4 p-1"
-            [disabled]="form.invalid"
+            [disabled]="form.invalid||isLoading"
           >
-            Iniciar Sesión
+            @if (isLoading) {
+              <mat-spinner diameter="20"></mat-spinner>
+            } @else {
+              <span>Iniciar Sesión</span>
+            }
           </button>
         </mat-card-actions>
       </mat-card>

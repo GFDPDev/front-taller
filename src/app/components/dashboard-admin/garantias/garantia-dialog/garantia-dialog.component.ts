@@ -268,9 +268,24 @@ export class GarantiaDialogComponent {
   }
   uploadDocumento(event: any) {
     const file: File = event!.target.files ? event.target.files[0] : "";
-    this.form.controls["doc"].setValue(file.name);
+    const now = new Date();
+    const timestamp =
+      now.getFullYear().toString() +
+      (now.getMonth() + 1).toString().padStart(2, '0') +
+      now.getDate().toString().padStart(2, '0') +
+      '_' +
+      now.getHours().toString().padStart(2, '0') +
+      now.getMinutes().toString().padStart(2, '0') +
+      now.getSeconds().toString().padStart(2, '0');
+    const originalName = file.name;
+    const extension = originalName.split('.').pop();
+    const baseName = originalName.split('.')[0];
+    const newFileName = `${baseName}_${timestamp}.${extension}`;
+    
+    this.form.controls['doc'].setValue(newFileName);
     const formData = new FormData();
-    formData.append("doc", file);
+    formData.append("doc", file, newFileName);
+    
     this.mainService.uploadFile(formData, "/file").subscribe((res: Res) => {
       this.snackbar.open(`${res.data} (${res.code})`, "Aceptar", {
         duration: 5000,
