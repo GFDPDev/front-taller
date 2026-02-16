@@ -95,6 +95,9 @@ export class ServicioDialogComponent implements OnInit, AfterViewInit {
     {
       value: 'ENTREGADO',
     },
+    {
+      value: 'DESECHADO',
+    },
   ];
   tipos = [
     {

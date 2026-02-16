@@ -96,6 +96,9 @@ export class TecnicoDialogComponent implements OnInit, AfterViewInit {
     {
       value: 'NO AUTORIZADO',
     },
+    {
+      value: 'DESECHADO',
+    },
   ];
 
   tipos = [

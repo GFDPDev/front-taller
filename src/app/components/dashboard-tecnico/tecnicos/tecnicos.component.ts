@@ -354,6 +354,13 @@ export class TecnicosComponent implements OnDestroy, OnInit {
       doc.text(line, pageWidth / 1.5 + 15, yPosCopy);
       yPosCopy += 5; // Ajusta el espaciado de línea
     });
+    yPosCopy += 5;
+
+    doc.text(
+      `Fecha: ${this.datetimeFormatter({ value: data.fecha_ingreso })}`,
+      pageWidth / 2 + 50,
+      yPosCopy
+    );
     yPos += 4;
     doc.setFontSize(8);
     doc.text('Teléfono: 415 140 0105', pageWidth / 2 - 45, yPos, {
@@ -388,6 +395,7 @@ export class TecnicosComponent implements OnDestroy, OnInit {
     );
 
     yPos += 10;
+ 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     doc.text(
