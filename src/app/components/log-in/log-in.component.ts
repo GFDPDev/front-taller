@@ -16,6 +16,7 @@ declare global {
   interface Window {
     electronAPI: {
       saveCredentials: (data: any) => Promise<any>;
+      printPDF: (data: any) => Promise<any>;
       getCredentials: () => Promise<any>;
       deleteCredentials: () => Promise<any>;
     };

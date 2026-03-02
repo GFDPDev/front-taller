@@ -106,7 +106,7 @@ export class TecnicosComponent implements OnDestroy, OnInit {
       maxWidth: '95vw',
       data: null,
     });
-    dialogRef.afterClosed().subscribe((result: ToolService) => {
+    dialogRef.afterClosed().subscribe((result: number) => {
       if (result) {
         this.getServicios();
 
@@ -116,6 +116,14 @@ export class TecnicosComponent implements OnDestroy, OnInit {
           title: 'Se ha registrado el servicio correctamente.',
           showConfirmButton: false,
           timer: 1500,
+        }).then(() => {
+          // Obtener el ID del servicio
+          // Buscar el servicio en dataSource.data
+          const nuevoServicio = this.dataSource.data.find(s => s.id === result);
+          if (nuevoServicio) {
+            const doc = this.generateReceipt(nuevoServicio);
+            this.printPDF(doc);
+          }
         });
       }
     });
@@ -146,7 +154,7 @@ export class TecnicosComponent implements OnDestroy, OnInit {
       return '';
     }
   }
-  printReceipt(data: ToolService) {
+  generateReceipt(data: ToolService): jsPDF {
     const doc = new jsPDF();
     const logoPath = 'assets/logo.png'; // La ruta del logo que me proporcionaste en el HTML.
 
@@ -404,9 +412,46 @@ export class TecnicosComponent implements OnDestroy, OnInit {
       yPos
     );
 
-    // doc.text(`Falla: ${data.falla_detectada}`, pageWidth / 1.5 + 20, yPos);
-    // doc.save(`orden_servicio_${data.id}.pdf`);
+    return doc;
+  }
+
+  printPDF(doc: jsPDF): void {
+    console.log(window.electronAPI);
+    if (window.electronAPI) {
+      try {
+        const pdfOutput = doc.output('arraybuffer');
+
+        // Convertimos a Base64 para enviarlo de forma segura por el canal IPC
+        const base64String = btoa(
+          new Uint8Array(pdfOutput)
+            .reduce((data, byte) => data + String.fromCharCode(byte), '')
+        );
+
+        window.electronAPI.printPDF(base64String)
+          .then((res: any) => {
+            if (res.success) {
+              this.snackbar.open('Imprimiendo recibo...', 'Cerrar', { duration: 2000 });
+            } else {
+              console.error('Error de impresión:', res.error);
+            }
+          });
+      } catch (error) {
+        console.log('Error al generar o enviar el PDF:', error);
+        this.openPDF(doc)
+      }
+    } else {
+      console.log('Electron API no disponible para impresión');
+      this.openPDF(doc)
+    }
+  }
+
+  openPDF(doc: jsPDF): void {
     window.open(doc.output('bloburl'), '_blank');
+  }
+
+  printReceipt(data: ToolService) {
+    const doc = this.generateReceipt(data);
+    this.openPDF(doc);
   }
   ngOnDestroy(): void {
     //Called once, before the instance is destroyed.

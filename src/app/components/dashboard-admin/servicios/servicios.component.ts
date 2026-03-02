@@ -267,7 +267,8 @@ export class ServiciosComponent implements OnDestroy {
     if (id == 'delete') {
       this.deleteServicio(e.data);
     } else if (id == 'receipt') {
-      this.printReceipt(e.data);
+      const doc = this.generateReceipt(e.data);
+      this.openPDF(doc);
     } else {
       this.updateServicio(e.data);
     }
@@ -323,16 +324,22 @@ export class ServiciosComponent implements OnDestroy {
       maxWidth: "95vw",
       data: null,
     });
-    dialogRef.afterClosed().subscribe((result: ToolService) => {
+    dialogRef.afterClosed().subscribe((result: number) => {
       if (result) {
         this.getServicios();
-
         Swal.fire({
           position: 'center',
           icon: 'success',
           title: 'Se ha registrado el servicio correctamente.',
           showConfirmButton: false,
           timer: 1500,
+        }).then(() => {
+          // Filtrar el nuevo servicio de rowData usando el ID devuelto
+          const nuevoServicio = this.rowData.find(s => s.id === result);
+          if (nuevoServicio) {
+            const doc = this.generateReceipt(nuevoServicio);
+            this.printPDF(doc);
+          }
         });
       }
     });
@@ -345,8 +352,6 @@ export class ServiciosComponent implements OnDestroy {
     });
     dialogRef.afterClosed().subscribe((result: ToolService) => {
       if (result) {
-        this.getServicios();
-
         Swal.fire({
           position: 'center',
           icon: 'success',
@@ -360,7 +365,7 @@ export class ServiciosComponent implements OnDestroy {
   getCSV() {
     this.agGrid.api.exportDataAsCsv({ allColumns: true });
   }
-  printReceipt(data: ToolService) {
+  generateReceipt(data: ToolService): jsPDF {
     const doc = new jsPDF();
     const logoPath = 'assets/logo.png'; // La ruta del logo que me proporcionaste en el HTML.
 
@@ -618,10 +623,44 @@ export class ServiciosComponent implements OnDestroy {
       yPos
     );
     
+    return doc;
+  }
 
-    // doc.text(`Falla: ${data.falla_detectada}`, pageWidth / 1.5 + 20, yPos);
-    // doc.save(`orden_servicio_${data.id}.pdf`);
-    window.open(doc.output('bloburl'),'_blank');
+  printPDF(doc: jsPDF): void {
+    console.log(window.electronAPI);
+    if (window.electronAPI) {
+      try {
+        const pdfOutput = doc.output('arraybuffer');
+
+        // Convertimos a Base64 para enviarlo de forma segura por el canal IPC
+        const base64String = btoa(
+          new Uint8Array(pdfOutput)
+            .reduce((data, byte) => data + String.fromCharCode(byte), '')
+        );
+
+        window.electronAPI.printPDF(base64String)
+          .then((res: any) => {
+            if (res.success) {
+              this.snackbar.open('Imprimiendo recibo...', 'Cerrar', { duration: 2000 });
+            } else {
+              console.error('Error de impresión:', res.error);
+            }
+          });
+      } catch (error) {
+        console.log('Error al generar o enviar el PDF:', error);
+      }
+    } else {
+      console.log('Electron API no disponible para impresión');
+    }
+  }
+
+  openPDF(doc: jsPDF): void {
+    window.open(doc.output('bloburl'), '_blank');
+  }
+
+  printReceipt(data: ToolService) {
+    const doc = this.generateReceipt(data);
+    this.printPDF(doc);
   }
   ngOnDestroy(): void {
     //Called once, before the instance is destroyed.

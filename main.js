@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { autoUpdater } = require('electron-updater');
 const log = require('electron-log');
+const ptp = require('pdf-to-printer');
 Object.assign(console, log.functions);
 const userDataPath = app.getPath('userData');
 const credentialsPath = path.join(userDataPath, 'user_credentials.enc');
@@ -141,6 +142,41 @@ ipcMain.handle('delete-credentials', async () => {
     }
     return { success: true };
   } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('print-pdf', async (event, pdfBase64) => {
+  try {
+    console.log('Iniciando proceso de impresion nativa...');
+
+    // 1. Crear un buffer desde el string Base64
+    const buffer = Buffer.from(pdfBase64, 'base64');
+
+    // 2. Definir una ruta temporal para el archivo
+    // Usamos app.getPath('temp') para que funcione en cualquier PC
+    const filePath = path.join(app.getPath('temp'), `ticket_${Date.now()}.pdf`);
+
+    // 3. Escribir el archivo físicamente
+    fs.writeFileSync(filePath, buffer);
+
+    // 4. Mandar a imprimir a la impresora PREDETERMINADA
+    // Si quisieras una específica, podrías pasar { printer: "Nombre" }
+    await ptp.print(filePath);
+
+    console.log('Documento enviado a la cola de impresion.');
+
+    // 5. Limpieza: Borrar el archivo temporal después de 5 segundos
+    setTimeout(() => {
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }, 5000);
+
+    return { success: true };
+
+  } catch (error) {
+    console.error('Error en el sistema de impresion:', error);
     return { success: false, error: error.message };
   }
 });

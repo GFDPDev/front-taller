@@ -7,5 +7,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Solicitar obtener credenciales
   getCredentials: () => ipcRenderer.invoke('get-credentials'),
   // Solicitar borrar credenciales
-  deleteCredentials: () => ipcRenderer.invoke('delete-credentials')
+  deleteCredentials: () => ipcRenderer.invoke('delete-credentials'),
+  printPDF: (data) => ipcRenderer.invoke('print-pdf', data),
+
 });
