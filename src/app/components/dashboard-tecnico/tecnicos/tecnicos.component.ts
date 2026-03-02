@@ -403,9 +403,18 @@ export class TecnicosComponent implements OnDestroy, OnInit {
       xPos,
       yPos
     );
+    this.mainService.putRequest({}, `${this.route}/print/${data.id}`).subscribe((res: Res) => {
+      if (res.error) {
+        this.snackbar.open(`${res.data} (${res.code})`, 'Aceptar', {
+          duration: 4000,
+          horizontalPosition: 'center',
+            verticalPosition: 'top',
+        });
+      } else {  
+        console.log("Actualizado estado a impreso");
+      }
+    });
 
-    // doc.text(`Falla: ${data.falla_detectada}`, pageWidth / 1.5 + 20, yPos);
-    // doc.save(`orden_servicio_${data.id}.pdf`);
     window.open(doc.output('bloburl'), '_blank');
   }
   ngOnDestroy(): void {

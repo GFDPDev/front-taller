@@ -251,7 +251,7 @@ export class TecnicoDialogComponent implements OnInit, AfterViewInit {
               verticalPosition: 'top',
             });
           } else {
-            this.dialogRef.close(servicio);
+            this.dialogRef.close(res.data);
           }
         });
     } else {
@@ -265,7 +265,7 @@ export class TecnicoDialogComponent implements OnInit, AfterViewInit {
               verticalPosition: 'top',
             });
           } else {
-            this.dialogRef.close(servicio);
+            this.dialogRef.close(servicio.id);
           }
         });
     }
