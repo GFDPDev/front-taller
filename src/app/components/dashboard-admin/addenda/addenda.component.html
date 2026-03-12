@@ -1,0 +1,255 @@
+<div class="p-6 space-y-6">
+  <!-- Card de Subida de Archivo -->
+  <mat-card class="space-y-6">
+    <mat-card-header class="flex justify-center">
+      <mat-card-title class="text-center"
+        >Inserción de Addenda Mabe</mat-card-title
+      >
+      <mat-card-subtitle class="text-center text-sm mt-2"
+        >Selecciona un archivo XML CFDI sin addenda</mat-card-subtitle
+      >
+    </mat-card-header>
+    <mat-card-content class="text-center space-y-4">
+      <div class="flex justify-center items-center">
+        <label
+          for="xmlFileInput"
+          class="flex flex-col items-center justify-center w-72 h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer"
+        >
+          <div class="flex flex-col items-center justify-center pt-5 pb-6">
+            <mat-icon class="scale-125 mb-2">cloud_upload</mat-icon>
+            <p class="text-sm text-gray-700">
+              <span class="font-semibold">Click para cargar</span> o arrastra un
+              archivo XML
+            </p>
+            <p class="text-xs text-gray-500 mt-1">Máximo 10MB</p>
+          </div>
+          <input
+            id="xmlFileInput"
+            type="file"
+            accept=".xml"
+            class="hidden"
+            (change)="onFileSelected($event)"
+          />
+        </label>
+      </div>
+      @if (xmlFileName) {
+        <div class="text-sm text-green-600">
+          <mat-icon class="align-middle">check_circle</mat-icon>
+          <span class="ml-2">{{ xmlFileName }} cargado correctamente</span>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Card de Formulario (Solo si hay datos cargados) -->
+  <div *ngIf="showPreview && addendaData" class="space-y-6">
+    <!-- Card de Datos Automáticos -->
+    <mat-card class="space-y-4 bg-gray-50">
+      <mat-card-header class="pb-4">
+        <mat-card-title class="text-sm font-semibold"
+          >Datos Automáticos del CFDI</mat-card-title
+        >
+        <mat-card-subtitle class="text-xs text-gray-600 mt-1"
+          >Información extraída automáticamente</mat-card-subtitle
+        >
+      </mat-card-header>
+      <mat-card-content>
+        <div class="grid grid-cols-3 gap-4">
+          <div>
+            <p class="text-xs text-gray-600 font-semibold uppercase">Folio</p>
+            <p class="text-sm font-semibold">{{ addendaData.folio }}</p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-600 font-semibold uppercase">Fecha</p>
+            <p class="text-sm font-semibold">{{ addendaData.fecha }}</p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-600 font-semibold uppercase">Total</p>
+            <p class="text-sm font-semibold">
+              $ {{ addendaData.total | number: "1.2-2" }}
+            </p>
+          </div>
+          <div class="col-span-3">
+            <p class="text-xs text-gray-600 font-semibold uppercase">
+              Total con Letra
+            </p>
+            <p class="text-sm font-semibold">
+              {{ addendaData.importeConLetra }}
+            </p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Card de Formulario -->
+    <form [formGroup]="addendaForm" class="space-y-4">
+      <mat-card class="space-y-4">
+        <mat-card-header class="pb-4">
+          <mat-card-title class="text-sm font-semibold"
+            >Datos Obligatorios</mat-card-title
+          >
+          <mat-card-subtitle class="text-xs text-gray-600 mt-1"
+            >Información que debes completar</mat-card-subtitle
+          >
+        </mat-card-header>
+        <mat-card-content class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <mat-form-field class="w-full">
+              <mat-label>Número de Orden de Compra (Mabe)</mat-label>
+              <input
+                matInput
+                formControlName="ordenCompra"
+                placeholder="Ej: 4502134272"
+                type="text"
+              />
+              <mat-error *ngIf="orderCompraError">
+                {{ orderCompraError }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="w-full">
+              <mat-label>Referencia 1</mat-label>
+              <input
+                matInput
+                formControlName="referencia1"
+                placeholder="Ej: 5200041645"
+                type="text"
+              />
+              <mat-error *ngIf="referencia1Error">
+                {{ referencia1Error }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Card de Datos de Empresa -->
+      <mat-card class="space-y-4 mt-4">
+        <mat-card-header class="pb-4">
+          <mat-card-title class="text-sm font-semibold"
+            >Datos de Empresa</mat-card-title
+          >
+          <mat-card-subtitle class="text-xs text-gray-600 mt-1"
+            >Configuración por defecto (modificable)</mat-card-subtitle
+          >
+        </mat-card-header>
+        <mat-card-content class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <mat-form-field class="w-full">
+              <mat-label>Código Proveedor</mat-label>
+              <input matInput formControlName="codigoProveedor" type="text" />
+            </mat-form-field>
+
+            <mat-form-field class="w-full">
+              <mat-label>Planta de Entrega</mat-label>
+              <input matInput formControlName="plantaEntrega" type="text" />
+            </mat-form-field>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </form>
+
+    <!-- Card de Conceptos -->
+    <mat-card class="space-y-4">
+      <mat-card-header class="pb-4">
+        <mat-card-title class="text-sm font-semibold"
+          >Detalles de Artículos</mat-card-title
+        >
+        <mat-card-subtitle class="text-xs text-gray-600 mt-1"
+          >Información extraída del CFDI</mat-card-subtitle
+        >
+      </mat-card-header>
+      <mat-card-content class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead class="bg-gray-100 border-b">
+            <tr>
+              <th class="px-4 py-2 text-left font-semibold">Línea</th>
+              <th class="px-4 py-2 text-left font-semibold">Código</th>
+              <th class="px-4 py-2 text-left font-semibold">Descripción</th>
+              <th class="px-4 py-2 text-center font-semibold">Cantidad</th>
+              <th class="px-4 py-2 text-right font-semibold">Precio S/IVA</th>
+              <th class="px-4 py-2 text-right font-semibold">Precio C/IVA</th>
+              <th class="px-4 py-2 text-right font-semibold">Importe S/IVA</th>
+              <th class="px-4 py-2 text-right font-semibold">Importe C/IVA</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let detalle of addendaData.conceptos; let i = index"
+              [class.bg-gray-50]="i % 2 === 0"
+            >
+              <td class="px-4 py-2">{{ detalle.noLineaArticulo }}</td>
+              <td class="px-4 py-2 font-semibold">
+                {{ detalle.codigoArticulo }}
+              </td>
+              <td class="px-4 py-2">{{ detalle.descripcion }}</td>
+              <td class="px-4 py-2 text-center">{{ detalle.cantidad }}</td>
+              <td class="px-4 py-2 text-right">
+                $ {{ detalle.precioSinIva | number: "1.2-2" }}
+              </td>
+              <td class="px-4 py-2 text-right">
+                $ {{ detalle.precioConIva | number: "1.2-2" }}
+              </td>
+              <td class="px-4 py-2 text-right">
+                $ {{ detalle.importeSinIva | number: "1.2-2" }}
+              </td>
+              <td class="px-4 py-2 text-right">
+                $ {{ detalle.importeConIva | number: "1.2-2" }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Card de Resumen -->
+    <mat-card class="space-y-4 bg-gray-50">
+      <mat-card-header class="pb-4">
+        <mat-card-title class="text-sm font-semibold">Resumen</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="grid grid-cols-3 gap-4">
+          <div>
+            <p class="text-xs text-gray-600 font-semibold uppercase">
+              Subtotal
+            </p>
+            <p class="text-sm font-semibold">
+              $ {{ addendaData.subtotal | number: "1.2-2" }}
+            </p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-600 font-semibold uppercase">
+              Impuestos
+            </p>
+            <p class="text-sm font-semibold">
+              $ {{ addendaData.totalImpuestos | number: "1.2-2" }}
+            </p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-600 font-semibold uppercase">Total</p>
+            <p class="text-sm font-semibold">
+              $ {{ addendaData.total | number: "1.2-2" }}
+            </p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Botones de Acción -->
+    <div class="flex gap-4 justify-center">
+      <button
+        matButton="filled"
+        color="primary"
+        (click)="generateAndDownload()"
+        [disabled]="!addendaForm.valid"
+      >
+        <mat-icon>save_alt</mat-icon>
+        Descargar XML con Addenda
+      </button>
+      <button matButton (click)="resetForm()">
+        <mat-icon>delete</mat-icon>
+        Limpiar
+      </button>
+    </div>
+  </div>
+</div>

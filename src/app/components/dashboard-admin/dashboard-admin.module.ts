@@ -26,6 +26,7 @@ import { AgGridModule } from 'ag-grid-angular';
 import { ButtonRendererComponent } from './ag-grid/button-renderer/button-renderer.component';
 import { CurrencyFormatComponent } from './ag-grid/currency-format/currency-format.component';
 import { DatetimeFormatComponent } from './ag-grid/datetime-format/datetime-format.component';
+import { AddendaComponent } from './addenda/addenda.component';
 
 
 @NgModule({
@@ -50,7 +51,8 @@ import { DatetimeFormatComponent } from './ag-grid/datetime-format/datetime-form
     TechChartComponent,
     ButtonRendererComponent,
     CurrencyFormatComponent,
-    DatetimeFormatComponent
+    DatetimeFormatComponent,
+    AddendaComponent
   ],
   imports: [
     CommonModule,

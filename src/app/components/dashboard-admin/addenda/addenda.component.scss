@@ -1,0 +1,24 @@
+mat-form-field {
+  width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+
+  thead {
+    background-color: #f9fafb;
+    font-weight: 600;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid #e5e7eb;
+
+    &:hover {
+      background-color: #f3f4f6;
+    }
+  }
+
+  td {
+    border-bottom: 1px solid #e5e7eb;
+  }
+}

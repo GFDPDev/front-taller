@@ -73,6 +73,19 @@
         </button>
 
         <button
+          [routerLink]="['/taller/dashboard-admin/addenda']"
+          [routerLinkActive]="'selected'"
+          [routerLinkActiveOptions]="{ exact: true }"
+          mat-button
+          (click)="setMenuTitle('Addenda')"
+          class="w-full justify-start"
+        >
+          <mat-icon>receipt_long</mat-icon>
+          <span>Addenda</span>
+        </button>
+
+
+        <button
           [routerLink]="['/taller/dashboard-admin/clientes']"
           [routerLinkActive]="'selected'"
           [routerLinkActiveOptions]="{ exact: true }"

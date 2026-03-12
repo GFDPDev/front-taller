@@ -1,6 +1,6 @@
 {
   "name": "taller",
-  "version": "3.2.3",
+  "version": "3.2.4",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "build-for-electron": "ng build --base-href ./",
-    "electron:start": "npx electron .",
+    "electron": "npx electron .",
     "electron:build-exe": "npm run build-for-electron && electron-builder --win nsis --x64 --publish onTag"
   },
   "description": "Control de Taller para Grupo Ferretero Don Pedro",
@@ -61,10 +61,12 @@
     "@angular/platform-browser": "^20.3.9",
     "@angular/platform-browser-dynamic": "^20.3.9",
     "@angular/router": "^20.3.9",
+    "@xmldom/xmldom": "^0.8.11",
     "ag-grid-angular": "^31.0.3",
     "ag-grid-community": "^31.0.3",
     "electron-log": "^5.4.3",
     "electron-updater": "^6.6.2",
+    "httpsms": "^0.0.4",
     "jquery": "^3.7.0",
     "jspdf": "^2.5.1",
     "moment": "^2.29.4",
@@ -72,6 +74,7 @@
     "rxjs": "~7.8.0",
     "sweetalert2": "^11.7.12",
     "tslib": "^2.3.0",
+    "xpath": "^0.0.34",
     "zone.js": "~0.15.1"
   },
   "devDependencies": {
@@ -80,9 +83,9 @@
     "@angular/compiler-cli": "^20.3.9",
     "@types/jasmine": "~4.3.0",
     "autoprefixer": "^10.4.21",
-    "jasmine-core": "~4.5.0",
     "electron": "^39.2.1",
     "electron-builder": "^26.0.12",
+    "jasmine-core": "~4.5.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.1.0",
     "karma-coverage": "~2.2.0",

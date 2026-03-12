@@ -9,6 +9,7 @@ import { ExpressComponent } from './express/express.component';
 import { GarantiasComponent } from './garantias/garantias.component';
 import { ExternosComponent } from './externos/externos.component';
 import { adminGuard } from 'src/app/auth/admin.guard';
+import { AddendaComponent } from './addenda/addenda.component';
 
 const routes: Routes = [
   {
@@ -22,6 +23,7 @@ const routes: Routes = [
       { path: 'servicios', component: ServiciosComponent },
       { path: 'clientes', component: ClientesComponent },
       { path: 'express', component: ExpressComponent },
+      { path: 'addenda', component: AddendaComponent },
       { path: 'externos', component: ExternosComponent },
       { path: 'garantias', component: GarantiasComponent },
     ],
