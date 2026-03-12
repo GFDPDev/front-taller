@@ -95,7 +95,12 @@ export class AddendaService {
       palabras += this.convertirHastaSeiscientos(entero);
     }
 
-    palabras += ' PESOS ';
+    // Usar PESO singular si es 1, PESOS plural si es mayor
+    if (entero === 1) {
+      palabras += ' PESO ';
+    } else {
+      palabras += ' PESOS ';
+    }
 
     if (decimal > 0) {
       palabras += decimal.toString().padStart(2, '0') + '/100 M.N.';
